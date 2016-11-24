@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+			http://www.springframework.org/schema/mvc 
+			http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd 
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd ">
+
+	<!-- 1.扫描包service,dao -->
+	<context:component-scan base-package="com.xawl.car.service,com.xawl.car.dao" />
+	<!-- 2.数据库链接jdbc.properties文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!--全局异常处理类 -->
+	<bean id="exception" class="com.xawl.car.exception.ExceptionResolver"></bean>
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 最大上传大小,不能超过40M @see #FileUploadInterceptor -->
+		<property name="maxUploadSize" value="40971520" />
+		<property name="maxInMemorySize" value="4096" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+
+	<!-- 配置关键字过滤器 <bean id="badUtil" class="com.xawl.car.util.BadWorldUtil"> 
+		<property name="src" value="words.properties"></property> </bean> -->
+	<!-- 配置扫描包，加载mapper代理对象 -->
+
+
+
+
+	<!-- 3.数据源DataSource -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxPoolSize" value="${c3p0.pool.maxPoolSize}" />
+		<property name="minPoolSize" value="${c3p0.pool.minPoolSize}" />
+		<property name="initialPoolSize" value="${c3p0.pool.initialPoolSize}" />
+		<property name="acquireIncrement" value="${c3p0.pool.acquireIncrement}" />
+		<property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}"></property>
+		<property name="testConnectionOnCheckin" value="${c3p0.testConnectionOnCheckin}"></property>
+		<property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}"></property>
+		<property name="maxIdleTime" value="${c3p0.maxIdleTime}"></property>
+		<!-- <property name="preferredTestQuery 这个是测试用的，一般不需要" value="select 1"></property> -->
+	</bean>
+
+
+
+
+	<!-- 3.1.数据源DataSource alibaba -->
+	<!-- <bean id="dataSource1" class="com.alibaba.druid.pool.DruidDataSource"> 
+		<property name="driverClassName" value="${jdbc.driverClassName}" /> <property 
+		name="url" value="${jdbc.url}" /> <property name="username" value="${jdbc.username}" 
+		/> <property name="password" value="${jdbc.password}" /> <property name="maxActive" 
+		value="${c3p0.pool.maxPoolSize}" /> <property name="minIdle" value="${c3p0.pool.minPoolSize}" 
+		/> <property name="initialSize" value="${c3p0.pool.initialPoolSize}" /> <property 
+		name="maxWait" value="10000" /> <property name="timeBetweenEvictionRunsMillis" 
+		value="60000" /> <property name="minEvictableIdleTimeMillis" value="300000" 
+		/> <property name="testWhileIdle" value="true" /> 这里建议配置为TRUE，防止取到的连接不可用 
+		<property name="testOnBorrow" value="true" /> <property name="testOnReturn" 
+		value="false" /> 打开PSCache，并且指定每个连接上PSCache的大小 <property name="poolPreparedStatements" 
+		value="true" /> <property name="maxPoolPreparedStatementPerConnectionSize" 
+		value="20" /> <property name="defaultAutoCommit" value="true" /> 验证连接有效与否的SQL，不同的数据配置不同 
+		<property name="validationQuery" value="select 1 " /> <property name="filters" 
+		value="stat" /> <property name="proxyFilters"> <list> <ref bean="logFilter" 
+		/> </list> </property> </bean> <bean id="logFilter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter"> 
+		<property name="statementExecutableSqlLogEnable" value="false" /> </bean> -->
+
+
+
+
+	<!-- 4.Session工厂 SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 跟mybatis进行整合 -->
+		<property name="configLocation" value="classpath:sqlMapConfig.xml" />
+		<property name="mapperLocations" value="classpath:com/xawl/car/mapper/*.xml" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.xawl.car.dao"></property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- 5.事务tx -->
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="update*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut expression="execution(* com.xawl.car.service.*.*(..))"
+			id="txPointCut" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut" />
+	</aop:config>
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- 连接池配置 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<!-- 最大连接数 -->
+		<property name="maxTotal" value="30" />
+		<!-- 最大空闲连接数 -->
+		<property name="maxIdle" value="10" />
+		<!-- 每次释放连接的最大数目 -->
+		<property name="numTestsPerEvictionRun" value="1024" />
+		<!-- 释放连接的扫描间隔（毫秒） -->
+		<property name="timeBetweenEvictionRunsMillis" value="30000" />
+		<!-- 连接最小空闲时间 -->
+		<property name="minEvictableIdleTimeMillis" value="1800000" />
+		<!-- 连接空闲多久后释放, 当空闲时间>该值 且 空闲连接>最大空闲连接数 时直接释放 -->
+		<property name="softMinEvictableIdleTimeMillis" value="10000" />
+		<!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 -->
+		<property name="maxWaitMillis" value="1500" />
+		<!-- 在获取连接的时候检查有效性, 默认false -->
+		<property name="testOnBorrow" value="true" />
+		<!-- 在空闲时检查有效性, 默认false -->
+		<property name="testWhileIdle" value="true" />
+		<!-- 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true -->
+		<property name="blockWhenExhausted" value="false" />
+	</bean>
+
+	<!-- redis单机 通过连接池 -->
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+		<constructor-arg name="host" value="${jedisPoolUrl}" />
+		<constructor-arg name="port" value="${jedisPoolPost}" />
+	</bean>
+
+	<bean id="jedisDao" class="com.xawl.car.dao.impl.JedisDaoImp"></bean>
+
+
+</beans>

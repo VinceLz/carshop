@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.1.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.1.xsd ">
+
+	<!-- 1.扫描包，controller -->
+	<context:component-scan base-package="com.xawl.car.controller" />
+
+	<mvc:annotation-driven>
+		<mvc:argument-resolvers>
+			 <bean class="com.xawl.car.resolver.JsonArguResolver" /> 
+		</mvc:argument-resolvers>
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes" value="text/html;charset=UTF-8" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<!-- 3.拦截器 -->
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.action" />
+			<bean class="com.xawl.car.interceptor.TimeInterceptor"></bean>
+		</mvc:interceptor>
+		<!-- <mvc:interceptor> <mvc:mapping path="/**/*.action" /> <bean class="com.xawl.car.interceptor.JsonInterceptor" 
+			/> </mvc:interceptor> <mvc:interceptor> <mvc:mapping path="/**/*.action" 
+			/> <bean class="com.xawl.car.interceptor.RoleInterceptor"></bean> </mvc:interceptor> -->
+	</mvc:interceptors>
+
+</beans>

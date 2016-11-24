@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xawl.car.dao.HomeMapper">
+
+	<select id="getHomeTop" resultType="com.xawl.car.domain.HomeTop">
+		select image,url from db_home
+		where
+		type=0 and orders=0
+	</select>
+	<select id="getHomeActice" resultType="com.xawl.car.domain.HomeTop">
+		SELECT url,title
+		FROM
+		db_home
+		WHERE
+		TYPE=1 AND isHot=1 AND orders=0 ORDER BY DATE LIMIT
+		0,8
+	</select>
+
+
+	<select id="findPage" resultType="com.xawl.car.domain.HomeTop"
+		parameterType="com.xawl.car.pagination.Page">
+		select image,title,url,isHot from db_home where type=1
+		and orders=0
+		order by date
+	</select>
+
+
+
+	<select id="getCarByProperty" parameterType="com.xawl.car.domain.VO.GoodsVO"
+		resultType="com.xawl.car.domain.Goods">
+		select gid,gname,gprice,gfirstimage from db_goods where 1=1
+		<if test="level!=null">
+			and level in
+			<foreach collection="level" close=")" open="(" separator=","
+				item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="output!=null">
+			and output in
+			<foreach collection="output" close=")" open="(" separator=","
+				item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="drive!=null">
+			and drive in
+			<foreach collection="drive" close=")" open="(" separator=","
+				item="item">
+				#{item}
+			</foreach>
+		</if>
+
+		<if test="fuel!=null">
+			and fuel in
+			<foreach collection="fuel" close=")" open="(" separator=","
+				item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="transmission!=null">
+			and transmission in
+			<foreach collection="transmission" close=")" open="("
+				separator="," item="item">
+				#{item}
+			</foreach>
+		</if>
+
+		<if test="country!=null">
+			and country in
+			<foreach collection="country" close=")" open="(" separator=","
+				item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="produce!=null">
+			and produce in
+			<foreach collection="produce" close=")" open="(" separator=","
+				item="item">
+				#{item}
+			</foreach>
+
+		</if>
+		<if test="structure!=null">
+			and structure in
+			<foreach collection="structure" close=")" open="(" separator=","
+				item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="seat!=null">
+			and seat in
+			<foreach collection="seat" close=")" open="(" separator=","
+				item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="maxprice!=null and maxprice!=''">and #{maxprice}>=gprice</if>
+		<if test="minprice!=null and minprice!=''">and gprice>=#{minprice}</if>
+		order by gdate limit 0,8
+	</select>
+
+	<select id="getCarCaseActive" resultType="com.xawl.car.domain.HomeTop">
+		select url,image,title
+		from db_home where orders=1 and type=1 order by date limit 0,8
+	</select>
+
+</mapper>

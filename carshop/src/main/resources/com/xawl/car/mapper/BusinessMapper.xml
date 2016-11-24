@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xawl.car.dao.BusinessMapper">
+
+	<resultMap type="com.xawl.car.domain.VO.BusinessVO" id="bVO">
+		<id column="bid" property="bid" />
+		<result column="bname" property="bname" />
+		<result column="bimage" property="bimage" />
+		<result column="baddress" property="baddress" />
+		<result column="bdate" property="bdate" />
+		<result column="bphone" property="bphone" />
+		<result column="uname" property="uname" />
+		<result column="majorbusiness" property="majorbusiness" />
+		<result column="distance" property="distance" />
+		<collection property="childs" ofType="com.xawl.car.domain.Goods"
+			column="childs">
+			<id column="gid" property="gid" />
+			<result column="gname" property="gname" />
+			<result column="gprice" property="gprice" />
+			<result column="glastimage" property="glastimage" />
+			<result column="guidegprice" property="guidegprice" />
+			<result column="title" property="title" />
+		</collection>
+
+
+	</resultMap>
+
+
+
+	<select id="findPage" resultType="com.xawl.car.domain.Business"
+		parameterType="com.xawl.car.pagination.Page">
+		select * from db_business order by bdate
+	</select>
+
+	<select id="getById" parameterType="int"
+		resultType="com.xawl.car.domain.Business">
+		select * from db_business where bid=#{bid}
+	</select>
+
+	<insert id="insert" parameterType="com.xawl.car.domain.Business">
+		insert into db_business
+		(bname,bimage,baddress,bdate,bphone,uname,longitude,latitude,type)
+		values(
+		#{bname},
+		#{bimage},
+		#{baddress},
+		#{bdate},
+		#{bphone},
+		#{uname},
+		#{longitude},
+		#{latitude},
+		#{type}
+		)
+	</insert>
+
+
+	<update id="update" parameterType="com.xawl.car.domain.Business">
+		update db_business set
+		bname=#{bname},
+		bimage=#{bimage},
+		baddress=#{baddress},
+		bphone=#{bphone},
+		uname=#{uname},
+		longitude=#{longitude},
+		latitude=#{latitude},
+		type=#{type}
+	</update>
+
+	<select id="getHomeHot" resultType="com.xawl.car.domain.Business">
+		SELECT
+		bid,bname,bimage,baddress ,bphone,majorbusiness,title1,title2 FROM
+		db_business WHERE
+		isHot=1 AND bdate
+		LIMIT 0,8
+	</select>
+	<select id="getAll" resultType="com.xawl.car.domain.Business">
+		select * from business
+
+	</select>
+	<select id="getHomeBydistance" parameterType="map"
+		resultType="com.xawl.car.domain.Business">
+		SELECT
+		bid,bname,bimage,baddress,bphone,majorbusiness,title1,title2,
+		ROUND(6378.1380*2.0*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180.0-latitude*PI()/180.0)/2.0),2.0)+COS(#{latitude}*PI()/180.0)*COS(latitude*PI()/180.0)*POW(SIN((#{longitude}*PI()/180.0-longitude*PI()/180.0)/2.0),2.0)))*1000.0)
+		AS distance
+		FROM db_business
+		ORDER BY distance
+		LIMIT 8
+	</select>
+
+
+
+
+	<select id="getStore2Car" parameterType="int"
+		resultMap="bVO">
+			SELECT
+		b.bid,b.bname,b.bimage,b.baddress,b.bphone,b.majorbusiness,b.title1,b.title2,g.gid,g.gname,g.gprice,g.glastimage,g.guidegprice,g.title
+		FROM
+		db_business b,db_goods g where b.bid=g.bid and b.bid=#{bid}
+	</select>
+</mapper>
