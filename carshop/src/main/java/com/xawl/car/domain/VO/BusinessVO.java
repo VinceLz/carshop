@@ -16,6 +16,25 @@ public class BusinessVO {
 	private String uname;// 店主名字
 	private String majorbusiness; // 主营车型
 	private List<Goods> childs;
+	private String title1;
+	private String title2;
+	
+
+	public String getTitle1() {
+		return title1;
+	}
+
+	public void setTitle1(String title1) {
+		this.title1 = title1;
+	}
+
+	public String getTitle2() {
+		return title2;
+	}
+
+	public void setTitle2(String title2) {
+		this.title2 = title2;
+	}
 
 	public Integer getBid() {
 		return bid;

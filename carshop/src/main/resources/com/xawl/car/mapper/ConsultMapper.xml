@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xawl.car.dao.ConsultMapper">
+	<insert id="insert" parameterType="com.xawl.car.domain.Consult">
+		insert into db_consult
+		(gid,gname,model,phone,uname,bid,bname) values(
+		#{gid},
+		#{gname},
+		#{model},
+		#{phone},
+		#{uname},
+		#{bid},
+		#{bname}
+		)
+	</insert>
+</mapper>
