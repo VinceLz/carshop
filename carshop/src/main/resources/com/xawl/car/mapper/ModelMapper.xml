@@ -18,78 +18,79 @@
 
 
 
-	<select id="getCarByProperty" parameterType="com.xawl.car.domain.VO.ModelVO"
+	<select id="getCarByProperty" parameterType="com.xawl.car.pagination.Page"
 		resultType="com.xawl.car.domain.Goods">
-		SELECT gid,gname,glastimage,title,maxprice,minprice FROM db_goods WHERE gid IN (
-		select gid  from db_model where 1=1
-		<if test="level!=null">
+		SELECT gid,gname,gfirstimage,title,maxprice,minprice FROM db_goods
+		WHERE gid in
+		(select gid from db_model where 1=1
+		<if test="params.level!=null">
 			and level in
-			<foreach collection="level" close=")" open="(" separator=","
+			<foreach collection="params.level" close=")" open="(" separator=","
 				item="item">
 				#{item}
 			</foreach>
 		</if>
-		<if test="output!=null">
+		<if test="params.output!=null">
 			and output in
-			<foreach collection="output" close=")" open="(" separator=","
+			<foreach collection="params.output" close=")" open="(" separator=","
 				item="item">
 				#{item}
 			</foreach>
 		</if>
-		<if test="drive!=null">
+		<if test="params.drive!=null">
 			and drive in
-			<foreach collection="drive" close=")" open="(" separator=","
+			<foreach collection="params.drive" close=")" open="(" separator=","
 				item="item">
 				#{item}
 			</foreach>
 		</if>
 
-		<if test="fuel!=null">
+		<if test="params.fuel!=null">
 			and fuel in
-			<foreach collection="fuel" close=")" open="(" separator=","
+			<foreach collection="params.fuel" close=")" open="(" separator=","
 				item="item">
 				#{item}
 			</foreach>
 		</if>
-		<if test="transmission!=null">
+		<if test="params.transmission!=null">
 			and transmission in
-			<foreach collection="transmission" close=")" open="("
+			<foreach collection="params.transmission" close=")" open="("
 				separator="," item="item">
 				#{item}
 			</foreach>
 		</if>
 
-		<if test="country!=null">
+		<if test="params.country!=null">
 			and country in
-			<foreach collection="country" close=")" open="(" separator=","
+			<foreach collection="params.country" close=")" open="(" separator=","
 				item="item">
 				#{item}
 			</foreach>
 		</if>
-		<if test="produce!=null">
+		<if test="params.produce!=null">
 			and produce in
-			<foreach collection="produce" close=")" open="(" separator=","
+			<foreach collection="params.produce" close=")" open="(" separator=","
 				item="item">
 				#{item}
 			</foreach>
 
 		</if>
-		<if test="structure!=null">
+		<if test="params.structure!=null">
 			and structure in
-			<foreach collection="structure" close=")" open="(" separator=","
+			<foreach collection="params.structure" close=")" open="(" separator=","
 				item="item">
 				#{item}
 			</foreach>
 		</if>
-		<if test="seat!=null">
+		<if test="params.seat!=null">
 			and seat in
-			<foreach collection="seat" close=")" open="(" separator=","
+			<foreach collection="params.seat" close=")" open="(" separator=","
 				item="item">
 				#{item}
 			</foreach>
 		</if>
-		<if test="maxprice!=null and maxprice!=''">and #{maxprice}>=gprice</if>
-		<if test="minprice!=null and minprice!=''">and gprice>=#{minprice}</if>
-		);
+		<if test="params.maxprice!=null and params.maxprice!=''">and #{maxprice}>=gprice</if>
+		<if test="params.minprice!=null and params.minprice!=''">and gprice>=#{minprice}</if>
+		)
 	</select>
 </mapper>

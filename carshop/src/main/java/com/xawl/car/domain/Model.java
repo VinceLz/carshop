@@ -20,7 +20,6 @@ public class Model {
 	private String produce;// 生产方式
 	private String structure;// 结构
 	private String seat;// 座位
-	private String brand;// 品牌
 	private String keyword; //关键字
 	private Integer isHot;
 	private BigDecimal guidegprice;//指导价
@@ -118,12 +117,7 @@ public class Model {
 	public void setSeat(String seat) {
 		this.seat = seat;
 	}
-	public String getBrand() {
-		return brand;
-	}
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
+	
 	public String getKeyword() {
 		return keyword;
 	}

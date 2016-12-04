@@ -6,12 +6,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONObject;
 import com.xawl.car.domain.Business;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.HomeTop;
@@ -90,9 +91,14 @@ public class HomeController {
 	@RequestMapping("/home/car/{param}")
 	@ResponseBody
 	public String getTop5(JSON json, @PathVariable() String param) {
-		ModelVO jsonToPojo = JSONObject.parseObject(param, ModelVO.class);
-		List<Goods> result = modelService.getCarByProperty(jsonToPojo);
-		json.add("list", result);
+		JSONObject jasonObject = JSONObject.fromObject(param);
+		Map map = (Map) jasonObject;
+		Page<Goods> page = new Page<Goods>();
+		page.setParams(map);
+		System.out.println(page.getParams());
+		List<Goods> result = modelService.getCarByProperty(page);
+		page.setResults(result);
+		json.add("list", page);
 		return json + "";
 	}
 

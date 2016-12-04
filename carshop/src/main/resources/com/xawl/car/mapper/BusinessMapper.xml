@@ -93,9 +93,9 @@
 
 	<select id="getStore2Car" parameterType="int" resultMap="bVO">
 		SELECT
-		bid,bname,bimage,baddress,bphone,majorbusiness,title,title1,title2,gid,gname,gfirstimage,maxprice,minprice
+		b.bid,b.bname,b.bimage,b.baddress,b.bphone,b.majorbusiness,g.title,b.title1,b.title2,g.gid,g.gname,g.gfirstimage,g.maxprice,g.minprice
 		FROM
-		v_aaa where bid=#{bid}
+		db_business b,db_goods g WHERE g.bid=#{bid} AND g.bid=b.bid
 	</select>
 
 </mapper>

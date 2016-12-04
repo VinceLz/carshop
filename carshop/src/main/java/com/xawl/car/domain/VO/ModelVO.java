@@ -17,8 +17,6 @@ public class ModelVO {
 	private String[] produce;// 生产方式
 	private String[] structure;// 结构
 	private String[] seat;// 座位
-	private String brand;// 品牌
-	private String model;// 型号
 	private String keyword; // 关键字
 	private Double maxprice; // 最大价格
 	private Double minprice; // 最小价格
@@ -152,22 +150,7 @@ public class ModelVO {
 		}
 	}
 
-	public String getBrand() {
-		return brand;
-	}
-
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
-
-	public String getModel() {
-		return model;
-	}
-
-	public void setModel(String model) {
-		this.model = model;
-	}
-
+	
 	public String getKeyword() {
 		return keyword;
 	}

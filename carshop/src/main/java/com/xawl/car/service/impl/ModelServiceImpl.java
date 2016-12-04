@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.xawl.car.dao.ModelMapper;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.Model;
-import com.xawl.car.domain.VO.ModelVO;
+import com.xawl.car.pagination.Page;
 import com.xawl.car.service.ModelService;
 @Service
 public class ModelServiceImpl implements ModelService {
@@ -25,8 +25,8 @@ public class ModelServiceImpl implements ModelService {
 
 
 	@Override
-	public List<Goods> getCarByProperty(ModelVO goods) {
-		return modelMapper.getCarByProperty(goods);
+	public List<Goods> getCarByProperty(Page<Goods> page) {
+		return modelMapper.getCarByProperty(page);
 	}
 
 }
