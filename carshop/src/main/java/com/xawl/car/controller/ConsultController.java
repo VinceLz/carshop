@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.xawl.car.domain.Consult;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.service.ConsultService;
+import com.xawl.car.util.DateUtil;
 
 @Controller
 public class ConsultController {
@@ -20,6 +21,7 @@ public class ConsultController {
 	@RequestMapping("/consult/add")
 	@ResponseBody
 	public String insert(JSON json, Consult consult) {
+		consult.setDate(DateUtil.getSqlDate());
 		consultService.insert(consult);
 		return json + "";
 	}

@@ -1,6 +1,5 @@
 package com.xawl.car.domain;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 /*
  * 咨询表
@@ -14,6 +13,15 @@ public class Consult {
 	private String phone; //电话
 	private String uname; //用户名
 	private String bname;  //4S店名
+	private String date;
+	
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
 
 	public Integer getConsultId() {
 		return consultId;

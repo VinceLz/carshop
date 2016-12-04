@@ -16,11 +16,12 @@ import com.xawl.car.domain.Business;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.HomeTop;
 import com.xawl.car.domain.JSON;
-import com.xawl.car.domain.VO.GoodsVO;
+import com.xawl.car.domain.VO.ModelVO;
 import com.xawl.car.pagination.Page;
 import com.xawl.car.service.BusinessService;
 import com.xawl.car.service.GoodsService;
 import com.xawl.car.service.HomeService;
+import com.xawl.car.service.ModelService;
 
 /*
  * 首页
@@ -37,13 +38,15 @@ public class HomeController {
 	@Resource
 	private BusinessService businessService;
 
-	
+	@Resource
+	private ModelService modelService;
+
 	// 测试
 
 	@RequestMapping("/home")
 	@ResponseBody
 	public String getTop(JSON json, String longitude, String latitude) {
-		
+
 		List<HomeTop> top = homeService.getHomeTop();
 		List<HomeTop> homeActice = homeService.getHomeActice();
 		List<Business> homeHot = null;
@@ -87,8 +90,8 @@ public class HomeController {
 	@RequestMapping("/home/car/{param}")
 	@ResponseBody
 	public String getTop5(JSON json, @PathVariable() String param) {
-		GoodsVO jsonToPojo = JSONObject.parseObject(param, GoodsVO.class);
-		List<Goods> result = homeService.getCarByProperty(jsonToPojo);
+		ModelVO jsonToPojo = JSONObject.parseObject(param, ModelVO.class);
+		List<Goods> result = modelService.getCarByProperty(jsonToPojo);
 		json.add("list", result);
 		return json + "";
 	}
@@ -103,8 +106,5 @@ public class HomeController {
 		// json.add("carstore", homeHot);
 		return json + "";
 	}
-	
-	
-	
-	
+
 }

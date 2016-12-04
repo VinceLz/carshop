@@ -16,4 +16,6 @@ public interface GoodsService {
 	void insert(Goods goods);
 
 	List<HomeTop> getHomeHot();
+	
+	
 }

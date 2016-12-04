@@ -11,14 +11,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.JSON;
+import com.xawl.car.domain.Model;
 import com.xawl.car.pagination.Page;
 import com.xawl.car.service.GoodsService;
+import com.xawl.car.service.ModelService;
 import com.xawl.car.util.DateUtil;
 
 @Controller
 public class GoodsController {
 	@Resource
 	private GoodsService goodsService;
+	@Resource
+	private ModelService modelService;
 
 	@RequestMapping("/admin/car/list")
 	public @ResponseBody
@@ -37,6 +41,7 @@ public class GoodsController {
 		return json + "";
 	}
 
+	// 返回车的名字
 	@RequestMapping("/admin/car/get")
 	@ResponseBody
 	public String add(JSON json, @RequestParam() String gid) {
@@ -44,5 +49,13 @@ public class GoodsController {
 		json.add("car", bean);
 		return json + "";
 	}
-	
+
+	@RequestMapping("/car/getModels")
+	@ResponseBody
+	public String get(JSON json, @RequestParam() String gid) {
+		List<Model> allById = modelService.getAllById(gid);
+		json.add("list", allById);
+		return json + "";
+	}
+
 }

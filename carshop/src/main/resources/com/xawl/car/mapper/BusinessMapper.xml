@@ -12,20 +12,17 @@
 		<result column="uname" property="uname" />
 		<result column="majorbusiness" property="majorbusiness" />
 		<result column="distance" property="distance" />
-		<result column="title1" property="title1"/>
-		<result column="title2" property="title2"/>
+		<result column="title1" property="title1" />
+		<result column="title2" property="title2" />
 		<collection property="childs" ofType="com.xawl.car.domain.Goods"
 			column="childs">
 			<id column="gid" property="gid" />
 			<result column="gname" property="gname" />
-			<result column="gprice" property="gprice" />
-			<result column="glastimage" property="glastimage" />
-			<result column="guidegprice" property="guidegprice" />
+			<result column="maxprice" property="maxprice" />
+			<result column="minprice" property="minprice" />
+			<result column="gfirstimage" property="gfirstimage" />
 			<result column="title" property="title" />
-			<result column="model" property="model" />
 		</collection>
-
-
 	</resultMap>
 
 
@@ -96,8 +93,9 @@
 
 	<select id="getStore2Car" parameterType="int" resultMap="bVO">
 		SELECT
-		b.bid,b.bname,b.title1,b.title2,b.bimage,b.baddress,b.bphone,b.majorbusiness,b.title1,b.title2,g.gid,g.gname,g.gprice,g.glastimage,g.guidegprice,g.title,g.model
+		bid,bname,bimage,baddress,bphone,majorbusiness,title,title1,title2,gid,gname,gfirstimage,maxprice,minprice
 		FROM
-		db_business b,db_goods g where b.bid=g.bid and b.bid=#{bid}
+		v_aaa where bid=#{bid}
 	</select>
+
 </mapper>

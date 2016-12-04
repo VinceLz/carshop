@@ -1,6 +1,7 @@
 package com.xawl.car.service.impl;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.xawl.car.dao.BusinessMapper;
 import com.xawl.car.dao.JedisDao;
+import com.xawl.car.dao.ModelMapper;
 import com.xawl.car.domain.Business;
+import com.xawl.car.domain.Goods;
+import com.xawl.car.domain.Model;
 import com.xawl.car.domain.VO.BusinessVO;
 import com.xawl.car.pagination.Page;
 import com.xawl.car.service.BusinessService;
@@ -22,6 +26,8 @@ public class BusinessServiceImpl implements BusinessService {
 
 	@Autowired
 	private JedisDao jedisDao;
+	@Autowired
+	private ModelMapper modelMapper;
 
 	@Override
 	public Business getById(Serializable id) {

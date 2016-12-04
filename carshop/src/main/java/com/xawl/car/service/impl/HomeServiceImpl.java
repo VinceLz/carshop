@@ -9,7 +9,7 @@ import com.xawl.car.dao.HomeMapper;
 import com.xawl.car.dao.JedisDao;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.HomeTop;
-import com.xawl.car.domain.VO.GoodsVO;
+import com.xawl.car.domain.VO.ModelVO;
 import com.xawl.car.pagination.Page;
 import com.xawl.car.service.HomeService;
 
@@ -37,10 +37,7 @@ public class HomeServiceImpl implements HomeService {
 		return homeMapper.findPage(page);
 	}
 
-	@Override
-	public List<Goods> getCarByProperty(GoodsVO goods) {
-		return homeMapper.getCarByProperty(goods);
-	}
+	
 
 	@Override
 	public List<HomeTop> getCarCaseActive() {
