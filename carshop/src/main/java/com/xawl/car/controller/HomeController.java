@@ -6,13 +6,12 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONObject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xawl.car.domain.Business;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.HomeTop;
@@ -47,7 +46,6 @@ public class HomeController {
 	@RequestMapping("/home")
 	@ResponseBody
 	public String getTop(JSON json, String longitude, String latitude) {
-
 		List<HomeTop> top = homeService.getHomeTop();
 		List<HomeTop> homeActice = homeService.getHomeActice();
 		List<Business> homeHot = null;
@@ -90,15 +88,15 @@ public class HomeController {
 	// 首页车 符合购车方案
 	@RequestMapping("/home/car/{param}")
 	@ResponseBody
-	public String getTop5(JSON json, @PathVariable() String param) {
-		JSONObject jasonObject = JSONObject.fromObject(param);
-		Map map = (Map) jasonObject;
-		Page<Goods> page = new Page<Goods>();
-		page.setParams(map);
-		System.out.println(page.getParams());
+	public String getTop5(JSON json, @PathVariable() String param,Page<Goods> page) {
+		ModelVO obj = JSONObject.parseObject(param, ModelVO.class);
+		if(obj==null){
+			obj=new ModelVO();
+		}
+		page.getParams().put("obj",obj);
 		List<Goods> result = modelService.getCarByProperty(page);
 		page.setResults(result);
-		json.add("list", page);
+		json.add("page", page);
 		return json + "";
 	}
 

@@ -2,6 +2,7 @@ package com.xawl.car.service.impl;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,20 @@ public class ModelServiceImpl implements ModelService {
 
 	@Override
 	public List<Goods> getCarByProperty(Page<Goods> page) {
+		
 		return modelMapper.getCarByProperty(page);
+	}
+
+
+	@Override
+	public Model getById(Serializable mid) {
+		return modelMapper.getById(mid);
+	}
+
+
+	@Override
+	public List<Model> findByPrice(Map price) {
+		return modelMapper.findByPrice(price);
 	}
 
 }

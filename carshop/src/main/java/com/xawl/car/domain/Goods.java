@@ -9,7 +9,7 @@ public class Goods {
 	private Integer gid;
 	private String gname;
 	private Integer bid;// 商家id
-	private String gfirstimage;// 图片
+	private String image;// 图片
 	private String bname;// 店家名
 	private String gdate;// 上传时间
 	private Integer sale;// 售量
@@ -36,11 +36,12 @@ public class Goods {
 	public void setBid(Integer bid) {
 		this.bid = bid;
 	}
-	public String getGfirstimage() {
-		return gfirstimage;
+	
+	public String getImage() {
+		return image;
 	}
-	public void setGfirstimage(String gfirstimage) {
-		this.gfirstimage = gfirstimage;
+	public void setImage(String image) {
+		this.image = image;
 	}
 	public String getBname() {
 		return bname;

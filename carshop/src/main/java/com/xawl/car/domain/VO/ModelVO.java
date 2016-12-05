@@ -1,5 +1,7 @@
 package com.xawl.car.domain.VO;
 
+import java.util.List;
+
 
 //车
 public class ModelVO {
@@ -8,15 +10,15 @@ public class ModelVO {
 	private Integer mid;
 	private String gname;
 	private String bname;// 店家名
-	private String[] level; // 等级
-	private String[] output;// 排量
-	private String[] drive;// 驱动
-	private String[] fuel;// 燃料
-	private String[] transmission;// 变速相
-	private String[] country;// 国家
-	private String[] produce;// 生产方式
-	private String[] structure;// 结构
-	private String[] seat;// 座位
+	private List<String> level; // 等级
+	private List<String> output;// 排量
+	private List<String> drive;// 驱动
+	private List<String> fuel;// 燃料
+	private List<String> transmission;// 变速相
+	private List<String> country;// 国家
+	private List<String> produce;// 生产方式
+	private List<String> structure;// 结构
+	private List<String> seat;// 座位
 	private String keyword; // 关键字
 	private Double maxprice; // 最大价格
 	private Double minprice; // 最小价格
@@ -37,12 +39,12 @@ public class ModelVO {
 		this.bname = bname;
 	}
 
-	public String[] getLevel() {
+	public List<String> getLevel() {
 		return level;
 	}
 
-	public void setLevel(String[] level) {
-		if (level.length == 0) {
+	public void setLevel(List<String> level) {
+		if (level==null||level.size() == 0) {
 			this.level = null;
 		} else {
 			this.level = level;
@@ -50,24 +52,24 @@ public class ModelVO {
 
 	}
 
-	public String[] getOutput() {
+	public List<String> getOutput() {
 		return output;
 	}
 
-	public void setOutput(String[] output) {
-		if (output.length == 0) {
+	public void setOutput(List<String> output) {
+		if (output==null||output.size() == 0) {
 			this.output = null;
 		} else {
 			this.output = output;
 		}
 	}
 
-	public String[] getDrive() {
+	public List<String> getDrive() {
 		return drive;
 	}
 
-	public void setDrive(String[] drive) {
-		if (drive.length == 0) {
+	public void setDrive(List<String> drive) {
+		if (drive==null||drive.size() == 0) {
 			this.drive = null;
 		} else {
 			this.drive = drive;
@@ -75,24 +77,24 @@ public class ModelVO {
 
 	}
 
-	public String[] getFuel() {
+	public List<String> getFuel() {
 		return fuel;
 	}
 
-	public void setFuel(String[] fuel) {
-		if (fuel.length == 0) {
+	public void setFuel(List<String> fuel) {
+		if (fuel==null||fuel.size() == 0) {
 			this.fuel = null;
 		} else {
 			this.fuel = fuel;
 		}
 	}
 
-	public String[] getTransmission() {
+	public List<String> getTransmission() {
 		return transmission;
 	}
 
-	public void setTransmission(String[] transmission) {
-		if (transmission.length == 0) {
+	public void setTransmission(List<String> transmission) {
+		if (transmission==null||transmission.size() == 0) {
 			this.transmission = null;
 		} else {
 			this.transmission = transmission;
@@ -100,12 +102,12 @@ public class ModelVO {
 
 	}
 
-	public String[] getCountry() {
+	public List<String> getCountry() {
 		return country;
 	}
 
-	public void setCountry(String[] country) {
-		if (country.length == 0) {
+	public void setCountry(List<String> country) {
+		if (country==null||country.size() == 0) {
 			this.country = null;
 		} else {
 			this.country = country;
@@ -113,12 +115,12 @@ public class ModelVO {
 
 	}
 
-	public String[] getProduce() {
+	public List<String> getProduce() {
 		return produce;
 	}
 
-	public void setProduce(String[] produce) {
-		if (produce.length == 0) {
+	public void setProduce(List<String> produce) {
+		if (produce==null||produce.size() == 0) {
 			this.produce = null;
 		} else {
 			this.produce = produce;
@@ -126,24 +128,24 @@ public class ModelVO {
 
 	}
 
-	public String[] getStructure() {
+	public List<String> getStructure() {
 		return structure;
 	}
 
-	public void setStructure(String[] structure) {
-		if (structure.length == 0) {
+	public void setStructure(List<String> structure) {
+		if (structure==null||structure.size() == 0) {
 			this.structure = null;
 		} else {
 			this.structure = structure;
 		}
 	}
 
-	public String[] getSeat() {
+	public List<String> getSeat() {
 		return seat;
 	}
 
-	public void setSeat(String[] seat) {
-		if (seat.length == 0) {
+	public void setSeat(List<String> seat) {
+		if (seat==null||seat.size() == 0) {
 			this.seat = null;
 		} else {
 			this.seat = seat;
@@ -183,4 +185,14 @@ public class ModelVO {
 		this.mid = mid;
 	}
 
+	@Override
+	public String toString() {
+		return "ModelVO [mid=" + mid + ", gname=" + gname + ", bname=" + bname
+				+ ", level=" + level + ", output=" + output + ", drive="
+				+ drive + ", fuel=" + fuel + ", transmission=" + transmission
+				+ ", country=" + country + ", produce=" + produce
+				+ ", structure=" + structure + ", seat=" + seat + ", keyword="
+				+ keyword + ", maxprice=" + maxprice + ", minprice=" + minprice
+				+ "]";
+	}
 }

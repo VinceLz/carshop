@@ -18,7 +18,7 @@
 	</select>
 
 	<select id="getHomeHot" resultType="com.xawl.car.domain.Goods">
-		select gid,gname,gprice,gfirstimage from db_goods where
+		select gid,gname,gprice,gimage from db_goods where
 		isHot=1 limit 0,8
 	</select>
 

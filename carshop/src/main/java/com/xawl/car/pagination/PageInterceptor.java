@@ -130,7 +130,7 @@ public class PageInterceptor implements Interceptor {
 	private String getMysqlPageSql(Page<?> page, StringBuffer sqlBuffer) {
 		// 计算第一条记录的位置，Mysql中记录的位置是从0开始的。
 		int offset = (page.getPageNo() - 1) * page.getPageSize();
-		sqlBuffer.append(" limit ").append(offset).append(",").append(page.getPageSize());
+		sqlBuffer.append(" LIMIT ").append(offset).append(",").append(page.getPageSize());
 		return sqlBuffer.toString();
 	}
 
@@ -214,8 +214,8 @@ public class PageInterceptor implements Interceptor {
 	 * @return
 	 */
 	private String getCountSql(String sql) {
-		int index = sql.indexOf("from");
-		return "select count(*) " + sql.substring(index);
+		int index=sql.toUpperCase().indexOf("FROM");
+		return "SELECT  COUNT(*) " + sql.substring(index);
 	}
 
 	/**

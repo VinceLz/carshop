@@ -1,6 +1,7 @@
 package com.xawl.car.controller;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -53,8 +54,25 @@ public class GoodsController {
 	@RequestMapping("/car/getModels")
 	@ResponseBody
 	public String get(JSON json, @RequestParam() String gid) {
+		// 通过gid拿到型号
 		List<Model> allById = modelService.getAllById(gid);
 		json.add("list", allById);
+		return json + "";
+	}
+
+	@RequestMapping("/car/models/get")
+	@ResponseBody
+	public String get2(JSON json, @RequestParam() String mid) {
+		// 通过gid拿到型号
+		Model main = modelService.getById(mid);
+		// 推荐
+		Map map = new HashMap<String, Object>();
+		map.put("min", main.getGuidegprice() * 0.9);
+		map.put("max", main.getGuidegprice() * 1.1);
+		map.put("mid", main.getMid());
+		List<Model> recommend = modelService.findByPrice(map);
+		json.add("car", main);//主要的车
+		json.add("recommend", recommend); //推荐的
 		return json + "";
 	}
 

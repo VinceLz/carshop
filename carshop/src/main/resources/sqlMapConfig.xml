@@ -3,7 +3,7 @@
 	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-config.dtd">
 
-<configuration>
+ <configuration>
 	<plugins>
 		<plugin interceptor="com.xawl.car.pagination.PageInterceptor">
 			<property name="databaseType" value="mysql" />

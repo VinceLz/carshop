@@ -3,9 +3,23 @@
 <mapper namespace="com.xawl.car.dao.ModelMapper">
 
 
+	<select id="getById" parameterType="int" resultType="com.xawl.car.domain.Model">
+		select
+		`mid`,gid,gname,mname,guidegprice,mimage,title,configure from db_model where
+		`mid`=#{mid}
+	</select>
+
+	<select id="findByPrice" parameterType="map"
+		resultType="com.xawl.car.domain.Model">
+	select mid,gid,gname,mname,guidegprice,mimage,title from db_model where 
+	guidegprice BETWEEN #{min} and #{max} and mid!=#{mid}
+	</select>
+
+
 	<select id="getAllById" parameterType="int"
 		resultType="com.xawl.car.domain.Model">
-		select mid,mname,gid,guideprice,gprice from db_model where
+		select mid,mname,gname,guidegprice,gprice,mimage,title from
+		db_model where
 		gid=#{gid}
 	</select>
 
@@ -15,82 +29,80 @@
 		gid=#{gid} GROUP BY gid;
 	</select>
 
-
-
-
 	<select id="getCarByProperty" parameterType="com.xawl.car.pagination.Page"
 		resultType="com.xawl.car.domain.Goods">
-		SELECT gid,gname,gfirstimage,title,maxprice,minprice FROM db_goods
-		WHERE gid in
-		(select gid from db_model where 1=1
-		<if test="params.level!=null">
+		SELECT gid,gname,gimage,title,maxprice,minprice from db_goods
+		WHERE gid in(
+		select gid from db_model where 1=1
+		<if test="params.obj.level!=null">
 			and level in
-			<foreach collection="params.level" close=")" open="(" separator=","
-				item="item">
-				#{item}
+			<foreach collection="params.obj.level" close=")" separator=","
+				open="(" item="item" index="index">
+				#{params.obj.level[${index}]}
 			</foreach>
 		</if>
-		<if test="params.output!=null">
+		<if test="params.obj.output!=null">
 			and output in
-			<foreach collection="params.output" close=")" open="(" separator=","
-				item="item">
-				#{item}
+			<foreach collection="params.obj.output" close=")" open="("
+				separator="," item="item" index="index">
+				#{params.obj.output[${index}]}
 			</foreach>
 		</if>
-		<if test="params.drive!=null">
+		<if test="params.obj.drive!=null">
 			and drive in
-			<foreach collection="params.drive" close=")" open="(" separator=","
-				item="item">
-				#{item}
+			<foreach collection="params.obj.drive" close=")" open="("
+				separator="," item="item" index="index">
+				#{params.obj.drive[${index}]}
 			</foreach>
 		</if>
 
-		<if test="params.fuel!=null">
+		<if test="params.obj.fuel!=null">
 			and fuel in
-			<foreach collection="params.fuel" close=")" open="(" separator=","
-				item="item">
-				#{item}
+			<foreach collection="params.obj.fuel" close=")" open="("
+				separator="," item="item" index="index">
+				#{params.obj.fuel[${index}]}
 			</foreach>
 		</if>
-		<if test="params.transmission!=null">
+		<if test="params.obj.transmission!=null">
 			and transmission in
-			<foreach collection="params.transmission" close=")" open="("
-				separator="," item="item">
-				#{item}
+			<foreach collection="params.obj.transmission" close=")" open="("
+				separator="," item="item" index="index">
+				#{params.obj.transmission[${index}]}
 			</foreach>
 		</if>
 
-		<if test="params.country!=null">
+		<if test="params.obj.country!=null">
 			and country in
-			<foreach collection="params.country" close=")" open="(" separator=","
-				item="item">
-				#{item}
+			<foreach collection="params.obj.country" close=")" open="("
+				separator="," item="item" index="index">
+				#{params.obj.country[${index}]}
 			</foreach>
 		</if>
-		<if test="params.produce!=null">
+		<if test="params.obj.produce!=null">
 			and produce in
-			<foreach collection="params.produce" close=")" open="(" separator=","
-				item="item">
-				#{item}
+			<foreach collection="params.obj.produce" close=")" open="("
+				separator="," item="item" index="index">
+				#{params.obj.produce[${index}]}
 			</foreach>
 
 		</if>
-		<if test="params.structure!=null">
+		<if test="params.obj.structure!=null">
 			and structure in
-			<foreach collection="params.structure" close=")" open="(" separator=","
-				item="item">
-				#{item}
+			<foreach collection="params.obj.structure" close=")" open="("
+				separator="," item="item" index="index">
+				#{params.obj.structure[${index}]}
 			</foreach>
 		</if>
-		<if test="params.seat!=null">
+		<if test="params.obj.seat!=null">
 			and seat in
-			<foreach collection="params.seat" close=")" open="(" separator=","
-				item="item">
-				#{item}
+			<foreach collection="params.obj.seat" close=")" open="("
+				separator="," item="item" index="index">
+				#{params.obj.seat[${index}]}
 			</foreach>
 		</if>
-		<if test="params.maxprice!=null and params.maxprice!=''">and #{maxprice}>=gprice</if>
-		<if test="params.minprice!=null and params.minprice!=''">and gprice>=#{minprice}</if>
+		<if test="params.obj.maxprice!=null and params.obj.maxprice!=''">and #{params.obj.maxprice}>=gprice</if>
+		<if test="params.obj.minprice!=null and params.obj.minprice!=''">and gprice>=#{params.obj.maxprice}</if>
+		<if test="params.obj.keyword!=null and params.obj.keyword!=''">and keyword=#{params.obj.keyword}</if>
 		)
 	</select>
 </mapper>

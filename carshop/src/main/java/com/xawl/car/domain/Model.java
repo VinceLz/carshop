@@ -6,7 +6,6 @@ import java.math.BigDecimal;
  * 车的 型号
  */
 public class Model {
-	
 	private Integer mid;//
 	private String mname; //型号名字
 	private Integer gid;//
@@ -22,11 +21,27 @@ public class Model {
 	private String seat;// 座位
 	private String keyword; //关键字
 	private Integer isHot;
-	private BigDecimal guidegprice;//指导价
-	private BigDecimal gprice;//价格
+	private Double guidegprice;//指导价
+	private Double gprice;//价格
 	private Integer bid;
-	private String gname;
+	private String gname; //
+	private String mimage;//大图片
+
+	private String title;
 	
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	public String getMimage() {
+		return mimage;
+	}
+	public void setMimage(String mimage) {
+		this.mimage = mimage;
+	}
 	public String getGname() {
 		return gname;
 	}
@@ -130,19 +145,16 @@ public class Model {
 	public void setIsHot(Integer isHot) {
 		this.isHot = isHot;
 	}
-	public BigDecimal getGuidegprice() {
+	public Double getGuidegprice() {
 		return guidegprice;
 	}
-	public void setGuidegprice(BigDecimal guidegprice) {
+	public void setGuidegprice(Double guidegprice) {
 		this.guidegprice = guidegprice;
 	}
-	public BigDecimal getGprice() {
+	public Double getGprice() {
 		return gprice;
 	}
-	public void setGprice(BigDecimal gprice) {
+	public void setGprice(Double gprice) {
 		this.gprice = gprice;
 	}
-	
-	
-	
 }
