@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.xawl.car.domain.CarColor;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.Model;
@@ -76,4 +77,13 @@ public class GoodsController {
 		return json + "";
 	}
 
+	@RequestMapping("/car/models/getColor")
+	@ResponseBody
+	public String get3(JSON json, @RequestParam() String mid) {
+		// 通过gid拿到型号
+		List<CarColor> list = modelService.getColors(mid);
+		// 推荐
+		json.add("colors", list);
+		return json + "";
+	}
 }

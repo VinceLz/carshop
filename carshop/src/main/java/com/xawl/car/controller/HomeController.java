@@ -88,16 +88,35 @@ public class HomeController {
 	// 首页车 符合购车方案
 	@RequestMapping("/home/car/{param}")
 	@ResponseBody
-	public String getTop5(JSON json, @PathVariable() String param,Page<Goods> page) {
+	public String getTop5(JSON json, @PathVariable() String param) {
+		List<HomeTop> image=null;
 		ModelVO obj = JSONObject.parseObject(param, ModelVO.class);
 		if(obj==null){
 			obj=new ModelVO();
 		}
-		page.getParams().put("obj",obj);
-		List<Goods> result = modelService.getCarByProperty(page);
-		page.setResults(result);
-		json.add("page", page);
+		if(obj.getPageNo()==1){
+		 image = homeService.getSearchImage();
+		}
+		List<Goods> result = modelService.getCarByProperty(obj);
+		json.add("params", obj);
+		json.add("result", result);
+		json.add("image",image);
 		return json + "";
+	}
+	
+	// 首页车 符合购车方案
+	@RequestMapping("/home/car")
+	@ResponseBody
+	public String getTop5(JSON json,ModelVO obj) {
+		List<HomeTop> image=null;
+		List<Goods> result = modelService.getCarByProperty(obj);
+		if(obj.getPageNo()==1){
+			 image = homeService.getSearchImage();
+		}
+		json.add("params", obj);
+		json.add("result", result);
+		json.add("image", image);
+		return json+"";
 	}
 
 	// 养车
@@ -106,8 +125,8 @@ public class HomeController {
 	public String getTop5(JSON json) {
 		List<HomeTop> result = homeService.getCarCaseActive();
 		json.add("active", result);
-		// List<Business> homeHot = businessService.getHomeHot();
-		// json.add("carstore", homeHot);
+		 List<Business> homeHot = businessService.getHomeHot();
+		 json.add("carstore", homeHot);
 		return json + "";
 	}
 

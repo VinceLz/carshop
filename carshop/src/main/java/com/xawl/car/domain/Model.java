@@ -25,8 +25,15 @@ public class Model {
 	private Double gprice;//价格
 	private Integer bid;
 	private String gname; //
-	private String mimage;//大图片
-
+	private String mimage[];//大图片
+	private String mshowImage;
+	
+	public String getShowImage() {
+		return mshowImage;
+	}
+	public void setShowImage(String mshowImage) {
+		this.mshowImage = mshowImage;
+	}
 	private String title;
 	
 	public String getTitle() {
@@ -36,11 +43,15 @@ public class Model {
 		this.title = title;
 	}
 	
-	public String getMimage() {
+	public String[] getMimage() {
 		return mimage;
 	}
 	public void setMimage(String mimage) {
-		this.mimage = mimage;
+		if (mimage != null && !mimage.isEmpty()) {
+			this.mimage = mimage.split(",");
+		} else {
+			this.mimage = null;
+		}
 	}
 	public String getGname() {
 		return gname;

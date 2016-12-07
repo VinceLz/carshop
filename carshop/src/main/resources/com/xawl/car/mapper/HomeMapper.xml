@@ -33,4 +33,9 @@
 		from db_home where orders=1 and type=1 order by date limit 0,8
 	</select>
 
+
+<select id="getSearchImage" resultType="com.xawl.car.domain.HomeTop">
+		select url,image
+		from db_home where orders=0 and type=2
+	</select>
 </mapper>

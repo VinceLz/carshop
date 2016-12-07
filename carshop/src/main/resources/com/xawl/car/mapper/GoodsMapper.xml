@@ -5,7 +5,7 @@
 		<id column="gid" property="gid" />
 		<result column="gname" property="gname" />
 		<result column="gprice" property="gprice" />
-		<result column="gfirstimage" property="gfirstimage" />
+		<result column="gimage" property="gimage" />
 	</resultMap>
 	<select id="findPage" resultType="com.xawl.car.domain.Goods"
 		parameterType="com.xawl.car.pagination.Page">

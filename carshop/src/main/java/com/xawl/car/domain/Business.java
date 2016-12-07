@@ -4,7 +4,7 @@ package com.xawl.car.domain;
 public class Business {
 	private int bid;
 	private String bname;
-	private String bimage; // 4S店的 照片
+	private String bimage[]; // 4S店的 照片
 	private String baddress;// 地址
 	private String bdate;// 创建时间
 	private String bphone;// 电话
@@ -18,6 +18,16 @@ public class Business {
 	private String title1;
 	private String title2;
 	private String distance;
+	private String bshowImage;
+	
+
+	public String getShowImage() {
+		return bshowImage;
+	}
+
+	public void setShowImage(String bshowImage) {
+		this.bshowImage = bshowImage;
+	}
 
 	public String getTitle1() {
 		return title1;
@@ -83,15 +93,15 @@ public class Business {
 		this.bname = bname;
 	}
 
-	public String getBimage() {
+	public String[] getBimage() {
 		return bimage;
 	}
 
 	public void setBimage(String bimage) {
 		if (bimage != null && !bimage.isEmpty()) {
-			this.bimage = bimage.split(",")[0];
+			this.bimage = bimage.split(",");
 		} else {
-			this.bimage = bimage;
+			this.bimage = null;
 		}
 	}
 	public String getBaddress() {

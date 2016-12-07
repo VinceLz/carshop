@@ -15,4 +15,6 @@ public interface HomeMapper {
 	List<HomeTop> findPage(Page<HomeTop> page);
 	List<Goods> getCarByProperty(ModelVO goods);
 	List<HomeTop> getCarCaseActive();
+	
+	List<HomeTop> getSearchImage();
 }	

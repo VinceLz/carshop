@@ -44,4 +44,9 @@ public class HomeServiceImpl implements HomeService {
 		return homeMapper.getCarCaseActive();
 	}
 
+	@Override
+	public List<HomeTop> getSearchImage() {
+		return homeMapper.getSearchImage();
+	}
+
 }

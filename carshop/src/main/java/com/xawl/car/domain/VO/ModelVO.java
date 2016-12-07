@@ -22,6 +22,24 @@ public class ModelVO {
 	private String keyword; // 关键字
 	private Double maxprice; // 最大价格
 	private Double minprice; // 最小价格
+	private Integer PageNo=1; //当前页 默认1
+	private Integer PageSize=10;
+	
+	public Integer getPageSize() {
+		return PageSize;
+	}
+
+	public void setPageSize(Integer pageSize) {
+		PageSize = pageSize;
+	}
+
+	public Integer getPageNo() {
+		return PageNo;
+	}
+
+	public void setPageNo(Integer pageNo) {
+		PageNo = pageNo;
+	}
 
 	public String getGname() {
 		return gname;
@@ -51,7 +69,7 @@ public class ModelVO {
 		}
 
 	}
-
+	
 	public List<String> getOutput() {
 		return output;
 	}

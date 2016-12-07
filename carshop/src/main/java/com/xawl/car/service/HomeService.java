@@ -13,6 +13,6 @@ public interface HomeService {
 	List<HomeTop> getHomeActice();
 	List<HomeTop> findPage(Page<HomeTop> page);
 	
-	
+	List<HomeTop> getSearchImage();
 	List<HomeTop> getCarCaseActive();
 }

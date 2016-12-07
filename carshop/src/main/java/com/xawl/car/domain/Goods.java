@@ -9,7 +9,7 @@ public class Goods {
 	private Integer gid;
 	private String gname;
 	private Integer bid;// 商家id
-	private String image;// 图片
+	private String gimage[];// 图片
 	private String bname;// 店家名
 	private String gdate;// 上传时间
 	private Integer sale;// 售量
@@ -17,7 +17,14 @@ public class Goods {
 	private Integer isHot;
 	private BigDecimal maxprice;  //指导价 数据库中没有这个值，只是计算出来的一个
 	private BigDecimal minprice;  
+	private String gshowImage;
 	
+	public String getShowImage() {
+		return gshowImage;
+	}
+	public void setShowImage(String gshowImage) {
+		this.gshowImage = gshowImage;
+	}
 	public Integer getGid() {
 		return gid;
 	}
@@ -37,11 +44,16 @@ public class Goods {
 		this.bid = bid;
 	}
 	
-	public String getImage() {
-		return image;
+	
+	public String[] getGimage() {
+		return gimage;
 	}
-	public void setImage(String image) {
-		this.image = image;
+	public void setGimage(String gimage) {
+		if (gimage != null && !gimage.isEmpty()) {
+			this.gimage = gimage.split(",");
+		} else {
+			this.gimage = null;
+		}
 	}
 	public String getBname() {
 		return bname;
