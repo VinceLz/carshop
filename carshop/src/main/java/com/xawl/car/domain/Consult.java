@@ -9,12 +9,31 @@ public class Consult {
 	private Integer gid;  //汽车id
 	private Integer bid;  //商家id
 	private String gname; //汽车名字
-	private String model; //型号
 	private String phone; //电话
 	private String uname; //用户名
 	private String bname;  //4S店名
 	private String date;
+	private String mname;
+	private Integer mid;
 	
+
+	
+	public String getMname() {
+		return mname;
+	}
+
+	public void setMname(String mname) {
+		this.mname = mname;
+	}
+
+	public Integer getMid() {
+		return mid;
+	}
+
+	public void setMid(Integer mid) {
+		this.mid = mid;
+	}
+
 	public String getDate() {
 		return date;
 	}
@@ -55,13 +74,6 @@ public class Consult {
 		this.gname = gname;
 	}
 
-	public String getModel() {
-		return model;
-	}
-
-	public void setModel(String model) {
-		this.model = model;
-	}
 
 	public String getPhone() {
 		return phone;

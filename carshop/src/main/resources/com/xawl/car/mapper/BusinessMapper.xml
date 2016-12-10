@@ -21,7 +21,7 @@
 			<result column="gname" property="gname" />
 			<result column="maxprice" property="maxprice" />
 			<result column="minprice" property="minprice" />
-			<result column="gshowImage" property="showImage" />
+			<result column="gshowImage" property="gshowImage" />
 				<result column="gimage" property="gimage" />
 			<result column="title" property="title" />
 		</collection>
@@ -70,7 +70,7 @@
 
 	<select id="getHomeHot" resultType="com.xawl.car.domain.Business">
 		SELECT
-		bid,bname,bimage,baddress,bshowImage ,bphone,majorbusiness,title1,title2 FROM
+		bid,bname,baddress,bshowImage ,bphone,majorbusiness,title1,title2 FROM
 		db_business WHERE
 		isHot=1 AND bdate
 		LIMIT 0,8
@@ -82,22 +82,17 @@
 	<select id="getHomeBydistance" parameterType="map"
 		resultType="com.xawl.car.domain.Business">
 		SELECT
-		bid,bname,bshowImage,bimage,baddress,bphone,majorbusiness,title1,title2,
+		bid,bname,bshowImage,baddress,bphone,majorbusiness,title1,title2,
 		ROUND(6378.1380*2.0*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180.0-latitude*PI()/180.0)/2.0),2.0)+COS(#{latitude}*PI()/180.0)*COS(latitude*PI()/180.0)*POW(SIN((#{longitude}*PI()/180.0-longitude*PI()/180.0)/2.0),2.0)))*1000.0)
 		AS distance
 		FROM db_business
 		ORDER BY distance
 		LIMIT 8
 	</select>
-
-
-
-
 	<select id="getStore2Car" parameterType="int" resultMap="bVO">
 		SELECT
-		b.bid,b.bname,b.bimage,b.bshowImage,b.baddress,b.bphone,b.majorbusiness,g.title,b.title1,b.title2,g.gid,g.gname,g.gshowImage,g.gimage,g.maxprice,g.minprice
+		b.bid,b.bname,b.bimage,b.baddress,b.bphone,b.majorbusiness,g.title,b.title1,b.title2,g.gid,g.gname,g.gshowImage,g.maxprice,g.minprice
 		FROM
 		db_business b,db_goods g WHERE g.bid=#{bid} AND g.bid=b.bid
 	</select>
-
 </mapper>

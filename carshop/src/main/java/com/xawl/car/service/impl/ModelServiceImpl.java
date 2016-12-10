@@ -12,6 +12,7 @@ import com.xawl.car.domain.CarColor;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.Model;
 import com.xawl.car.domain.Order;
+import com.xawl.car.domain.VO.GoodsVO;
 import com.xawl.car.domain.VO.ModelVO;
 import com.xawl.car.pagination.Page;
 import com.xawl.car.service.ModelService;
@@ -22,11 +23,7 @@ public class ModelServiceImpl implements ModelService {
 	private ModelMapper modelMapper;
 	
 	
-	@Override
-	public List<Model> getAllById(Serializable gid) {
-		return modelMapper.getAllById(gid);
-	}
-
+	
 
 	@Override
 	public List<Goods> getCarByProperty(ModelVO obj) {
@@ -57,6 +54,14 @@ public class ModelServiceImpl implements ModelService {
 	public Order getbyMid2All(Serializable mid) {
 		return modelMapper.getbyMid2All(mid);
 	}
+
+
+	@Override
+	public GoodsVO getAllById(Serializable gid) {
+		return modelMapper.getAllById(gid);
+	}
+
+
 
 
 

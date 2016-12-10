@@ -9,10 +9,11 @@ import com.xawl.car.domain.CarColor;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.Model;
 import com.xawl.car.domain.Order;
+import com.xawl.car.domain.VO.GoodsVO;
 import com.xawl.car.domain.VO.ModelVO;
 
 public interface ModelMapper {
-	List<Model> getAllById(Serializable gid);
+	GoodsVO getAllById(Serializable gid);
 
 	List<Goods> getCarByProperty(ModelVO obj);
 

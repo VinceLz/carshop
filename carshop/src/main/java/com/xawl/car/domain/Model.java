@@ -27,21 +27,21 @@ public class Model {
 	private String gname; //
 	private String mimage[];//大图片
 	private String mshowImage;
+	private String mtitle;
 	
-	public String getShowImage() {
+	public String getMshowImage() {
 		return mshowImage;
 	}
-	public void setShowImage(String mshowImage) {
+	public void setMshowImage(String mshowImage) {
 		this.mshowImage = mshowImage;
 	}
-	private String title;
+	public String getMtitle() {
+		return mtitle;
+	}
+	public void setMtitle(String mtitle) {
+		this.mtitle = mtitle;
+	}
 	
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
 	
 	public String[] getMimage() {
 		return mimage;

@@ -14,6 +14,7 @@ import com.xawl.car.domain.CarColor;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.Model;
+import com.xawl.car.domain.VO.GoodsVO;
 import com.xawl.car.pagination.Page;
 import com.xawl.car.service.GoodsService;
 import com.xawl.car.service.ModelService;
@@ -56,8 +57,8 @@ public class GoodsController {
 	@ResponseBody
 	public String get(JSON json, @RequestParam() String gid) {
 		// 通过gid拿到型号
-		List<Model> allById = modelService.getAllById(gid);
-		json.add("list", allById);
+		GoodsVO allById = modelService.getAllById(gid);
+		json.add("car", allById);
 		return json + "";
 	}
 

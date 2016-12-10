@@ -21,11 +21,12 @@ public class Business {
 	private String bshowImage;
 	
 
-	public String getShowImage() {
+
+	public String getBshowImage() {
 		return bshowImage;
 	}
 
-	public void setShowImage(String bshowImage) {
+	public void setBshowImage(String bshowImage) {
 		this.bshowImage = bshowImage;
 	}
 
