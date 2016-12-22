@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.xawl.car.domain.Business;
+import com.xawl.car.domain.Image;
 import com.xawl.car.domain.VO.BusinessVO;
 import com.xawl.car.pagination.Page;
 
@@ -19,4 +20,6 @@ public interface BusinessMapper {
 	List<Business>getHomeBydistance(Map map);
 	
 	BusinessVO getStore2Car(Serializable bid);
+	BusinessVO get(String bid);
+	List<String> getImage(Serializable id);
 }

@@ -13,6 +13,7 @@ import com.xawl.car.dao.JedisDao;
 import com.xawl.car.dao.ModelMapper;
 import com.xawl.car.domain.Business;
 import com.xawl.car.domain.Goods;
+import com.xawl.car.domain.Image;
 import com.xawl.car.domain.Model;
 import com.xawl.car.domain.VO.BusinessVO;
 import com.xawl.car.pagination.Page;
@@ -63,6 +64,16 @@ public class BusinessServiceImpl implements BusinessService {
 	@Override
 	public BusinessVO getStore2Car(Serializable bid) {
 		return businessMapper.getStore2Car(bid);
+	}
+
+	@Override
+	public BusinessVO get(String bid) {
+		return businessMapper.get(bid);
+	}
+
+	@Override
+	public List<String> getImage(Serializable id) {
+		return businessMapper.getImage(id);
 	}
 
 }

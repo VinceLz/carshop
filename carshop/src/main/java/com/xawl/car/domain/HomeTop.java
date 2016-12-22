@@ -7,6 +7,7 @@ package com.xawl.car.domain;
  * order   0是购车   1是养车
  */
 public class HomeTop {
+	private  Integer hid;
 	private Integer type;// 类型
 	private String image;
 	private String url;
@@ -75,5 +76,14 @@ public class HomeTop {
 		return "HomeTop [type=" + type + ", image=" + image + ", url=" + url
 				+ ", title=" + title + ", isHot=" + isHot + "]";
 	}
+
+	public Integer getHid() {
+		return hid;
+	}
+
+	public void setHid(Integer hid) {
+		this.hid = hid;
+	}
+	
 
 }

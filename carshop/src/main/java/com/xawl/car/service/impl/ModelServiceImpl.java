@@ -62,6 +62,12 @@ public class ModelServiceImpl implements ModelService {
 	}
 
 
+	@Override
+	public List<String> getImage(Serializable id) {
+		return modelMapper.getImage(id);
+	}
+
+
 
 
 

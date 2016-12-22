@@ -1,6 +1,7 @@
 package com.xawl.car.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 //车
 public class Goods {
@@ -9,7 +10,7 @@ public class Goods {
 	private Integer gid;
 	private String gname;
 	private Integer bid;// 商家id
-	private String gimage[];// 图片
+	private List<String> gimage;// 图片
 	private String bname;// 店家名
 	private String gdate;// 上传时间
 	private Integer sale;// 售量
@@ -46,15 +47,12 @@ public class Goods {
 	}
 	
 	
-	public String[] getGimage() {
+	
+	public List<String> getGimage() {
 		return gimage;
 	}
-	public void setGimage(String gimage) {
-		if (gimage != null && !gimage.isEmpty()) {
-			this.gimage = gimage.split(",");
-		} else {
-			this.gimage = null;
-		}
+	public void setGimage(List<String> gimage) {
+		this.gimage = gimage;
 	}
 	public String getBname() {
 		return bname;

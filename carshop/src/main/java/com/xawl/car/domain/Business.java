@@ -1,10 +1,16 @@
 package com.xawl.car.domain;
 
+import java.util.List;
+
 //4s 店
 public class Business {
+	
+	
+	
+	
 	private int bid;
 	private String bname;
-	private String bimage[]; // 4S店的 照片
+	private List<String> bimage; // 4S店的 照片
 	private String baddress;// 地址
 	private String bdate;// 创建时间
 	private String bphone;// 电话
@@ -94,17 +100,15 @@ public class Business {
 		this.bname = bname;
 	}
 
-	public String[] getBimage() {
+
+	public List<String> getBimage() {
 		return bimage;
 	}
 
-	public void setBimage(String bimage) {
-		if (bimage != null && !bimage.isEmpty()) {
-			this.bimage = bimage.split(",");
-		} else {
-			this.bimage = null;
-		}
+	public void setBimage(List<String> bimage) {
+		this.bimage = bimage;
 	}
+
 	public String getBaddress() {
 		return baddress;
 	}

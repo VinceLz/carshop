@@ -5,7 +5,6 @@
 	<resultMap type="com.xawl.car.domain.VO.BusinessVO" id="bVO">
 		<id column="bid" property="bid" />
 		<result column="bname" property="bname" />
-		<result column="bimage" property="bimage" />
 		<result column="baddress" property="baddress" />
 		<result column="bdate" property="bdate" />
 		<result column="bphone" property="bphone" />
@@ -13,8 +12,8 @@
 		<result column="majorbusiness" property="majorbusiness" />
 		<result column="distance" property="distance" />
 		<result column="title1" property="title1" />
-		<result column="title2" property="title2" />
-		<result column="showImage" property="showImage"/>
+		<result column="stages" property="stages" />
+		<result column="bshowImage" property="bshowImage"/>
 		<collection property="childs" ofType="com.xawl.car.domain.Goods"
 			column="childs">
 			<id column="gid" property="gid" />
@@ -22,77 +21,50 @@
 			<result column="maxprice" property="maxprice" />
 			<result column="minprice" property="minprice" />
 			<result column="gshowImage" property="gshowImage" />
-				<result column="gimage" property="gimage" />
+			
 			<result column="title" property="title" />
 		</collection>
 	</resultMap>
 
 
 
-	<select id="findPage" resultType="com.xawl.car.domain.Business"
-		parameterType="com.xawl.car.pagination.Page">
-		select * from db_business order by bdate
+	
+	<select id="get" parameterType="string"
+		resultType="com.xawl.car.domain.VO.BusinessVO">
+		select bid,bname,baddress,bphone,majorbusiness,bshowImage,title1,title2 from view_business_title where bid=#{bid}
 	</select>
 
-	<select id="getById" parameterType="int"
-		resultType="com.xawl.car.domain.Business">
-		select * from db_business where bid=#{bid}
-	</select>
 
-	<insert id="insert" parameterType="com.xawl.car.domain.Business">
-		insert into db_business
-		(bname,bimage,baddress,bdate,bphone,uname,longitude,latitude,type)
-		values(
-		#{bname},
-		#{bimage},
-		#{baddress},
-		#{bdate},
-		#{bphone},
-		#{uname},
-		#{longitude},
-		#{latitude},
-		#{type}
-		)
-	</insert>
-
-
-	<update id="update" parameterType="com.xawl.car.domain.Business">
-		update db_business set
-		bname=#{bname},
-		bimage=#{bimage},
-		baddress=#{baddress},
-		bphone=#{bphone},
-		uname=#{uname},
-		longitude=#{longitude},
-		latitude=#{latitude},
-		type=#{type}
-	</update>
 
 	<select id="getHomeHot" resultType="com.xawl.car.domain.Business">
 		SELECT
 		bid,bname,baddress,bshowImage ,bphone,majorbusiness,title1,title2 FROM
-		db_business WHERE
+		view_business_title WHERE
 		isHot=1 AND bdate
 		LIMIT 0,8
 	</select>
-	<select id="getAll" resultType="com.xawl.car.domain.Business">
-		select * from business
-
-	</select>
+	
 	<select id="getHomeBydistance" parameterType="map"
 		resultType="com.xawl.car.domain.Business">
 		SELECT
 		bid,bname,bshowImage,baddress,bphone,majorbusiness,title1,title2,
 		ROUND(6378.1380*2.0*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180.0-latitude*PI()/180.0)/2.0),2.0)+COS(#{latitude}*PI()/180.0)*COS(latitude*PI()/180.0)*POW(SIN((#{longitude}*PI()/180.0-longitude*PI()/180.0)/2.0),2.0)))*1000.0)
 		AS distance
-		FROM db_business
+		FROM view_business_title
 		ORDER BY distance
 		LIMIT 8
 	</select>
 	<select id="getStore2Car" parameterType="int" resultMap="bVO">
 		SELECT
-		b.bid,b.bname,b.bimage,b.baddress,b.bphone,b.majorbusiness,g.title,b.title1,b.title2,g.gid,g.gname,g.gshowImage,g.maxprice,g.minprice
+		b.bid,b.bname,b.baddress,b.stages,b.bphone,b.majorbusiness,g.title,g.gid,g.gname,g.gshowImage,g.maxprice,g.minprice
 		FROM
-		db_business b,db_goods g WHERE g.bid=#{bid} AND g.bid=b.bid
+		view_business_stages b,db_goods g WHERE g.bid=#{bid} AND g.bid=b.bid
 	</select>
+	
+	<select id="getImage" parameterType="int" resultType="string">
+		select image from db_image where bid=#{bid}
+	</select>
+	
+	
+	
 </mapper>

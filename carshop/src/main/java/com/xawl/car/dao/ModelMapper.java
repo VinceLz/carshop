@@ -22,7 +22,7 @@ public interface ModelMapper {
 	Model getById(Serializable mid);
 
 	List<Model> findByPrice(Map price);
-
+	List<String> getImage(Serializable id);
 	Order getbyMid2All(Serializable mid);
 	List<CarColor> getColors(Serializable mid);
 }

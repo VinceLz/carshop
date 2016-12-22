@@ -27,37 +27,14 @@ public class GoodsController {
 	@Resource
 	private ModelService modelService;
 
-	@RequestMapping("/admin/car/list")
-	public @ResponseBody
-	Object getList(JSON json, Page<Goods> page) {
-		List<Goods> list = goodsService.findPage(page);
-		page.setResults(list);
-		json.add("page", page);
-		return json + "";
-	}
-
-	@RequestMapping("/admin/car/add")
-	@ResponseBody
-	public String add(JSON json, Goods goods) {
-		goods.setGdate(DateUtil.getSqlDate());
-		goodsService.insert(goods);
-		return json + "";
-	}
-
-	// 返回车的名字
-	@RequestMapping("/admin/car/get")
-	@ResponseBody
-	public String add(JSON json, @RequestParam() String gid) {
-		Goods bean = goodsService.getById(gid);
-		json.add("car", bean);
-		return json + "";
-	}
 
 	@RequestMapping("/car/getModels")
 	@ResponseBody
 	public String get(JSON json, @RequestParam() String gid) {
 		// 通过gid拿到型号
 		GoodsVO allById = modelService.getAllById(gid);
+		List<String> image = goodsService.getImage(gid);
+		allById.setGimage(image);
 		json.add("car", allById);
 		return json + "";
 	}
@@ -67,6 +44,8 @@ public class GoodsController {
 	public String get2(JSON json, @RequestParam() String mid) {
 		// 通过gid拿到型号
 		Model main = modelService.getById(mid);
+		List<String> image = modelService.getImage(mid);
+		main.setMimage(image);
 		// 推荐
 		Map map = new HashMap<String, Object>();
 		map.put("min", main.getGuidegprice() * 0.9);

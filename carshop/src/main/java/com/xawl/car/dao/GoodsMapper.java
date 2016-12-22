@@ -17,6 +17,6 @@ public interface GoodsMapper {
 
 	List<HomeTop> getHomeHot();
 	
-	
+	List<String> getImage(Serializable id);
 
 }

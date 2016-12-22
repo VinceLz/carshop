@@ -3,7 +3,7 @@
 <mapper namespace="com.xawl.car.dao.HomeMapper">
 
 	<select id="getHomeTop" resultType="com.xawl.car.domain.HomeTop">
-		select image,url from db_home
+		select  image,url from db_home
 		where
 		type=0 and orders=0
 	</select>
@@ -17,13 +17,6 @@
 	</select>
 
 
-	<select id="findPage" resultType="com.xawl.car.domain.HomeTop"
-		parameterType="com.xawl.car.pagination.Page">
-		select image,title,url,isHot from db_home where type=1
-		and orders=0
-		order by date
-	</select>
-
 
 
 	
@@ -34,7 +27,7 @@
 	</select>
 
 
-<select id="getSearchImage" resultType="com.xawl.car.domain.HomeTop">
+	<select id="getSearchImage" resultType="com.xawl.car.domain.HomeTop">
 		select url,image
 		from db_home where orders=0 and type=2
 	</select>

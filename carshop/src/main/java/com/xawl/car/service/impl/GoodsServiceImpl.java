@@ -41,4 +41,9 @@ public class GoodsServiceImpl implements GoodsService {
 	public List<HomeTop> getHomeHot() {
 		return goodsMapper.getHomeHot();
 	}
+
+	@Override
+	public List<String> getImage(Serializable id) {
+		return goodsMapper.getImage(id);
+	}
 }

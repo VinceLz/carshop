@@ -1,29 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xawl.car.dao.GoodsMapper">
-	<resultMap type="com.xawl.car.domain.Goods" id="homeCar">
-		<id column="gid" property="gid" />
-		<result column="gname" property="gname" />
-		<result column="gprice" property="gprice" />
-		<result column="gimage" property="gimage" />
-	</resultMap>
-	<select id="findPage" resultType="com.xawl.car.domain.Goods"
-		parameterType="com.xawl.car.pagination.Page">
-		select * from db_goods order by gdate
+	
+
+
+
+	<select id="getImage" resultType="string" parameterType="int">
+		select
+		image from db_image where  gid=#{gid}
 	</select>
-
-	<select id="getById" parameterType="int" resultType="com.xawl.car.domain.Goods">
-		select *
-		from db_goods where gid=#{gid}
-	</select>
-
-	<select id="getHomeHot" resultType="com.xawl.car.domain.Goods">
-		select gid,gname,gprice,gimage from db_goods where
-		isHot=1 limit 0,8
-	</select>
-
-	<insert id="insert" parameterType="com.xawl.car.domain.Goods">
-		insert into
-
-	</insert>
 </mapper>

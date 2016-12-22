@@ -1,6 +1,7 @@
 package com.xawl.car.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /*
  * 车的 型号
@@ -25,7 +26,7 @@ public class Model {
 	private Double gprice;//价格
 	private Integer bid;
 	private String gname; //
-	private String mimage[];//大图片
+	private List<String> mimage;//大图片
 	private String mshowImage;
 	private String mtitle;
 	
@@ -43,15 +44,12 @@ public class Model {
 	}
 	
 	
-	public String[] getMimage() {
+
+	public List<String> getMimage() {
 		return mimage;
 	}
-	public void setMimage(String mimage) {
-		if (mimage != null && !mimage.isEmpty()) {
-			this.mimage = mimage.split(",");
-		} else {
-			this.mimage = null;
-		}
+	public void setMimage(List<String> mimage) {
+		this.mimage = mimage;
 	}
 	public String getGname() {
 		return gname;

@@ -7,7 +7,8 @@
 		<id column="gid" property="gid" />
 		<result column="title" property="title" />
 		<result column="gname" property="gname" />
-		<result column="gimage" property="gimage" />
+		<result column="bid" property="bid" />
+		<result column="stages" property="stages" />
 		<result column="maxprice" property="maxprice" />
 		<result column="minprice" property="minprice" />
 		<collection property="childs" ofType="com.xawl.car.domain.Model"
@@ -23,7 +24,7 @@
 	
 	<select id="getById" parameterType="int" resultType="com.xawl.car.domain.Model">
 		select
-		`mid`,gid,gname,mname,guidegprice,mimage,configure,mtitle
+		`mid`,gid,gname,mname,guidegprice,configure,mtitle
 		from db_model
 		where
 		`mid`=#{mid}
@@ -39,9 +40,9 @@
 
 	<select id="getAllById" parameterType="int" resultMap="GVO">
 		SELECT
-		m.mid,m.mname,m.guidegprice,m.gprice,m.mshowImage,g.title,g.gname,g.maxprice,g.minprice,g.gid,g.gimage,m.mtitle
+		m.mid,m.mname,m.guidegprice,m.gprice,m.mshowImage,g.title,g.bid,g.gname,g.maxprice,g.minprice,g.gid,g.stages,m.mtitle
 		FROM
-		db_model m,db_goods g WHERE m.gid=g.gid AND
+		db_model m,view_goods_stages g WHERE m.gid=g.gid AND
 		g.gid=#{gid}
 	</select>
 
@@ -146,4 +147,11 @@
 		db_model m,db_goods g,db_business b WHERE m.`gid`=g.`gid` AND
 		g.`bid`=b.`bid` AND m.`mid`=#{mid}
 	</select>
+	
+	<select id="getImage" resultType="string" parameterType="int">
+		select
+		image from db_image where mid=#{mid}
+	</select>
+	
+	
 </mapper>

@@ -20,4 +20,5 @@ public interface ModelService {
 	List<Model> findByPrice(Map map);
 	List<CarColor> getColors(Serializable mid);
 	Order getbyMid2All(Serializable mid);
+	List<String> getImage(Serializable id);
 }

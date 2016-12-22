@@ -17,5 +17,5 @@ public interface GoodsService {
 
 	List<HomeTop> getHomeHot();
 	
-	
+	List<String> getImage(Serializable id);
 }

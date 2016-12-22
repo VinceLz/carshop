@@ -8,7 +8,7 @@ public class GoodsVO {
 	private Integer gid;
 	private String gname;
 	private Integer bid;// 商家id
-	private String gimage[];// 图片
+	private List<String> gimage;// 图片
 	private String bname;// 店家名
 	private String gdate;// 上传时间
 	private Integer sale;// 售量
@@ -17,11 +17,19 @@ public class GoodsVO {
 	private double maxprice;
 	private double minprice;
 	private String gshowImage;
-
+	private String stages;
 	private List<Model> childs;
 
 	public Integer getGid() {
 		return gid;
+	}
+
+	public String getStages() {
+		return stages;
+	}
+
+	public void setStages(String stages) {
+		this.stages = stages;
 	}
 
 	public void setGid(Integer gid) {
@@ -44,16 +52,14 @@ public class GoodsVO {
 		this.bid = bid;
 	}
 
-	public String[] getGimage() {
+	
+
+	public List<String> getGimage() {
 		return gimage;
 	}
 
-	public void setGimage(String gimage) {
-		if (gimage != null && !gimage.isEmpty()) {
-			this.gimage = gimage.split(",");
-		} else {
-			this.gimage = null;
-		}
+	public void setGimage(List<String> gimage) {
+		this.gimage = gimage;
 	}
 
 	public String getBname() {
@@ -120,12 +126,11 @@ public class GoodsVO {
 		this.gshowImage = gshowImage;
 	}
 
-	public List<Model> getChild() {
+	public List<Model> getChilds() {
 		return childs;
 	}
 
-	public void setChild(List<Model> childs) {
+	public void setChilds(List<Model> childs) {
 		this.childs = childs;
 	}
-
 }

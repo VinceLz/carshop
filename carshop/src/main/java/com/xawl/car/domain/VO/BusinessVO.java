@@ -9,7 +9,7 @@ public class BusinessVO {
 	// 4S店的详情页实体类
 	private Integer bid;
 	private String bname;
-	private String bimage[];
+	private List<String> bimage;
 	private String baddress;
 	private String bdate;// 创建时间
 	private String bphone;// 电话
@@ -18,7 +18,16 @@ public class BusinessVO {
 	private List<Goods> childs;
 	private String title1;
 	private String title2;
+	private String stages;
 	
+
+	public String getStages() {
+		return stages;
+	}
+
+	public void setStages(String stages) {
+		this.stages = stages;
+	}
 
 	public String getTitle1() {
 		return title1;
@@ -52,17 +61,13 @@ public class BusinessVO {
 		this.bname = bname;
 	}
 
-	public String[] getBimage() {
+
+	public List<String> getBimage() {
 		return bimage;
 	}
 
-	public void setBimage(String bimage) {
-		if (bimage != null && !bimage.isEmpty()) {
-			this.bimage = bimage.split(",");
-		} else {
-			this.bimage = null;
-		}
-
+	public void setBimage(List<String> bimage) {
+		this.bimage = bimage;
 	}
 
 	public String getBaddress() {

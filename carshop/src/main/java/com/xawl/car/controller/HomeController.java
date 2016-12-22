@@ -66,15 +66,6 @@ public class HomeController {
 		return json + "";
 	}
 
-	// 首页活动 更多
-	@RequestMapping("/home/active")
-	@ResponseBody
-	public String getTop3(JSON json, Page<HomeTop> page) {
-		List<HomeTop> result = homeService.findPage(page);
-		page.setResults(result);
-		json.add("page", page);
-		return json + "";
-	}
 
 	// 首页车 符合购车方案
 	// @RequestMapping("/home/car")
@@ -117,17 +108,6 @@ public class HomeController {
 		json.add("result", result);
 		json.add("image", image);
 		return json+"";
-	}
-
-	// 养车
-	@RequestMapping("/home/case")
-	@ResponseBody
-	public String getTop5(JSON json) {
-		List<HomeTop> result = homeService.getCarCaseActive();
-		json.add("active", result);
-		 List<Business> homeHot = businessService.getHomeHot();
-		 json.add("carstore", homeHot);
-		return json + "";
 	}
 
 }
