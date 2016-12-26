@@ -25,4 +25,6 @@ public interface ModelMapper {
 	List<String> getImage(Serializable id);
 	Order getbyMid2All(Serializable mid);
 	List<CarColor> getColors(Serializable mid);
+	
+	Model getConf(Serializable id);
 }

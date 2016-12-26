@@ -3,14 +3,10 @@
 <mapper namespace="com.xawl.car.dao.ConsultMapper">
 	<insert id="insert" parameterType="com.xawl.car.domain.Consult">
 		insert into db_consult
-		(gid,gname,model,phone,uname,bid,bname,date) values(
-		#{gid},
-		#{gname},
-		#{model},
+		(mid,phone,uname,date) values(
+		#{mid},
 		#{phone},
 		#{uname},
-		#{bid},
-		#{bname},
 		#{date}
 		)
 	</insert>

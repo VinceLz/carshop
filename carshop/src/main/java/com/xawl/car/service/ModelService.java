@@ -21,4 +21,5 @@ public interface ModelService {
 	List<CarColor> getColors(Serializable mid);
 	Order getbyMid2All(Serializable mid);
 	List<String> getImage(Serializable id);
+	Model getConf(Serializable id);
 }

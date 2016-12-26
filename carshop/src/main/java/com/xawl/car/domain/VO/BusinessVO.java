@@ -16,6 +16,7 @@ public class BusinessVO {
 	private String uname;// 店主名字
 	private String majorbusiness; // 主营车型
 	private List<Goods> childs;
+	private String bshowImage;
 	private String title1;
 	private String title2;
 	private String stages;
@@ -116,6 +117,14 @@ public class BusinessVO {
 
 	public void setChilds(List<Goods> childs) {
 		this.childs = childs;
+	}
+
+	public String getBshowImage() {
+		return bshowImage;
+	}
+
+	public void setBshowImage(String bshowImage) {
+		this.bshowImage = bshowImage;
 	}
 
 	

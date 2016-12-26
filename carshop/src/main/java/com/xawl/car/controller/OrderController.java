@@ -1,17 +1,13 @@
 package com.xawl.car.controller;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.Order;
-import com.xawl.car.domain.VO.ModelVO;
 import com.xawl.car.service.ModelService;
 import com.xawl.car.service.OrderService;
 import com.xawl.car.util.DateUtil;

@@ -11,17 +11,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONObject;
 import com.xawl.car.domain.Business;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.HomeTop;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.VO.ModelVO;
-import com.xawl.car.pagination.Page;
 import com.xawl.car.service.BusinessService;
 import com.xawl.car.service.GoodsService;
 import com.xawl.car.service.HomeService;
 import com.xawl.car.service.ModelService;
+import com.xawl.car.util.JsonUtils;
 
 /*
  * 首页
@@ -81,10 +80,14 @@ public class HomeController {
 	@ResponseBody
 	public String getTop5(JSON json, @PathVariable() String param) {
 		List<HomeTop> image=null;
-		ModelVO obj = JSONObject.parseObject(param, ModelVO.class);
+		ModelVO obj=null;
+		if(param!=null&&!param.isEmpty()){
+			 obj = JsonUtils.jsonToPojo(param, ModelVO.class);
+		}
 		if(obj==null){
 			obj=new ModelVO();
 		}
+		System.out.println(obj);
 		if(obj.getPageNo()==1){
 		 image = homeService.getSearchImage();
 		}
@@ -109,5 +112,6 @@ public class HomeController {
 		json.add("image", image);
 		return json+"";
 	}
+	
 
 }

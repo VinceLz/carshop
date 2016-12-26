@@ -1,4 +1,5 @@
 package com.xawl.car.controller;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,14 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xawl.car.domain.CarColor;
-import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.Model;
 import com.xawl.car.domain.VO.GoodsVO;
-import com.xawl.car.pagination.Page;
 import com.xawl.car.service.GoodsService;
 import com.xawl.car.service.ModelService;
-import com.xawl.car.util.DateUtil;
 
 @Controller
 public class GoodsController {
@@ -27,14 +25,17 @@ public class GoodsController {
 	@Resource
 	private ModelService modelService;
 
-
 	@RequestMapping("/car/getModels")
 	@ResponseBody
 	public String get(JSON json, @RequestParam() String gid) {
 		// 通过gid拿到型号
 		GoodsVO allById = modelService.getAllById(gid);
+		System.out.println(gid);
 		List<String> image = goodsService.getImage(gid);
-		allById.setGimage(image);
+		if(image!=null&&image.size()!=0)
+		{
+			allById.setGimage(image);
+		}
 		json.add("car", allById);
 		return json + "";
 	}
@@ -45,15 +46,19 @@ public class GoodsController {
 		// 通过gid拿到型号
 		Model main = modelService.getById(mid);
 		List<String> image = modelService.getImage(mid);
-		main.setMimage(image);
+		if(image!=null&&image.size()!=0)
+		{
+			main.setMimage(image);
+		}
+		
 		// 推荐
 		Map map = new HashMap<String, Object>();
 		map.put("min", main.getGuidegprice() * 0.9);
 		map.put("max", main.getGuidegprice() * 1.1);
 		map.put("mid", main.getMid());
 		List<Model> recommend = modelService.findByPrice(map);
-		json.add("car", main);//主要的车
-		json.add("recommend", recommend); //推荐的
+		json.add("car", main);// 主要的车
+		json.add("recommend", recommend); // 推荐的
 		return json + "";
 	}
 
@@ -66,4 +71,15 @@ public class GoodsController {
 		json.add("colors", list);
 		return json + "";
 	}
+
+	// 获取车的详细配置
+	@RequestMapping("/car/models/getconf")
+	@ResponseBody
+	public String get4(JSON json, @RequestParam() String mid) {
+		Model conf = modelService.getConf(mid);
+		json.add("model", conf);
+		return json + "";
+	}
+
+	
 }

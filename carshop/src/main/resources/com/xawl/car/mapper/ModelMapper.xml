@@ -8,9 +8,11 @@
 		<result column="title" property="title" />
 		<result column="gname" property="gname" />
 		<result column="bid" property="bid" />
+		<result column="bphone" property="bphone" />
 		<result column="stages" property="stages" />
 		<result column="maxprice" property="maxprice" />
 		<result column="minprice" property="minprice" />
+			<result column="bid" property="bid" />
 		<collection property="childs" ofType="com.xawl.car.domain.Model"
 			column="childs">
 			<id column="mid" property="mid" />
@@ -21,29 +23,32 @@
 			<result column="mtitle" property="mtitle" />
 		</collection>
 	</resultMap>
-	
+
 	<select id="getById" parameterType="int" resultType="com.xawl.car.domain.Model">
-		select
-		`mid`,gid,gname,mname,guidegprice,configure,mtitle
-		from db_model
-		where
-		`mid`=#{mid}
+		SELECT
+		m.`mid`,m.gid,m.gname,m.mname,m.guidegprice,m.mtitle,b.`bphone`,b.bid
+		FROM
+		db_model m,db_business b ,db_goods g
+		WHERE m.`gid`=g.`gid` AND
+		g.bid=b.`bid` AND m.mid=#{mid}
 	</select>
 
 	<select id="findByPrice" parameterType="map"
 		resultType="com.xawl.car.domain.Model">
-		select mid,gid,gname,mname,guidegprice,mshowImage,mtitle from
+		select mid,gid,gname,mname,guidegprice,mshowImage,mtitle
+		from
 		db_model where
-		guidegprice BETWEEN #{min} and #{max} and mid!=#{mid}
+		guidegprice BETWEEN #{min} and #{max} and
+		mid!=#{mid}
 	</select>
 
 
 	<select id="getAllById" parameterType="int" resultMap="GVO">
 		SELECT
-		m.mid,m.mname,m.guidegprice,m.gprice,m.mshowImage,g.title,g.bid,g.gname,g.maxprice,g.minprice,g.gid,g.stages,m.mtitle
+		m.mid,m.mname,m.guidegprice,m.gprice,m.mshowImage,g.title,g.bid,g.gname,g.maxprice,g.minprice,g.gid,g.stages,m.mtitle,b.`bphone`
 		FROM
-		db_model m,view_goods_stages g WHERE m.gid=g.gid AND
-		g.gid=#{gid}
+		db_model m,view_goods_stages g,db_business b WHERE m.gid=g.gid AND
+		g.bid=b.`bid` and g.gid=#{id}
 	</select>
 
 	<select id="getMax2Min" parameterType="int" resultType="map">
@@ -54,7 +59,7 @@
 
 	<select id="getCarByProperty" parameterType="com.xawl.car.domain.VO.ModelVO"
 		resultType="com.xawl.car.domain.Goods">
-		SELECT gid,gname,gshowImage,title,maxprice,minprice from db_goods
+		SELECT gid,gname,gshowImage,title,maxprice,minprice,bid from db_goods
 		WHERE gid
 		in(
 		select gid from db_model where 1=1
@@ -125,8 +130,8 @@
 			</foreach>
 		</if>
 		<if test="maxprice!=null and maxprice!=''">and #{maxprice}>=gprice</if>
-		<if test="minprice!=null and minprice!=''">and gprice>=#{maxprice}</if>
-		<if test="keyword!=null and keyword!=''">and keyword=#{keyword}</if>
+		<if test="minprice!=null and minprice!=''">and gprice>=#{minprice}</if>
+		<if test="keyword!=null and keyword!=''">and keyword like '%${keyword}%'</if>
 		) limit ${(PageNo-1)*PageSize},#{PageSize}
 	</select>
 
@@ -147,11 +152,20 @@
 		db_model m,db_goods g,db_business b WHERE m.`gid`=g.`gid` AND
 		g.`bid`=b.`bid` AND m.`mid`=#{mid}
 	</select>
-	
+
 	<select id="getImage" resultType="string" parameterType="int">
 		select
 		image from db_image where mid=#{mid}
 	</select>
-	
-	
+
+
+	<select id="getConf" resultType="com.xawl.car.domain.Model"
+		parameterType="int">
+		select mid,mname,configure,guidegprice from db_model
+		where mid=#{mid}
+	</select>
+
+
+
+
 </mapper>

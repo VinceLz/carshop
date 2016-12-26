@@ -19,6 +19,15 @@ public class GoodsVO {
 	private String gshowImage;
 	private String stages;
 	private List<Model> childs;
+	private String bphone;
+	
+	public String getBphone() {
+		return bphone;
+	}
+
+	public void setBphone(String bphone) {
+		this.bphone = bphone;
+	}
 
 	public Integer getGid() {
 		return gid;
