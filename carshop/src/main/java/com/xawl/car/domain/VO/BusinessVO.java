@@ -22,6 +22,7 @@ public class BusinessVO {
 	private String stages;
 	
 
+
 	public String getStages() {
 		return stages;
 	}
@@ -42,6 +43,8 @@ public class BusinessVO {
 		return title2;
 	}
 
+	
+
 	public void setTitle2(String title2) {
 		this.title2 = title2;
 	}
@@ -61,7 +64,6 @@ public class BusinessVO {
 	public void setBname(String bname) {
 		this.bname = bname;
 	}
-
 
 	public List<String> getBimage() {
 		return bimage;
@@ -127,5 +129,4 @@ public class BusinessVO {
 		this.bshowImage = bshowImage;
 	}
 
-	
 }

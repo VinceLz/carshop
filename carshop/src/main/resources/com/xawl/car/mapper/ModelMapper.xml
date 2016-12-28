@@ -26,11 +26,11 @@
 
 	<select id="getById" parameterType="int" resultType="com.xawl.car.domain.Model">
 		SELECT
-		m.`mid`,m.gid,m.gname,m.mname,m.guidegprice,m.mtitle,b.`bphone`,b.bid
+		m.`mid`,m.gid,m.mname,m.guidegprice,m.mtitle,b.`bphone`,b.bid,g.gname
 		FROM
 		db_model m,db_business b ,db_goods g
 		WHERE m.`gid`=g.`gid` AND
-		g.bid=b.`bid` AND m.mid=#{mid}
+		g.bid=b.`bid` AND m.mid=#{mid} limit 0,1
 	</select>
 
 	<select id="findByPrice" parameterType="map"
@@ -39,7 +39,7 @@
 		from
 		db_model where
 		guidegprice BETWEEN #{min} and #{max} and
-		mid!=#{mid}
+		mid!=#{mid} 
 	</select>
 
 

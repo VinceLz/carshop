@@ -41,6 +41,11 @@ public class Consult {
 	public void setMid(Integer mid) {
 		this.mid = mid;
 	}
+	@Override
+	public String toString() {
+		return "Consult [consultId=" + consultId + ", phone=" + phone
+				+ ", uname=" + uname + ", date=" + date + ", mid=" + mid + "]";
+	}
 	
 
 	

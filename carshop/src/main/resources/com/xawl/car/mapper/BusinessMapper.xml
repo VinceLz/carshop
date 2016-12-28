@@ -13,7 +13,7 @@
 		<result column="distance" property="distance" />
 		<result column="title1" property="title1" />
 		<result column="stages" property="stages" />
-		<result column="bshowImage" property="bshowImage"/>
+		<result column="bshowImage" property="bshowImage" />
 		<collection property="childs" ofType="com.xawl.car.domain.Goods"
 			column="childs">
 			<id column="gid" property="gid" />
@@ -21,35 +21,47 @@
 			<result column="maxprice" property="maxprice" />
 			<result column="minprice" property="minprice" />
 			<result column="gshowImage" property="gshowImage" />
-			
+
 			<result column="title" property="title" />
 		</collection>
 	</resultMap>
 
 
 
-	
+
 	<select id="get" parameterType="string"
 		resultType="com.xawl.car.domain.VO.BusinessVO">
-		select bid,bname,baddress,bphone,majorbusiness,bshowImage,title1,title2 from view_business_title where bid=#{bid}
+		select
+		bid,bname,baddress,bphone,majorbusiness,bshowImage,title1,title2,isActivity
+		from
+		view_business_title where bid=#{bid} limit 0,1
 	</select>
 
 
 
 	<select id="getHomeHot" resultType="com.xawl.car.domain.Business">
 		SELECT
-		bid,bname,baddress,bshowImage ,bphone,majorbusiness,title1,title2 FROM
+		bid,bname,baddress,bshowImage
+		,bphone,majorbusiness,title1,title2,isActivity FROM
 		view_business_title WHERE
 		isHot=1 AND bdate
 		LIMIT 0,8
 	</select>
-	
+
 	<select id="getHomeBydistance" parameterType="map"
 		resultType="com.xawl.car.domain.Business">
-		SELECT
-		bid,bname,bshowImage,baddress,bphone,majorbusiness,title1,title2,
-		ROUND(6378.1380*2.0*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180.0-latitude*PI()/180.0)/2.0),2.0)+COS(#{latitude}*PI()/180.0)*COS(latitude*PI()/180.0)*POW(SIN((#{longitude}*PI()/180.0-longitude*PI()/180.0)/2.0),2.0)))*1000.0)
-		AS distance
+		
+SELECT
+		bid,bname,bshowImage,baddress,bphone,majorbusiness,title1,title2,isActivity,
+
+           ROUND(6378.1380 * 2.0 * ASIN(SQRT(
+						POW((SIN(#{latitude}  * PI() / 180.0 - latitude
+								* PI() / 180.0) / 2.0), 2.0)
+						+ COS(latitude * PI() / 180.0)
+						* COS(latitude * PI() / 180.0)
+						* POW(
+								SIN(( #{longitude}* PI() / 180.0 - longitude * PI() / 180.0) / 2.0),
+								2.0))) * 1000.0)      AS distance
 		FROM view_business_title
 		ORDER BY distance
 		LIMIT 8
@@ -58,13 +70,15 @@
 		SELECT
 		b.bid,b.bname,b.baddress,b.stages,b.bphone,b.majorbusiness,g.title,g.gid,g.gname,g.gshowImage,g.maxprice,g.minprice
 		FROM
-		view_business_stages b,db_goods g WHERE g.bid=#{bid} AND g.bid=b.bid
+		view_business_stages b,db_goods g WHERE g.bid=#{bid} AND
+		g.bid=b.bid
 	</select>
-	
+
 	<select id="getImage" parameterType="int" resultType="string">
-		select image from db_image where bid=#{bid}
+		select
+		image from db_image where bid=#{bid}
 	</select>
-	
-	
-	
+
+
+
 </mapper>

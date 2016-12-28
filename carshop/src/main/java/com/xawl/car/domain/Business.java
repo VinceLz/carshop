@@ -4,10 +4,6 @@ import java.util.List;
 
 //4s 店
 public class Business {
-	
-	
-	
-	
 	private int bid;
 	private String bname;
 	private List<String> bimage; // 4S店的 照片
@@ -25,8 +21,18 @@ public class Business {
 	private String title2;
 	private String distance;
 	private String bshowImage;
-	
+	private Boolean isActivity = true;
 
+	public Boolean getIsActivity() {
+		return isActivity;
+	}
+
+	public void setIsActivity(Boolean isActivity) {
+		if (!isActivity) {
+			this.title2 = null;
+		}
+		this.isActivity = isActivity;
+	}
 
 	public String getBshowImage() {
 		return bshowImage;
@@ -49,7 +55,9 @@ public class Business {
 	}
 
 	public void setTitle2(String title2) {
-		this.title2 = title2;
+		if (isActivity) {
+			this.title2 = title2;
+		}
 	}
 
 	public String getDistance() {
@@ -99,7 +107,6 @@ public class Business {
 	public void setBname(String bname) {
 		this.bname = bname;
 	}
-
 
 	public List<String> getBimage() {
 		return bimage;

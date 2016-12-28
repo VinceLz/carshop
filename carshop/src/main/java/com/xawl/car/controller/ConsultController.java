@@ -21,6 +21,7 @@ public class ConsultController {
 	@RequestMapping("/consult/add")
 	@ResponseBody
 	public String insert(JSON json, Consult consult) {
+		System.out.println(consult);
 		consult.setDate(DateUtil.getSqlDate());
 		consultService.insert(consult);
 		return json + "";
