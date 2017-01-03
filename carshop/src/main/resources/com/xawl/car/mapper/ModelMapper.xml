@@ -26,7 +26,7 @@
 
 	<select id="getById" parameterType="int" resultType="com.xawl.car.domain.Model">
 		SELECT
-		m.`mid`,m.gid,m.mname,m.guidegprice,m.mtitle,b.`bphone`,b.bid,g.gname
+		m.`mid`,m.gid,m.mname,m.guidegprice,m.mtitle,b.`bphone`,b.bid,g.gname,m.configure
 		FROM
 		db_model m,db_business b ,db_goods g
 		WHERE m.`gid`=g.`gid` AND

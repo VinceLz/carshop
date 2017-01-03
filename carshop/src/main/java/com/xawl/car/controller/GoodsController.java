@@ -25,6 +25,8 @@ public class GoodsController {
 	@Resource
 	private ModelService modelService;
 
+	
+	
 	@RequestMapping("/car/getModels")
 	@ResponseBody
 	public String get(JSON json, @RequestParam() String gid) {

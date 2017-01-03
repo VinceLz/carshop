@@ -50,7 +50,7 @@ public class PoiUtils {
 					map2 = null;
 					key = "";
 				}
-				key = row.getCell(0).getStringCellValue().trim();
+				key = row.getCell(0).getStringCellValue().trim().replace("$", "");
 				map2 = new LinkedHashMap<String, String>();
 			} else {
 				// С��
