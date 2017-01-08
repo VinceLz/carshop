@@ -17,7 +17,10 @@ public class GoodsVO {
 	private double maxprice;
 	private double minprice;
 	private String gshowImage;
-	private String stages;
+	private String stages12;
+	private String stages24;
+	private String stages36;
+	
 	private List<Model> childs;
 	private String bphone;
 	
@@ -33,12 +36,29 @@ public class GoodsVO {
 		return gid;
 	}
 
-	public String getStages() {
-		return stages;
+
+	public String getStages12() {
+		return stages12;
 	}
 
-	public void setStages(String stages) {
-		this.stages = stages;
+	public void setStages12(String stages12) {
+		this.stages12 = stages12;
+	}
+
+	public String getStages24() {
+		return stages24;
+	}
+
+	public void setStages24(String stages24) {
+		this.stages24 = stages24;
+	}
+
+	public String getStages36() {
+		return stages36;
+	}
+
+	public void setStages36(String stages36) {
+		this.stages36 = stages36;
 	}
 
 	public void setGid(Integer gid) {

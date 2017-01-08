@@ -9,7 +9,9 @@
 		<result column="gname" property="gname" />
 		<result column="bid" property="bid" />
 		<result column="bphone" property="bphone" />
-		<result column="stages" property="stages" />
+		<result column="stages12" property="stages12" />
+		<result column="stages24" property="stages24" />
+		<result column="stages36" property="stages36" />
 		<result column="maxprice" property="maxprice" />
 		<result column="minprice" property="minprice" />
 			<result column="bid" property="bid" />
@@ -45,9 +47,9 @@
 
 	<select id="getAllById" parameterType="int" resultMap="GVO">
 		SELECT
-		m.mid,m.mname,m.guidegprice,m.gprice,m.mshowImage,g.title,g.bid,g.gname,g.maxprice,g.minprice,g.gid,g.stages,m.mtitle,b.`bphone`
+		m.mid,m.mname,m.guidegprice,m.gprice,m.mshowImage,g.title,g.bid,g.gname,g.maxprice,g.minprice,g.gid,g.stages12,g.stages24,g.stages36,m.mtitle,b.`bphone`
 		FROM
-		db_model m,view_goods_stages g,db_business b WHERE m.gid=g.gid AND
+		db_model m,view_goods_stages_title g,db_business b WHERE m.gid=g.gid AND
 		g.bid=b.`bid` and g.gid=#{id}
 	</select>
 

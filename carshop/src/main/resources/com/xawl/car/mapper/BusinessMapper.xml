@@ -21,7 +21,6 @@
 			<result column="maxprice" property="maxprice" />
 			<result column="minprice" property="minprice" />
 			<result column="gshowImage" property="gshowImage" />
-
 			<result column="title" property="title" />
 		</collection>
 	</resultMap>
@@ -34,7 +33,7 @@
 		select
 		bid,bname,baddress,bphone,majorbusiness,bshowImage,title1,title2,isActivity
 		from
-		view_business_title where bid=#{bid} limit 0,1
+		view_business_stages_title where bid=#{bid} limit 0,1
 	</select>
 
 
@@ -43,7 +42,7 @@
 		SELECT
 		bid,bname,baddress,bshowImage
 		,bphone,majorbusiness,title1,title2,isActivity FROM
-		view_business_title WHERE
+		view_business_stages_title WHERE
 		isHot=1 AND bdate
 		LIMIT 0,8
 	</select>
@@ -62,15 +61,15 @@ SELECT
 						* POW(
 								SIN(( #{longitude}* PI() / 180.0 - longitude * PI() / 180.0) / 2.0),
 								2.0))) * 1000.0)      AS distance
-		FROM view_business_title
+		FROM view_business_stages_title
 		ORDER BY distance
 		LIMIT 8
 	</select>
 	<select id="getStore2Car" parameterType="int" resultMap="bVO">
 		SELECT
-		b.bid,b.bname,b.baddress,b.stages,b.bphone,b.majorbusiness,g.title,g.gid,g.gname,g.gshowImage,g.maxprice,g.minprice
+		b.bid,b.bname,b.baddress,b.stages12,b.stages24,b.stages36,b.bphone,b.majorbusiness,g.title,g.gid,g.gname,g.gshowImage,g.maxprice,g.minprice
 		FROM
-		view_business_stages b,db_goods g WHERE g.bid=#{bid} AND
+		view_business_stages_title b,db_goods g WHERE g.bid=#{bid} AND
 		g.bid=b.bid
 	</select>
 
