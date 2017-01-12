@@ -39,6 +39,7 @@ public class GoodsController {
 			allById.setGimage(image);
 		}
 		json.add("car", allById);
+		
 		return json + "";
 	}
 
@@ -47,13 +48,16 @@ public class GoodsController {
 	public String get2(JSON json, @RequestParam() String mid) {
 		// 通过gid拿到型号
 		Model main = modelService.getById(mid);
+		
 		List<String> image = modelService.getImage(mid);
 		if(image!=null&&image.size()!=0)
 		{
 			main.setMimage(image);
 		}
-		
 		// 推荐
+		if(main==null){
+			return json+"";
+		}
 		Map map = new HashMap<String, Object>();
 		map.put("min", main.getGuidegprice() * 0.9);
 		map.put("max", main.getGuidegprice() * 1.1);

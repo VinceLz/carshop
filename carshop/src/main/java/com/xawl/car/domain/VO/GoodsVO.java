@@ -17,10 +17,20 @@ public class GoodsVO {
 	private double maxprice;
 	private double minprice;
 	private String gshowImage;
-	private String stages12;
-	private String stages24;
-	private String stages36;
+	private Double stages12;
+	private Double stages24;
+	private Double stages36;
+	private String stages="分期政策"; //为了防止app坏掉，先向下兼容
 	
+	
+	public String getStages() {
+		return stages;
+	}
+
+	public void setStages(String stages) {
+		this.stages = stages;
+	}
+
 	private List<Model> childs;
 	private String bphone;
 	
@@ -37,27 +47,28 @@ public class GoodsVO {
 	}
 
 
-	public String getStages12() {
+
+	public Double getStages12() {
 		return stages12;
 	}
 
-	public void setStages12(String stages12) {
+	public void setStages12(Double stages12) {
 		this.stages12 = stages12;
 	}
 
-	public String getStages24() {
+	public Double getStages24() {
 		return stages24;
 	}
 
-	public void setStages24(String stages24) {
+	public void setStages24(Double stages24) {
 		this.stages24 = stages24;
 	}
 
-	public String getStages36() {
+	public Double getStages36() {
 		return stages36;
 	}
 
-	public void setStages36(String stages36) {
+	public void setStages36(Double stages36) {
 		this.stages36 = stages36;
 	}
 
