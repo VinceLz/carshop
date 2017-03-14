@@ -19,7 +19,6 @@ public class HomeServiceImpl implements HomeService {
 	@Autowired
 	private HomeMapper homeMapper;
 
-
 	@Override
 	public List<HomeTop> getHomeTop() {
 		System.out.println(homeMapper.getHomeTop().toString());
@@ -37,8 +36,6 @@ public class HomeServiceImpl implements HomeService {
 		return homeMapper.findPage(page);
 	}
 
-	
-
 	@Override
 	public List<HomeTop> getCarCaseActive() {
 		return homeMapper.getCarCaseActive();
@@ -47,6 +44,11 @@ public class HomeServiceImpl implements HomeService {
 	@Override
 	public List<HomeTop> getSearchImage() {
 		return homeMapper.getSearchImage();
+	}
+
+	@Override
+	public List<HomeTop> getcyTop() {
+		return homeMapper.getcyTop();
 	}
 
 }

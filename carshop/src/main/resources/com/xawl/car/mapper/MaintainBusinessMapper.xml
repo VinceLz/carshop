@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xawl.car.dao.MaintainBusinessMapper">
+
+
+
+	<select id="getHomeHot" resultType="com.xawl.car.domain.MaintainBusiness">
+		SELECT
+		mbid,mbname,baddress,bshowimage
+		,bphone,title1,title2,isHot FROM
+		view_ycbusiness_stages_title WHERE
+		isHot=1 order by bdate desc
+	</select>
+
+
+	<select id="getHomeBydistance" parameterType="map"
+		resultType="com.xawl.car.domain.MaintainBusiness">
+
+		SELECT
+		mbid,mbname,bshowImage,baddress,bphone,title1,title2,
+
+		ROUND(6378.1380 *
+		2.0 * ASIN(SQRT(
+		POW((SIN(#{latitude} * PI() / 180.0
+		- latitude
+		* PI()
+		/
+		180.0) / 2.0), 2.0)
+		+ COS(latitude * PI() / 180.0)
+		*
+		COS(latitude *
+		PI() /
+		180.0)
+		* POW(
+		SIN(( #{longitude}* PI() / 180.0 -
+		longitude * PI()
+		/ 180.0)
+		/ 2.0),
+		2.0))) * 1000.0) AS distance
+		FROM
+		view_ycbusiness_stages_title
+		ORDER BY distance
+	</select>
+
+
+	<select id="getStore" parameterType="string"
+		resultType="com.xawl.car.domain.MaintainBusiness">
+		select
+		mbid,mbname,baddress,bdate,bphone,uname,score,commentcount,time from
+		db_maintainbusiness where
+		mbid=#{mbid}
+	</select>
+
+
+	<select id="getImage" resultType="string" parameterType="int">
+		select
+		image from db_image where mbid=#{mbid}
+	</select>
+
+
+
+	<select id="getCommentList" resultType="com.xawl.car.domain.Comment"
+		parameterType="int">
+		select
+		comment_id,mbid,content,date,uname from db_comment
+		where mbid=#{mbid}
+	</select>
+
+
+	<select id="getClean" resultType="com.xawl.car.domain.Service"
+		parameterType="map">
+		select
+		sid,sname,sdesc,oldprice,newprice,mbid from
+		db_service where type=#{type} and mbid=#{mbid}
+	</select>
+
+
+</mapper>

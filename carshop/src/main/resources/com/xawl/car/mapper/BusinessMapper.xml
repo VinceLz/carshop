@@ -43,27 +43,29 @@
 		bid,bname,baddress,bshowImage
 		,bphone,majorbusiness,title1,title2,isActivity FROM
 		view_business_stages_title WHERE
-		isHot=1 AND bdate
-		LIMIT 0,8
+		isHot=1 order by bdate desc
 	</select>
 
 	<select id="getHomeBydistance" parameterType="map"
 		resultType="com.xawl.car.domain.Business">
-		
-SELECT
+
+		SELECT
 		bid,bname,bshowImage,baddress,bphone,majorbusiness,title1,title2,isActivity,
 
-           ROUND(6378.1380 * 2.0 * ASIN(SQRT(
-						POW((SIN(#{latitude}  * PI() / 180.0 - latitude
-								* PI() / 180.0) / 2.0), 2.0)
-						+ COS(latitude * PI() / 180.0)
-						* COS(latitude * PI() / 180.0)
-						* POW(
-								SIN(( #{longitude}* PI() / 180.0 - longitude * PI() / 180.0) / 2.0),
-								2.0))) * 1000.0)      AS distance
-		FROM view_business_stages_title
+		ROUND(6378.1380 * 2.0 * ASIN(SQRT(
+		POW((SIN(#{latitude} * PI() / 180.0
+		- latitude
+		* PI() / 180.0) / 2.0), 2.0)
+		+ COS(latitude * PI() / 180.0)
+		*
+		COS(latitude * PI() / 180.0)
+		* POW(
+		SIN(( #{longitude}* PI() / 180.0 -
+		longitude * PI() / 180.0) / 2.0),
+		2.0))) * 1000.0) AS distance
+		FROM
+		view_business_stages_title
 		ORDER BY distance
-		LIMIT 8
 	</select>
 	<select id="getStore2Car" parameterType="int" resultMap="bVO">
 		SELECT

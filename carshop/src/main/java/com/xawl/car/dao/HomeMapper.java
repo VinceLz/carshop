@@ -17,4 +17,6 @@ public interface HomeMapper {
 	List<HomeTop> getCarCaseActive();
 	
 	List<HomeTop> getSearchImage();
+
+	List<HomeTop> getcyTop();
 }	

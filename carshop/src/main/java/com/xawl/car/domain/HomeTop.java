@@ -3,7 +3,7 @@ package com.xawl.car.domain;
 /**
  * 首页类型
  * 
- * @author kernel 0 是轮播图 1 是活动表    2是搜索轮播图
+ * @author kernel 0 是轮播图 1 是活动表    2是搜索轮播图   3养车轮播图
  * order   0是购车   1是养车
  */
 public class HomeTop {

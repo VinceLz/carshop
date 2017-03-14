@@ -15,4 +15,6 @@ public interface HomeService {
 	
 	List<HomeTop> getSearchImage();
 	List<HomeTop> getCarCaseActive();
+
+	List<HomeTop> getcyTop();
 }

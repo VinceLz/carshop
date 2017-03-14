@@ -3,10 +3,18 @@
 <mapper namespace="com.xawl.car.dao.HomeMapper">
 
 	<select id="getHomeTop" resultType="com.xawl.car.domain.HomeTop">
-		select  image,url from db_home
+		select image,url from db_home
 		where
 		type=0 and orders=0
 	</select>
+
+	<select id="getcyTop" resultType="com.xawl.car.domain.HomeTop">
+		select image,url from db_home
+		where
+		type=0 and orders=1
+	</select>
+
+
 	<select id="getHomeActice" resultType="com.xawl.car.domain.HomeTop">
 		SELECT url,title
 		FROM
@@ -19,7 +27,7 @@
 
 
 
-	
+
 
 	<select id="getCarCaseActive" resultType="com.xawl.car.domain.HomeTop">
 		select url,image,title
@@ -29,6 +37,7 @@
 
 	<select id="getSearchImage" resultType="com.xawl.car.domain.HomeTop">
 		select url,image
-		from db_home where orders=0 and type=2
+		from
+		db_home where orders=0 and type=2
 	</select>
 </mapper>
