@@ -20,7 +20,16 @@ public class MaintainBusiness {
 	private int purchase; // 已经购买的人
 	private int commentcount;// 已经评价的人数
 	private String time;
+	private String PreferentialInformation;
 	
+	public String getPreferentialInformation() {
+		return PreferentialInformation;
+	}
+
+	public void setPreferentialInformation(String preferentialInformation) {
+		PreferentialInformation = preferentialInformation;
+	}
+
 	private List<Service> clean;
 	private List<Service> mainclean;
 	private List<Service> decoration;

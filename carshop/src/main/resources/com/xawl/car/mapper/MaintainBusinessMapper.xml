@@ -46,7 +46,7 @@
 	<select id="getStore" parameterType="string"
 		resultType="com.xawl.car.domain.MaintainBusiness">
 		select
-		mbid,mbname,baddress,bdate,bphone,uname,score,commentcount,time from
+		mbid,mbname,baddress,bdate,bphone,uname,score,commentcount,PreferentialInformation,time from
 		db_maintainbusiness where
 		mbid=#{mbid}
 	</select>
