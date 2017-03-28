@@ -68,7 +68,7 @@ public class UserController {
 			userService.update(user);
 
 			request.getSession().setAttribute(ResourceUtil.CURRENT_USER, user);
-			json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
+		//	json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
 			json.add("user", user);
 			return json + "";
 		} else {
@@ -157,7 +157,7 @@ public class UserController {
 		json.add("ulogin", ulogin);
 		json.add("code", para);
 		request.getSession().setAttribute("VirCode", sms);
-		json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
+	//	json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
 		return json.toString();
 	}
 
@@ -197,7 +197,7 @@ public class UserController {
 		request.getSession().removeAttribute("VirCode");
 		json.add("user", user);
 		// 默认是注册完毕后直接登录。
-		json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
+	//	json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
 		request.getSession().setAttribute(ResourceUtil.CURRENT_USER, user);
 		return json + "";
 	}

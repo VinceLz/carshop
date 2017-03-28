@@ -46,7 +46,8 @@
 	<select id="getStore" parameterType="string"
 		resultType="com.xawl.car.domain.MaintainBusiness">
 		select
-		mbid,mbname,baddress,bdate,bphone,uname,score,commentcount,PreferentialInformation,time from
+		mbid,mbname,baddress,bdate,bphone,uname,score,commentcount,PreferentialInformation,time
+		from
 		db_maintainbusiness where
 		mbid=#{mbid}
 	</select>
@@ -74,5 +75,11 @@
 		db_service where type=#{type} and mbid=#{mbid}
 	</select>
 
-
+	<select id="login" resultType="com.xawl.car.domain.MaintainBusiness"
+		parameterType="map">
+		select mbid,mbname,baddress,bdate,bphone,uname
+		from db_maintainbusiness where
+		bphone=#{mlogin} and
+		mpassword=#{mpassword}
+	</select>
 </mapper>

@@ -22,4 +22,6 @@ public interface MaintainBusinessService {
 
 	List<Service> getClean(Map map);
 
+	MaintainBusiness login(Map map);
+
 }

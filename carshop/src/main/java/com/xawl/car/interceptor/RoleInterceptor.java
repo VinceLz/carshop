@@ -15,6 +15,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.xawl.car.domain.MaintainBusiness;
 import com.xawl.car.domain.User;
 import com.xawl.car.service.UserService;
 import com.xawl.car.util.JsonUtil;
@@ -28,27 +29,24 @@ public class RoleInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-
 		// 进行检测权限
 		HandlerMethod methodHandler = (HandlerMethod) handler;
 		java.lang.reflect.Method method = methodHandler.getMethod();
 		Role role = method.getAnnotation(Role.class);
 		if (role != null) {
-			String token = request.getParameter("token");
-			System.out.println("token" + token);
+		
 			int roleCode = role.role(); // 权限码
-			if ((roleCode & Role.ROLE_USER) != 0) {// 需要登陆
+			if ((roleCode==Role.ROLE_USER)) {// 需要登陆
+				String token = request.getParameter("token");
 				User user = (User) request.getSession().getAttribute(
 						ResourceUtil.CURRENT_USER);
-				System.out.println("获取到的user" + user);
 				if (user != null && user.getToken().equals(token)) {
 					return true;
 				} else {
-					System.out.println("session过期了");
 					// session为空或者已经过期，则进行判断token
 					User usernew = userService.getUserByToken(token);
 					if (usernew == null) {
-						System.out.println("获取新用户为null");
+
 						send(response, keyUtil.SERVICE_NO_LOGIN);
 						request.getSession().invalidate();
 						return false;
@@ -65,6 +63,19 @@ public class RoleInterceptor implements HandlerInterceptor {
 					}
 				}
 
+			} else if ((roleCode==Role.ROLE_BUSINESS)) {
+				// 商家校验
+				System.out.println("我是商家拦截器");
+				MaintainBusiness business = (MaintainBusiness) request
+						.getSession().getAttribute(
+								ResourceUtil.CURRENT_BUSINESS);
+				if (business != null) {
+					return true;
+				} else {
+					send(response, keyUtil.SERVICE_NO_LOGIN);
+					request.getSession().invalidate();
+					return false;
+				}
 			}
 		}
 		return true;

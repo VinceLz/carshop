@@ -47,4 +47,9 @@ public class MaintainBusinessServiceImpl implements MaintainBusinessService {
 	public List<com.xawl.car.domain.Service> getClean(Map mbid) {
 		return maintainBusinessMapper.getClean(mbid);
 	}
+
+	@Override
+	public MaintainBusiness login(Map map) {
+		return maintainBusinessMapper.login(map);
+	}
 }

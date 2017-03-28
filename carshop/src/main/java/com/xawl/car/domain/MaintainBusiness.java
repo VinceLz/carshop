@@ -22,7 +22,16 @@ public class MaintainBusiness {
 	private String time;
 	private String PreferentialInformation;
 	private String distance;
-	
+	private String mpassword;
+
+	public String getMpassword() {
+		return mpassword;
+	}
+
+	public void setMpassword(String mpassword) {
+		this.mpassword = mpassword;
+	}
+
 	public String getDistance() {
 		return distance;
 	}
@@ -42,7 +51,7 @@ public class MaintainBusiness {
 	private List<Service> clean;
 	private List<Service> mainclean;
 	private List<Service> decoration;
-	
+
 	public List<Service> getClean() {
 		return clean;
 	}
@@ -90,8 +99,6 @@ public class MaintainBusiness {
 	public void setMbname(String mbname) {
 		this.mbname = mbname;
 	}
-
-	
 
 	public String getBshowimage() {
 		return bshowimage;

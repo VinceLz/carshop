@@ -20,4 +20,6 @@ public interface MaintainBusinessMapper {
 
 	List<com.xawl.car.domain.Service> getClean(Map mbid);
 
+	MaintainBusiness login(Map map);
+
 }
