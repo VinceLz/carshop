@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xawl.car.dao.UserMapper">
+
+	<select id="getUserByUlogin" parameterType="string"
+		resultType="com.xawl.car.domain.User">
+		select
+		uid,ulogin,uphone,uaddress,uname,ucreate,uemail,status,uimage,token
+		from db_user where ulogin=#{ulogin}
+	</select>
+
+	<insert id="insertregist" parameterType="com.xawl.car.domain.User">
+		insert into db_user
+		(ulogin,uphone,uaddress,uname,upassword,ucreate,uemail,status,uimage,token)
+		values(
+		#{ulogin},
+		#{uphone},
+		#{uaddress},
+		#{uname},
+		#{upassword},
+		#{ucreate},
+		#{uemail},
+		#{status},
+		#{uimage},
+		#{token}
+		)
+
+	</insert>
+	<update id="updateImage" parameterType="map">
+		update db_user set
+		uimage=#{uimage} where uid=#{uid}
+	</update>
+	<select id="getUser" parameterType="map" resultType="com.xawl.car.domain.User">
+		select
+		uid,ulogin,uphone,uaddress,uname,ucreate,uemail,status,uimage,token
+		from db_user where ulogin=#{ulogin} and upassword=#{upassword}
+
+	</select>
+
+	<update id="update" parameterType="com.xawl.car.domain.User">
+		update db_user
+		<set>
+			<if test="uphone !=null and uphone!=''">uphone=#{uphone},</if>
+			<if test="uaddress !=null and uaddress!=''">uaddress=#{uaddress},</if>
+			<if test="uname !=null and uname!=''">uname=#{uname},</if>
+			<if test="upassword !=null and upassword!=''">upassword=#{upassword},</if>
+			<if test="uemail !=null and uemail!=''">uemail=#{uemail}</if>
+			<if test="token !=null and token!=''">token=#{token}</if>
+		</set>
+		where uid=#{uid}
+	</update>
+	<select id="getUserByToken" parameterType="string"
+		resultType="com.xawl.car.domain.User">
+		select
+		uid,ulogin,uphone,uaddress,uname,ucreate,uemail,status,uimage,token
+		from db_user where token=#{token}
+	</select>
+</mapper>

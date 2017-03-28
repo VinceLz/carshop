@@ -9,6 +9,7 @@ import org.springframework.web.bind.support.WebArgumentResolver;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import com.xawl.car.domain.JSON;
+import com.xawl.car.interceptor.Role;
 import com.xawl.car.util.JsonUtil;
 import com.xawl.car.util.keyUtil;
 
@@ -22,7 +23,12 @@ public class JsonArguResolver implements WebArgumentResolver {
 		if (methodParameter.getParameterType().equals(JSON.class)
 				&& methodParameter.getParameterType() != null) {
 			JSONObject jsonObjec = JsonUtil.createJson(keyUtil.SERVICE_SUCCESS);
-			JSON json=new JSON(jsonObjec);
+
+			JSON json = new JSON(jsonObjec);
+			Role role = methodParameter.getMethod().getAnnotation(Role.class);
+			if (role != null) {
+				json.add("JSESSIONID", request.getSession().getId());
+			}
 			return json;
 		}
 

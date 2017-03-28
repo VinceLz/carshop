@@ -17,6 +17,7 @@ public class JSON implements Serializable {
 	public JSON(JSONObject jsonObject) {
 		jsonConfig.setJsonPropertyFilter(filter);
 		this.json = jsonObject;
+
 	}
 
 	public void add(String key, Object value) {

@@ -19,7 +19,7 @@
 
 	<mvc:annotation-driven>
 		<mvc:argument-resolvers>
-			 <bean class="com.xawl.car.resolver.JsonArguResolver" /> 
+			<bean class="com.xawl.car.resolver.JsonArguResolver" />
 		</mvc:argument-resolvers>
 		<mvc:message-converters register-defaults="true">
 			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
@@ -34,9 +34,14 @@
 			<mvc:mapping path="/**/*.action" />
 			<bean class="com.xawl.car.interceptor.TimeInterceptor"></bean>
 		</mvc:interceptor>
-		<!-- <mvc:interceptor> <mvc:mapping path="/**/*.action" /> <bean class="com.xawl.car.interceptor.JsonInterceptor" 
-			/> </mvc:interceptor> <mvc:interceptor> <mvc:mapping path="/**/*.action" 
-			/> <bean class="com.xawl.car.interceptor.RoleInterceptor"></bean> </mvc:interceptor> -->
+	<!-- 	<mvc:interceptor>
+			<mvc:mapping path="/**/*.action" /> <bean class="com.xawl.car.interceptor.JsonInterceptor" 
+				/> </mvc:interceptor> -->
+			<mvc:interceptor>
+				<mvc:mapping path="/**/*.action" />
+				<bean class="com.xawl.car.interceptor.RoleInterceptor"></bean>
+			</mvc:interceptor>
+
 	</mvc:interceptors>
 
 </beans>

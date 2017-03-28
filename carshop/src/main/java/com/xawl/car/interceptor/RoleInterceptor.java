@@ -1,8 +1,9 @@
 package com.xawl.car.interceptor;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,11 +15,15 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.xawl.car.domain.User;
+import com.xawl.car.service.UserService;
 import com.xawl.car.util.JsonUtil;
 import com.xawl.car.util.ResourceUtil;
 import com.xawl.car.util.keyUtil;
 
 public class RoleInterceptor implements HandlerInterceptor {
+	@Resource
+	private UserService userService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,
@@ -29,39 +34,37 @@ public class RoleInterceptor implements HandlerInterceptor {
 		java.lang.reflect.Method method = methodHandler.getMethod();
 		Role role = method.getAnnotation(Role.class);
 		if (role != null) {
+			String token = request.getParameter("token");
+			System.out.println("token" + token);
 			int roleCode = role.role(); // 权限码
-
-			if ((roleCode & Role.ROLE_USER) != 0) {
-				if (request.getSession()
-						.getAttribute(ResourceUtil.CURRENT_USER) != null) {
+			if ((roleCode & Role.ROLE_USER) != 0) {// 需要登陆
+				User user = (User) request.getSession().getAttribute(
+						ResourceUtil.CURRENT_USER);
+				System.out.println("获取到的user" + user);
+				if (user != null && user.getToken().equals(token)) {
 					return true;
 				} else {
-					send(response, keyUtil.SERVICE_NO_LOGIN);
-					request.getSession().invalidate();
-					return false;
+					System.out.println("session过期了");
+					// session为空或者已经过期，则进行判断token
+					User usernew = userService.getUserByToken(token);
+					if (usernew == null) {
+						System.out.println("获取新用户为null");
+						send(response, keyUtil.SERVICE_NO_LOGIN);
+						request.getSession().invalidate();
+						return false;
+					} else {
+						request.getSession().setAttribute(
+								ResourceUtil.CURRENT_USER, usernew);
+						// 登陆成功 将最新的sessionId写入request并且写回客户端
+						Cookie[] cookies = request.getCookies();
+						for (Cookie cook : cookies) {
+							if ("JSESSIONID".equals(cook.getName())) {
+								cook.setValue(request.getSession().getId());
+							}
+						}
+					}
 				}
 
-			}
-
-			if ((roleCode & Role.ROLE_ADMIN) != 0) {
-				if (request.getSession().getAttribute(
-						ResourceUtil.CURRENT_ADMIN) != null) {
-					return true;
-				} else {
-					send(response, keyUtil.SERVICE_FAIL);
-					return false;
-				}
-			}
-			if ((roleCode & Role.ROLE_BUSINESS) != 0) {
-
-				if (request.getSession().getAttribute(
-						ResourceUtil.CURRENT_BUSINESS) != null) {
-					return true;
-				} else {
-					send(response, keyUtil.SERVICE_FAIL);
-					request.getSession().invalidate();
-					return false;
-				}
 			}
 		}
 		return true;
@@ -78,6 +81,7 @@ public class RoleInterceptor implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
+
 	}
 
 	public void send(HttpServletResponse response, int status) {
@@ -86,7 +90,7 @@ public class RoleInterceptor implements HandlerInterceptor {
 		response.setCharacterEncoding("UTF-8"); // 避免乱码
 		response.setContentType("application/json;charset=UTF-8");
 		JSONObject jsonObjec = JsonUtil.createJson(status);
-		jsonObjec.element("msg", "出错");
+		jsonObjec.element("msg", "error");
 		response.setHeader("Cache-Control", "no-cache, must-revalidate");
 		try {
 			response.getWriter().print(jsonObjec.toString());

@@ -53,6 +53,9 @@ public class MaintainBusinessController {
 	@RequestMapping("/ycstore/get")
 	public String getHome2(JSON json, String mbid) {
 		MaintainBusiness store = maintainBusinessService.getStore(mbid);
+		if (store == null) {
+			return json + "";
+		}
 		List<String> image = maintainBusinessService.getImage(mbid);
 		if (image != null && image.size() != 0) {
 			store.setBimage(image);

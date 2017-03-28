@@ -21,7 +21,16 @@ public class MaintainBusiness {
 	private int commentcount;// 已经评价的人数
 	private String time;
 	private String PreferentialInformation;
+	private String distance;
 	
+	public String getDistance() {
+		return distance;
+	}
+
+	public void setDistance(String distance) {
+		this.distance = distance;
+	}
+
 	public String getPreferentialInformation() {
 		return PreferentialInformation;
 	}
