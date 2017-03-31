@@ -45,4 +45,9 @@ public class UserServiceImpl implements UserService {
 		return userMapper.getUserByToken(token);
 	}
 
+	@Override
+	public void updatePwd(User user) {
+		userMapper.updatePwd(user);
+	}
+
 }

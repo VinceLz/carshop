@@ -18,4 +18,6 @@ public interface UserMapper {
 
 	User getUserByToken(String token);
 
+	void updatePwd(User user);
+
 }

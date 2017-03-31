@@ -4,8 +4,9 @@ public class User {
 	public static int USER_STATUS_STOP = 0;
 	public static int USER_STATUS_OK = 1;
 	private int uid;
-	private String ulogin;
 	private String uphone;
+	private String ulogin;
+	
 	private String uaddress;
 	private String uname;
 	private String upassword;
@@ -17,6 +18,14 @@ public class User {
 	private String token;
 	
 	
+	public String getUlogin() {
+		return ulogin;
+	}
+
+	public void setUlogin(String ulogin) {
+		this.ulogin = ulogin;
+	}
+
 	public String getToken() {
 		return token;
 	}
@@ -41,13 +50,6 @@ public class User {
 		this.uid = uid;
 	}
 
-	public String getUlogin() {
-		return ulogin;
-	}
-
-	public void setUlogin(String ulogin) {
-		this.ulogin = ulogin;
-	}
 
 	public String getUphone() {
 		return uphone;

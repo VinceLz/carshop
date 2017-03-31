@@ -22,4 +22,12 @@ public interface MaintainBusinessMapper {
 
 	MaintainBusiness login(Map map);
 
+	void deleteByService(String sid);
+
+	
+
+	void updateService(com.xawl.car.domain.Service service);
+
+	void insertService(com.xawl.car.domain.Service service);
+
 }

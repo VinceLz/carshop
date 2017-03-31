@@ -8,8 +8,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xawl.car.domain.JSON;
@@ -17,6 +17,7 @@ import com.xawl.car.domain.MaintainBusiness;
 import com.xawl.car.domain.Service;
 import com.xawl.car.interceptor.Role;
 import com.xawl.car.service.MaintainBusinessService;
+import com.xawl.car.util.DateUtil;
 import com.xawl.car.util.ResourceUtil;
 import com.xawl.car.util.TokenUtil;
 
@@ -32,7 +33,7 @@ public class BusinessManagerController {
 	// 1 登陆接口
 	@ResponseBody
 	@RequestMapping("/manager/login")
-	public String login(JSON json, String mlogin, String mpassword,
+	public String login(JSON json, @RequestParam()String mlogin, @RequestParam()String mpassword,
 			HttpServletRequest request) {
 		Map map = new HashMap<String, String>();
 		map.put("mlogin", mlogin);
@@ -82,5 +83,40 @@ public class BusinessManagerController {
 		json.add("decoration", zh);
 		return json.toString();
 	}
+
 	// 4 查看处理自己的订单
+
+	// 删除接口
+	@ResponseBody
+	@Role(role = Role.ROLE_BUSINESS)
+	@RequestMapping("/manager/delete")
+	public String get3(JSON json, @RequestParam()String sid) {
+		// 通过商家获取到
+		maintainBusinessService.deleteByService(sid);
+		return json.toString();
+	}
+
+	// 新增
+	@ResponseBody
+	@Role(role = Role.ROLE_BUSINESS)
+	@RequestMapping("/manager/add")
+	public String get4(JSON json, Service service, MaintainBusiness business) {
+		// 通过商家获取到
+		System.out.println(service);
+		service.setMbid(business.getMbid());
+		service.setCreatdate(DateUtil.getSqlDate());
+		maintainBusinessService.insertService(service);
+		return json.toString();
+	}
+
+	// 修改
+	@ResponseBody
+	@Role(role = Role.ROLE_BUSINESS)
+	@RequestMapping("/manager/update")
+	public String get5(JSON json, Service service) {
+		// 通过商家获取到
+		maintainBusinessService.updateService(service);
+		return json.toString();
+	}
+
 }

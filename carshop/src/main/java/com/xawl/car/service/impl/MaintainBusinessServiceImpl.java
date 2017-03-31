@@ -52,4 +52,19 @@ public class MaintainBusinessServiceImpl implements MaintainBusinessService {
 	public MaintainBusiness login(Map map) {
 		return maintainBusinessMapper.login(map);
 	}
+
+	@Override
+	public void deleteByService(String sid) {
+		maintainBusinessMapper.deleteByService(sid);
+	}
+
+	@Override
+	public void updateService(com.xawl.car.domain.Service service) {
+		maintainBusinessMapper.updateService(service);
+	}
+
+	@Override
+	public void insertService(com.xawl.car.domain.Service service) {
+		maintainBusinessMapper.insertService(service);
+	}
 }

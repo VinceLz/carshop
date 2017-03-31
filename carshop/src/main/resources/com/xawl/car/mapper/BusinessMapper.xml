@@ -64,8 +64,8 @@
 		longitude * PI() / 180.0) / 2.0),
 		2.0))) * 1000.0) AS distance
 		FROM
-		view_business_stages_title
-		ORDER BY distance
+		view_business_stages_title where isHot=1
+		ORDER BY distance asc
 	</select>
 	<select id="getStore2Car" parameterType="int" resultMap="bVO">
 		SELECT

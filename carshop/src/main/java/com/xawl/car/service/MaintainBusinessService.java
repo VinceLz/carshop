@@ -24,4 +24,12 @@ public interface MaintainBusinessService {
 
 	MaintainBusiness login(Map map);
 
+	void deleteByService(String sid);
+
+
+
+	void updateService(Service service);
+
+	void insertService(Service service);
+
 }

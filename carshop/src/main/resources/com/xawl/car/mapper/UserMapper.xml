@@ -55,4 +55,7 @@
 		uid,ulogin,uphone,uaddress,uname,ucreate,uemail,status,uimage,token
 		from db_user where token=#{token}
 	</select>
+	<update id="updatePwd" parameterType="com.xawl.car.domain.User">
+		update db_user set upassword=#{upassword} where ulogin=#{ulogin}
+	</update>
 </mapper>

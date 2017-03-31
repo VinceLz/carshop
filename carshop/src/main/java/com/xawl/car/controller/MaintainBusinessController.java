@@ -8,11 +8,11 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.xawl.car.domain.Comment;
 import com.xawl.car.domain.HomeTop;
-import com.xawl.car.domain.Image;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.MaintainBusiness;
 import com.xawl.car.domain.Service;
@@ -51,7 +51,7 @@ public class MaintainBusinessController {
 
 	@ResponseBody
 	@RequestMapping("/ycstore/get")
-	public String getHome2(JSON json, String mbid) {
+	public String getHome2(JSON json, @RequestParam()String mbid) {
 		MaintainBusiness store = maintainBusinessService.getStore(mbid);
 		if (store == null) {
 			return json + "";
@@ -78,7 +78,7 @@ public class MaintainBusinessController {
 
 	@ResponseBody
 	@RequestMapping("/ycstore/getComment")
-	public String getHome3(JSON json, String mbid) {
+	public String getHome3(JSON json, @RequestParam()String mbid) {
 		List<Comment> comment = maintainBusinessService.getCommentList(mbid);
 		json.add("comment", comment);
 		return json.toString();

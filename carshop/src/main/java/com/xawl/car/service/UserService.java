@@ -16,4 +16,6 @@ public interface UserService {
 	void update(User user);
 
 	User getUserByToken(String token);
+
+	void updatePwd(User user);
 }

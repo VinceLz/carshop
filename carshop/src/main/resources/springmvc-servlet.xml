@@ -40,7 +40,7 @@
 			<mvc:interceptor>
 				<mvc:mapping path="/**/*.action" />
 				<bean class="com.xawl.car.interceptor.RoleInterceptor"></bean>
-			</mvc:interceptor>
+			</mvc:interceptor> 
 
 	</mvc:interceptors>
 

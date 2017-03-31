@@ -35,13 +35,16 @@ import com.xawl.car.util.TokenUtil;
 
 @Controller
 public class UserController {
-	public static String OK = "1";
-	public static String STOP = "0";
-
-	@Resource
-	private UserService userService;
 	private PropertiesUtil proper = new PropertiesUtil(this.getClass()
 			.getClassLoader().getResourceAsStream("config.properties"));// 读取配置文件
+	public static String OK = "1";
+	public static String STOP = "0";
+	String accountSid = proper.getProperty("accountSid");
+	String token = proper.getProperty("token");
+	String appId = proper.getProperty("appId");
+	String templateId = proper.getProperty("templateId");
+	@Resource
+	private UserService userService;
 
 	@RequestMapping(value = "/user/login")
 	public @ResponseBody
@@ -68,7 +71,8 @@ public class UserController {
 			userService.update(user);
 
 			request.getSession().setAttribute(ResourceUtil.CURRENT_USER, user);
-		//	json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
+			// json.add("JSESSIONID", request.getSession().getId());//
+			// 防止cookie不能使用，回显
 			json.add("user", user);
 			return json + "";
 		} else {
@@ -140,10 +144,7 @@ public class UserController {
 			json.add("msg", "this phone is registed");
 			return json + "";
 		}
-		String accountSid = proper.getProperty("accountSid");
-		String token = proper.getProperty("token");
-		String appId = proper.getProperty("appId");
-		String templateId = proper.getProperty("templateId");
+
 		String para = SMSUtil.getRandNum(6);
 		SMSUtil.testTemplateSMS(true, accountSid, token, appId, templateId,
 				ulogin, para);
@@ -157,14 +158,16 @@ public class UserController {
 		json.add("ulogin", ulogin);
 		json.add("code", para);
 		request.getSession().setAttribute("VirCode", sms);
-	//	json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
+		// json.add("JSESSIONID", request.getSession().getId());//
+		// 防止cookie不能使用，回显
 		return json.toString();
 	}
 
 	@RequestMapping("/user/registlast")
 	public @ResponseBody
-	Object regist2(@RequestParam() String upassword, String code, JSON json,
-			HttpServletRequest request) throws ParseException {
+	Object regist2(@RequestParam() String upassword,
+			@RequestParam() String code, JSON json, HttpServletRequest request)
+			throws ParseException {
 		SMS sms = (SMS) request.getSession().getAttribute("VirCode");
 		if (sms == null) {
 			System.out.println("-----session问题");
@@ -172,6 +175,12 @@ public class UserController {
 			json.add("msg", "time over or error");
 			return json + "";
 		}
+		if (sms.getType() != 1) {
+			// 不是注册返回
+			json.add("status", 0);
+			return json.toString();
+		}
+
 		String sendTime = sms.getSendTime();
 		// 比较时间
 		if (!DateUtil.compTo(sendTime, 10) || !code.equals(sms.getReturnCode())) {
@@ -197,51 +206,91 @@ public class UserController {
 		request.getSession().removeAttribute("VirCode");
 		json.add("user", user);
 		// 默认是注册完毕后直接登录。
-	//	json.add("JSESSIONID", request.getSession().getId());// 防止cookie不能使用，回显
+		// json.add("JSESSIONID", request.getSession().getId());//
+		// 防止cookie不能使用，回显
 		request.getSession().setAttribute(ResourceUtil.CURRENT_USER, user);
 		return json + "";
 	}
 
 	// 退出登录
-	@RequestMapping("/front/user/logout")
+	@RequestMapping("/user/logout")
 	public @ResponseBody
 	Object logout2(JSON json, HttpServletRequest request) {
 		request.getSession().invalidate();
 		return json.toString();
 	}
 
-	@RequestMapping(value = "/front/user/registCode")
-	@ResponseBody
-	public void captcha(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		CodeUtil.outputCaptcha(request, response);
-	}
-
-	@RequestMapping(value = "//user/demo")
+	@RequestMapping(value = "/user/demo")
 	@ResponseBody
 	@Role()
 	public String isRegist(JSON json) {
 		System.out.println("进来了");
-		json.add("msg","you app ok!");
+		json.add("msg", "you app ok!");
 		return json + "";
 	}
 
-	@RequestMapping(value = "/front/user/registCodeVali")
+	// 找回密码
+	@RequestMapping(value = "/user/findpwd")
 	@ResponseBody
-	public String captcha2(HttpServletRequest request, JSON json,
-			@RequestParam() String code) {
-		String ser_code = (String) request.getSession().getAttribute("imgcode"); // 获取服务器的图形验证吗
-		System.out.println(ser_code + "sessopm");
-		if (ser_code != null && ser_code.equals(code)) {
-			// 相等 正确
-			request.getSession().setAttribute("isSMS", "ok");
-			return json + "";
-		} else {
-			// 不相等
-			request.getSession().setAttribute("isSMS", "no");
+	public String findpwd(JSON json, @RequestParam() String ulogin,
+			HttpServletRequest request) {
+		User user = userService.getUserByUlogin(ulogin);
+		if (user == null) {
+			json.add("status", 0);// 已经注册成功
+			return json.toString();
+		}
+		// 找回密码逻辑
+		String para = SMSUtil.getRandNum(6);
+		SMSUtil.testTemplateSMS(true, accountSid, token, appId, templateId,
+				ulogin, para);
+		String encode = UUID.randomUUID().toString();
+		SMS sms = new SMS();
+		sms.setPhone(ulogin);
+		sms.setReturnCode(para);
+		sms.setSendTime(DateUtil.getSqlDate());
+		sms.setType(2);
+		sms.setEncode(encode);
+		json.add("ulogin", ulogin);
+		json.add("code", para);
+		request.getSession().setAttribute("VirCode", sms);
+		return json + "";
+	}
+
+	// 设置密码
+	@RequestMapping(value = "/user/setpwd")
+	@ResponseBody
+	public String findpwd2(JSON json, @RequestParam() String upassword,
+			@RequestParam() String code, HttpServletRequest request)
+			throws ParseException {
+
+		SMS sms = (SMS) request.getSession().getAttribute("VirCode");
+		if (sms == null) {
 			json.add("status", 0);
+			json.add("msg", "time over or error");
 			return json + "";
 		}
+		if (sms.getType() != 2) {
+			// 不是找回中的设置密码
+			json.add("status", 0);
+			return json.toString();
+		}
+
+		String sendTime = sms.getSendTime();
+		// 比较时间
+		if (!DateUtil.compTo(sendTime, 10) || !code.equals(sms.getReturnCode())) {
+			// 超过10分钟了或者验证码错误
+			json.add("status", 0);
+			System.out.println("-----验证码问题");
+			json.add("msg", "time over or code error");
+			return json + "";
+		}
+		String phone = sms.getPhone();
+		User user = new User();
+		user.setUlogin(phone);
+		user.setUpassword(TokenUtil.MD5(upassword));
+		userService.updatePwd(user);// 更新密码
+		request.getSession().removeAttribute("VirCode");
+		return json + "";
 
 	}
 

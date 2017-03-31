@@ -34,10 +34,15 @@ public class RoleInterceptor implements HandlerInterceptor {
 		java.lang.reflect.Method method = methodHandler.getMethod();
 		Role role = method.getAnnotation(Role.class);
 		if (role != null) {
-		
+
 			int roleCode = role.role(); // 权限码
-			if ((roleCode==Role.ROLE_USER)) {// 需要登陆
+			if ((roleCode == Role.ROLE_USER)) {// 需要登陆
 				String token = request.getParameter("token");
+				if (token == null) {
+					send(response, keyUtil.SERVICE_NO_LOGIN);
+					request.getSession().invalidate();
+					return false;
+				}
 				User user = (User) request.getSession().getAttribute(
 						ResourceUtil.CURRENT_USER);
 				if (user != null && user.getToken().equals(token)) {
@@ -63,7 +68,7 @@ public class RoleInterceptor implements HandlerInterceptor {
 					}
 				}
 
-			} else if ((roleCode==Role.ROLE_BUSINESS)) {
+			} else if ((roleCode == Role.ROLE_BUSINESS)) {
 				// 商家校验
 				System.out.println("我是商家拦截器");
 				MaintainBusiness business = (MaintainBusiness) request

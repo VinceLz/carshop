@@ -39,7 +39,8 @@
 		2.0))) * 1000.0) AS distance
 		FROM
 		view_ycbusiness_stages_title
-		ORDER BY distance
+		where isHot=1
+		ORDER BY distance asc
 	</select>
 
 
@@ -72,14 +73,45 @@
 		parameterType="map">
 		select
 		sid,sname,sdesc,oldprice,newprice,mbid from
-		db_service where type=#{type} and mbid=#{mbid}
+		db_service where type=#{type} and mbid=#{mbid} order by creatdate desc
 	</select>
 
 	<select id="login" resultType="com.xawl.car.domain.MaintainBusiness"
 		parameterType="map">
 		select mbid,mbname,baddress,bdate,bphone,uname
-		from db_maintainbusiness where
+		from
+		db_maintainbusiness where
 		bphone=#{mlogin} and
 		mpassword=#{mpassword}
 	</select>
+
+	<delete id="deleteByService" parameterType="string">
+		delete from
+		db_service where sid=#{sid}
+	</delete>
+
+	<insert id="insertService" parameterType="com.xawl.car.domain.Service">
+		insert into db_service
+		(sname,sdesc,oldprice,newprice,mbid,type,creatdate)
+		values(
+		#{sname},
+		#{sdesc},
+		#{oldprice},
+		#{newprice},
+		#{mbid},
+		#{type},
+		#{creatdate}
+		)
+	</insert>
+	<update id="updateService" parameterType="com.xawl.car.domain.Service">
+		update db_service
+		<set>
+			<if test="sname!=null and sname!=''">sname=#{sname},</if>
+			<if test="sdesc!=null and sdesc!=''">sdesc=#{sdesc},</if>
+			<if test="oldprice!=null and oldprice!=''">oldprice=#{oldprice},</if>
+			<if test="newprice!=null and newprice!=''">newprice=#{newprice},</if>
+			<if test="type!=null and type!=''">type=#{type},</if>
+		</set>
+		where sid=#{sid}
+	</update>
 </mapper>

@@ -23,20 +23,21 @@ public class JsonArguResolver implements WebArgumentResolver {
 		HttpServletRequest request = webRequest
 				.getNativeRequest(HttpServletRequest.class);
 		//
-		if (methodParameter.getParameterType().equals(JSON.class)
+		System.out.println("-----------" + methodParameter.getParameterType());
+		if (methodParameter.getParameterType() == JSON.class
 				&& methodParameter.getParameterType() != null) {
 			JSONObject jsonObjec = JsonUtil.createJson(keyUtil.SERVICE_SUCCESS);
 			JSON json = new JSON(jsonObjec);
 			return json;
-		}
-
-		if (methodParameter.getParameterType().equals(MaintainBusiness.class)) {
+		} else if (methodParameter.getParameterType() == MaintainBusiness.class
+				&& methodParameter.getParameterType() != null) {
 			// 需要注入商家
-			MaintainBusiness business = (MaintainBusiness) request
+			MaintainBusiness business = (MaintainBusiness) request.getSession()
 					.getAttribute(ResourceUtil.CURRENT_BUSINESS);
 			if (business != null) {
 				return business;
 			}
+			return UNRESOLVED;
 		}
 
 		return UNRESOLVED;

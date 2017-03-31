@@ -212,4 +212,20 @@ public class MaintainBusiness {
 		this.commentcount = commentcount;
 	}
 
+	@Override
+	public String toString() {
+		return "MaintainBusiness [mbid=" + mbid + ", mbname=" + mbname
+				+ ", bshowimage=" + bshowimage + ", bimage=" + bimage
+				+ ", baddress=" + baddress + ", bdate=" + bdate + ", bphone="
+				+ bphone + ", uname=" + uname + ", longitude=" + longitude
+				+ ", latitude=" + latitude + ", isHot=" + isHot + ", title1="
+				+ title1 + ", title2=" + title2 + ", score=" + score
+				+ ", purchase=" + purchase + ", commentcount=" + commentcount
+				+ ", time=" + time + ", PreferentialInformation="
+				+ PreferentialInformation + ", distance=" + distance
+				+ ", mpassword=" + mpassword + ", clean=" + clean
+				+ ", mainclean=" + mainclean + ", decoration=" + decoration
+				+ "]";
+	}
+
 }
