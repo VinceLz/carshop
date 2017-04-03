@@ -11,6 +11,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.MaintainBusiness;
+import com.xawl.car.domain.User;
 import com.xawl.car.interceptor.Role;
 import com.xawl.car.util.JsonUtil;
 import com.xawl.car.util.ResourceUtil;
@@ -23,7 +24,6 @@ public class JsonArguResolver implements WebArgumentResolver {
 		HttpServletRequest request = webRequest
 				.getNativeRequest(HttpServletRequest.class);
 		//
-		System.out.println("-----------" + methodParameter.getParameterType());
 		if (methodParameter.getParameterType() == JSON.class
 				&& methodParameter.getParameterType() != null) {
 			JSONObject jsonObjec = JsonUtil.createJson(keyUtil.SERVICE_SUCCESS);
@@ -36,6 +36,15 @@ public class JsonArguResolver implements WebArgumentResolver {
 					.getAttribute(ResourceUtil.CURRENT_BUSINESS);
 			if (business != null) {
 				return business;
+			}
+			return UNRESOLVED;
+		} else if (methodParameter.getParameterType() == User.class
+				&& methodParameter.getParameterType() != null) {
+			// 需要注入用户
+			User user = (User) request.getSession().getAttribute(
+					ResourceUtil.CURRENT_USER);
+			if (user != null) {
+				return user;
 			}
 			return UNRESOLVED;
 		}

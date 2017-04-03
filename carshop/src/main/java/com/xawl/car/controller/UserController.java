@@ -2,7 +2,6 @@ package com.xawl.car.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,14 +20,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.xawl.car.domain.JSON;
+import com.xawl.car.domain.RollGrant;
 import com.xawl.car.domain.SMS;
 import com.xawl.car.domain.User;
-import com.xawl.car.interceptor.Role;
+import com.xawl.car.service.RollService;
 import com.xawl.car.service.UserService;
-import com.xawl.car.util.CodeUtil;
 import com.xawl.car.util.DateUtil;
+import com.xawl.car.util.ExecutorUtil;
 import com.xawl.car.util.PropertiesUtil;
 import com.xawl.car.util.ResourceUtil;
+import com.xawl.car.util.RollUtil;
 import com.xawl.car.util.SMSUtil;
 import com.xawl.car.util.TokenUtil;
 
@@ -45,6 +45,9 @@ public class UserController {
 	String templateId = proper.getProperty("templateId");
 	@Resource
 	private UserService userService;
+
+	@Resource
+	private RollService rollService;
 
 	@RequestMapping(value = "/user/login")
 	public @ResponseBody
@@ -202,14 +205,47 @@ public class UserController {
 		String token = TokenUtil.MD5(phone + upassword + create);
 		user.setToken(token);
 		userService.insertregist(user);
-		user.setUpassword("");// 密码制空
+		// 插入完成后获取最新的用户数据
+		user = null;
+		User userByUlogin = userService.getUserByUlogin(phone);
 		request.getSession().removeAttribute("VirCode");
-		json.add("user", user);
+		json.add("user", userByUlogin);
+		final int uid = userByUlogin.getUid();
 		// 默认是注册完毕后直接登录。
 		// json.add("JSESSIONID", request.getSession().getId());//
 		// 防止cookie不能使用，回显
 		request.getSession().setAttribute(ResourceUtil.CURRENT_USER, user);
+
+		// 在这里启动一个线程去执行注册赠送优惠劵的逻辑
+
+		// 考虑是否使用线程池
+		// todo:后期考虑做成动态（优惠劵放发地点全由后台控制)
+		ExecutorUtil.getInstance().execute(new Runnable() {
+			@Override
+			public void run() {
+				// 获取注册规则类
+				RollGrant rollGrant = rollService
+						.getRollGrant(RollGrant.USER_REGIST);
+				RollUtil.insert(rollGrant, rollService, uid, null);// 根据规则进行放发优惠劵
+			}
+		});
 		return json + "";
+	}
+
+	// 退出登录
+	@RequestMapping("/user/demo")
+	public @ResponseBody
+	Object logout44(JSON json, HttpServletRequest request) {
+		ExecutorUtil.getInstance().execute(new Runnable() {
+			@Override
+			public void run() {
+				// 获取注册规则类
+				RollGrant rollGrant = rollService
+						.getRollGrant(RollGrant.USER_PAY);
+				RollUtil.insert(rollGrant, rollService, 11, 300F);// 根据规则进行放发优惠劵
+			}
+		});
+		return json.toString();
 	}
 
 	// 退出登录
@@ -220,15 +256,6 @@ public class UserController {
 		return json.toString();
 	}
 
-	@RequestMapping(value = "/user/demo")
-	@ResponseBody
-	@Role()
-	public String isRegist(JSON json) {
-		System.out.println("进来了");
-		json.add("msg", "you app ok!");
-		return json + "";
-	}
-
 	// 找回密码
 	@RequestMapping(value = "/user/findpwd")
 	@ResponseBody
@@ -236,7 +263,7 @@ public class UserController {
 			HttpServletRequest request) {
 		User user = userService.getUserByUlogin(ulogin);
 		if (user == null) {
-			json.add("status", 0);// 已经注册成功
+			json.add("status", 0);// 没有注册
 			return json.toString();
 		}
 		// 找回密码逻辑

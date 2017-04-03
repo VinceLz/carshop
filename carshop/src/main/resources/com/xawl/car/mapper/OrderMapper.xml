@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xawl.car.dao.OrderMapper">
 	<insert id="insert" parameterType="com.xawl.car.domain.Order">
-		insert into db_order (ordertime,total,status,uid,uname,bid,bname,bphone,uphone,mname,mid,gid,gname,color,buyWay,city,cardCity)
+		insert into db_order
+		(ordertime,total,status,uid,uname,bid,bname,bphone,uphone,mname,mid,gid,gname,color,buyWay,city,cardCity)
 		values(
 		#{ordertime},
 		#{total},
@@ -23,4 +24,28 @@
 		#{cardCity}
 		)
 	</insert>
+
+
+	<insert id="insertYcorder" parameterType="com.xawl.car.domain.YcOrder">
+		insert into db_yc_order
+		(bmname,price,ruid,sname,mbid,uid,uname,uphone,realprice,status)
+		values(
+		#{bmname},
+		#{price},
+		#{ruid},
+		#{sname},
+		#{mbid},
+		#{uid},
+		#{uname},
+		#{uphone},
+		#{realprice},
+		#{status}
+		)
+	</insert>
+
+	<select id="getOrders" parameterType="int" resultType="com.xawl.car.domain.YcOrder">
+		select
+		bmname,realprice,ruid,sname,yoid,mbid,uid,uname,uphone,status from
+		db_yc_order where mbid=#{mbid}
+	</select>
 </mapper>

@@ -106,7 +106,7 @@ public class RoleInterceptor implements HandlerInterceptor {
 		response.setCharacterEncoding("UTF-8"); // 避免乱码
 		response.setContentType("application/json;charset=UTF-8");
 		JSONObject jsonObjec = JsonUtil.createJson(status);
-		jsonObjec.element("msg", "error");
+		jsonObjec.element("msg", "no login or no token ");
 		response.setHeader("Cache-Control", "no-cache, must-revalidate");
 		try {
 			response.getWriter().print(jsonObjec.toString());

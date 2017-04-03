@@ -14,6 +14,14 @@ public class DateUtil {
 		return format;
 	}
 
+	public static String getSqlDate2addMouth(int addmouth) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, addmouth);
+		SimpleDateFormat myFmt1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String format = myFmt1.format(cal.getTime());
+		return format;
+	}
+
 	public static boolean compTo(String currentTime, int number)
 			throws ParseException {
 		SimpleDateFormat myFmt1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -74,5 +82,4 @@ public class DateUtil {
 		return (int) ((to - from) / (1000 * 60 * 60 * 24));
 	}
 
-	
 }

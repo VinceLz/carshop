@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.MaintainBusiness;
 import com.xawl.car.domain.Service;
+import com.xawl.car.domain.YcOrder;
 import com.xawl.car.interceptor.Role;
 import com.xawl.car.service.MaintainBusinessService;
+import com.xawl.car.service.OrderService;
 import com.xawl.car.util.DateUtil;
 import com.xawl.car.util.ResourceUtil;
 import com.xawl.car.util.TokenUtil;
@@ -30,11 +32,14 @@ public class BusinessManagerController {
 	@Resource
 	private MaintainBusinessService maintainBusinessService;
 
+	@Resource
+	private OrderService orderService;
+
 	// 1 登陆接口
 	@ResponseBody
 	@RequestMapping("/manager/login")
-	public String login(JSON json, @RequestParam()String mlogin, @RequestParam()String mpassword,
-			HttpServletRequest request) {
+	public String login(JSON json, @RequestParam() String mlogin,
+			@RequestParam() String mpassword, HttpServletRequest request) {
 		Map map = new HashMap<String, String>();
 		map.put("mlogin", mlogin);
 		map.put("mpassword", TokenUtil.MD5(mpassword));
@@ -90,7 +95,7 @@ public class BusinessManagerController {
 	@ResponseBody
 	@Role(role = Role.ROLE_BUSINESS)
 	@RequestMapping("/manager/delete")
-	public String get3(JSON json, @RequestParam()String sid) {
+	public String get3(JSON json, @RequestParam() String sid) {
 		// 通过商家获取到
 		maintainBusinessService.deleteByService(sid);
 		return json.toString();
@@ -119,4 +124,13 @@ public class BusinessManagerController {
 		return json.toString();
 	}
 
+	// 获取订单信息
+	@ResponseBody
+	@Role(role = Role.ROLE_BUSINESS)
+	@RequestMapping("/manager/orders")
+	public String get6(JSON json, MaintainBusiness business) {
+		List<YcOrder> list = orderService.getOrders(business.getMbid());// 获取所有订单
+		json.add("orders", list);
+		return json.toString();
+	}
 }

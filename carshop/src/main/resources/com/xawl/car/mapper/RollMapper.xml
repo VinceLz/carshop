@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xawl.car.dao.RollMapper">
+
+	<select id="getRollGrant" parameterType="string"
+		resultType="com.xawl.car.domain.RollGrant">
+		select rgid,rgname,status,param,handler
+		from db_roll_grant
+		where rgname=#{rgname} limit 1
+	</select>
+
+	<insert id="insertRollByUid" parameterType="com.xawl.car.domain.RollUser">
+		insert into
+		db_roll_user(uid,rid,pastdate,createdate,status) values(
+		#{uid},
+		#{rid},
+		#{pastdate},
+		#{createdate},
+		#{status}
+		)
+	</insert>
+
+	<select id="getRollByType2Uid" parameterType="map"
+		resultType="com.xawl.car.domain.VO.RollVO">
+		SELECT
+		r.rid,r.type,r.rname,r.price,ru.pastdate,ru.createdate,ru.status FROM
+		db_roll r,db_roll_user ru WHERE ru.`rid`=r.`rid` AND ru.`uid`=#{uid}
+		and (r.type=#{type} or r.type=0) and ru.status=0
+	</select>
+
+	<delete id="deleteByruid" parameterType="int">
+		update db_roll_user set
+		status=1 where ruid=#{ruid}
+	</delete>
+
+	<select id="getRollByUid" parameterType="int"
+		resultType="com.xawl.car.domain.VO.RollVO">
+		SELECT
+		r.rid,r.type,r.rname,r.price,ru.pastdate,ru.createdate,ru.status FROM
+		db_roll r,db_roll_user ru WHERE ru.`rid`=r.`rid` AND ru.`uid`=#{uid}
+	</select>
+
+
+	
+</mapper>

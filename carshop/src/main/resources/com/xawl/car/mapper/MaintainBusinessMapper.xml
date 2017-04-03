@@ -72,7 +72,7 @@
 	<select id="getClean" resultType="com.xawl.car.domain.Service"
 		parameterType="map">
 		select
-		sid,sname,sdesc,oldprice,newprice,mbid from
+		sid,sname,sdesc,oldprice,newprice,mbid,type from
 		db_service where type=#{type} and mbid=#{mbid} order by creatdate desc
 	</select>
 
