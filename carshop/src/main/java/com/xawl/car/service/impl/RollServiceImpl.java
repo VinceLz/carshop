@@ -43,6 +43,11 @@ public class RollServiceImpl implements RollService {
 		return rollMapper.getRollByUid(uid);
 	}
 
+	@Override
+	public void updateRollStatus(Map map) {
+		rollMapper.updateRollStatus(map);
+	}
+
 
 	
 

@@ -133,4 +133,18 @@ public class BusinessManagerController {
 		json.add("orders", list);
 		return json.toString();
 	}
+
+	// 商家确认订单
+	@ResponseBody
+	@Role(role = Role.ROLE_BUSINESS)
+	@RequestMapping("/manager/affirm")
+	public String get7(JSON json, MaintainBusiness business,
+			@RequestParam int yoid) {
+		Map map = new HashMap();
+		map.put("mbid", business.getMbid());
+		map.put("yoid", yoid);
+		map.put("status", YcOrder.ORDER_SUCCESS);
+		orderService.updateOrderStatusByYc(map);// 确认
+		return json.toString();
+	}
 }

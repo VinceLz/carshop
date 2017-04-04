@@ -1,6 +1,14 @@
 package com.xawl.car.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+
 import javax.annotation.Resource;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,4 +34,8 @@ public class ConsultController {
 		consultService.insert(consult);
 		return json + "";
 	}
+
+	
+
+
 }

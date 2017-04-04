@@ -40,6 +40,10 @@
 		db_roll r,db_roll_user ru WHERE ru.`rid`=r.`rid` AND ru.`uid`=#{uid}
 	</select>
 
+	<update id="updateRollStatus" parameterType="map">
+		update db_roll_user
+		set status=#{status} where ruid=#{ruid}
+	</update>
 
-	
+
 </mapper>

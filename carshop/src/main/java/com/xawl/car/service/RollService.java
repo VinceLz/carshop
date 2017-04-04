@@ -19,5 +19,7 @@ public interface RollService {
 
 	List<RollVO> getRollByUid(int uid);
 
+	void updateRollStatus(Map map);
+
 
 }

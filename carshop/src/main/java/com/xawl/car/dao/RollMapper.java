@@ -20,5 +20,7 @@ public interface RollMapper {
 
 	List<RollVO> getRollByUid(int uid);
 
+	void updateRollStatus(Map map);
+
 	
 }

@@ -3,13 +3,15 @@ package com.xawl.car.domain;
  * 养车模块中的订单
  */
 public class YcOrder {
+	public static int ORDER_NO_PAY=-1;//买家未支付钱
 	public static int ORDER_PAY=0;//买付钱了
 	public static int ORDER_FAIL=1;//卖家取消了订单
 	public static int ORDER_SUCCESS=2;//卖家确认
 	private int yoid;
+	private String goodid;
 	private String bmname;
 	private float price; //支付的钱
-	private int ruid;
+	private Integer ruid;
 	private String sname;
 	private int mbid;
 	private int uid;
@@ -17,6 +19,15 @@ public class YcOrder {
 	private String uphone;
 	private float realprice; //原价
 	private int status; 
+	
+	public String getGoodid() {
+		return goodid;
+	}
+
+	public void setGoodid(String goodid) {
+		this.goodid = goodid;
+	}
+
 	public int getYoid() {
 		return yoid;
 	}
@@ -44,10 +55,10 @@ public class YcOrder {
 	public void setPrice(float price) {
 		this.price = price;
 	}
-	public int getRuid() {
+	public Integer getRuid() {
 		return ruid;
 	}
-	public void setRuid(int ruid) {
+	public void setRuid(Integer ruid) {
 		this.ruid = ruid;
 	}
 	public String getSname() {

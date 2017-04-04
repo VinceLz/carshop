@@ -28,7 +28,7 @@
 
 	<insert id="insertYcorder" parameterType="com.xawl.car.domain.YcOrder">
 		insert into db_yc_order
-		(bmname,price,ruid,sname,mbid,uid,uname,uphone,realprice,status)
+		(bmname,price,ruid,sname,mbid,uid,uname,uphone,realprice,status,goodid)
 		values(
 		#{bmname},
 		#{price},
@@ -39,13 +39,20 @@
 		#{uname},
 		#{uphone},
 		#{realprice},
-		#{status}
+		#{status},
+		#{goodid}
 		)
 	</insert>
 
-	<select id="getOrders" parameterType="int" resultType="com.xawl.car.domain.YcOrder">
+	<select id="getOrders" parameterType="int"
+		resultType="com.xawl.car.domain.YcOrder">
 		select
-		bmname,realprice,ruid,sname,yoid,mbid,uid,uname,uphone,status from
+		bmname,realprice,ruid,sname,yoid,mbid,uid,uname,uphone,status,goodid
+		from
 		db_yc_order where mbid=#{mbid}
 	</select>
+	<update id="updateOrderStatusByYc" parameterType="map">
+		update
+		db_yc_order set status=#{status} where mbid=#{mbid} and yoid=#{yoid}
+	</update>
 </mapper>

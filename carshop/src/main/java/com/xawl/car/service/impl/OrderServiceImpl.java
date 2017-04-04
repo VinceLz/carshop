@@ -1,6 +1,7 @@
 package com.xawl.car.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,11 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<YcOrder> getOrders(int mbid) {
 		return orderMapper.getOrders(mbid);
+	}
+
+	@Override
+	public void updateOrderStatusByYc(Map map) {
+		orderMapper.updateOrderStatusByYc(map);
 	}
 
 }
