@@ -48,6 +48,11 @@ public class RollServiceImpl implements RollService {
 		rollMapper.updateRollStatus(map);
 	}
 
+	@Override
+	public RollVO getByRuid(Integer ruid) {
+		return rollMapper.getByRuid(ruid);
+	}
+
 
 	
 

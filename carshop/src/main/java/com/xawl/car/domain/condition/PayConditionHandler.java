@@ -18,10 +18,12 @@ public class PayConditionHandler implements ConditionHandler {
 			if (Float.parseFloat(split[0]) <= price
 					&& Float.parseFloat(split[1]) >= price) {
 				if (p.getRids() != null) {
+					System.out.println(p.getRids());
 					set.addAll(p.getRids());
 				}
 			}
 		}
+		System.out.println(set);
 		return set;
 	}
 

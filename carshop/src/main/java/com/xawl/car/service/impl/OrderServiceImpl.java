@@ -36,4 +36,19 @@ public class OrderServiceImpl implements OrderService {
 		orderMapper.updateOrderStatusByYc(map);
 	}
 
+	@Override
+	public YcOrder getByGoodid(String yoid) {
+		return orderMapper.getByGoodid(yoid);
+	}
+
+	@Override
+	public void updateOrderYcStatus(Map map) {
+		orderMapper.updateOrderYcStatus(map);
+	}
+
+	@Override
+	public void updateQid(YcOrder byGoodid) {
+		orderMapper.updateQid(byGoodid);
+	}
+
 }

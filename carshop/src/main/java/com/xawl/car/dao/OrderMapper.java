@@ -16,4 +16,12 @@ public interface OrderMapper {
 
 	void updateOrderStatusByYc(Map map);
 
+	void updateOrderYcStatus(Map map);
+
+	YcOrder getByGoodid(String yoid);
+
+	
+
+	void updateQid(YcOrder byGoodid);
+
 }

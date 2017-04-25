@@ -7,7 +7,7 @@
 	<select id="getHomeHot" resultType="com.xawl.car.domain.MaintainBusiness">
 		SELECT
 		mbid,mbname,baddress,bshowimage
-		,bphone,title1,title2,isHot FROM
+		,bphone,title1,title2,isHot,score FROM
 		view_ycbusiness_stages_title WHERE
 		isHot=1 order by bdate desc
 	</select>
@@ -17,8 +17,7 @@
 		resultType="com.xawl.car.domain.MaintainBusiness">
 
 		SELECT
-		mbid,mbname,bshowImage,baddress,bphone,title1,title2,
-
+		mbid,mbname,bshowImage,baddress,bphone,title1,title2,score,
 		ROUND(6378.1380 *
 		2.0 * ASIN(SQRT(
 		POW((SIN(#{latitude} * PI() / 180.0

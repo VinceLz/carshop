@@ -165,7 +165,7 @@ public class UserController {
 		// 防止cookie不能使用，回显
 		return json.toString();
 	}
-
+	
 	@RequestMapping("/user/registlast")
 	public @ResponseBody
 	Object regist2(@RequestParam() String upassword,
@@ -194,7 +194,7 @@ public class UserController {
 			return json + "";
 		}
 		String phone = sms.getPhone();
-		User user = new User();
+		final User user = new User();
 		user.setUlogin(phone);
 		user.setUphone(phone);
 		String create = DateUtil.getSqlDate();
@@ -206,11 +206,11 @@ public class UserController {
 		user.setToken(token);
 		userService.insertregist(user);
 		// 插入完成后获取最新的用户数据
-		user = null;
+		
 		User userByUlogin = userService.getUserByUlogin(phone);
 		request.getSession().removeAttribute("VirCode");
 		json.add("user", userByUlogin);
-		final int uid = userByUlogin.getUid();
+		  final int uid = userByUlogin.getUid();
 		// 默认是注册完毕后直接登录。
 		// json.add("JSESSIONID", request.getSession().getId());//
 		// 防止cookie不能使用，回显
@@ -226,9 +226,10 @@ public class UserController {
 				// 获取注册规则类
 				RollGrant rollGrant = rollService
 						.getRollGrant(RollGrant.USER_REGIST);
-				RollUtil.insert(rollGrant, rollService, uid, null);// 根据规则进行放发优惠劵
+				RollUtil.insert(rollGrant, rollService, uid, user);// 根据规则进行放发优惠劵
 			}
 		});
+	
 		return json + "";
 	}
 

@@ -37,6 +37,7 @@ public class RollController {
 		map.put("uid", user.getUid());
 		map.put("type", type);
 		List<RollVO> volist = rollService.getRollByType2Uid(map);
+		System.out.println(volist+"-----");
 		json.add("rolls", volist);
 		return json.toString();
 	}

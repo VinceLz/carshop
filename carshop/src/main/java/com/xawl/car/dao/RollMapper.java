@@ -22,5 +22,7 @@ public interface RollMapper {
 
 	void updateRollStatus(Map map);
 
+	RollVO getByRuid(Integer ruid);
+
 	
 }

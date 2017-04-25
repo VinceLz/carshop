@@ -16,7 +16,8 @@
 
 	<!-- 1.扫描包，controller -->
 	<context:component-scan base-package="com.xawl.car.controller" />
-
+	<!-- 启动对@AspectJ注解的支持 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
 	<mvc:annotation-driven>
 		<mvc:argument-resolvers>
 			<bean class="com.xawl.car.resolver.JsonArguResolver" />
@@ -34,13 +35,12 @@
 			<mvc:mapping path="/**/*.action" />
 			<bean class="com.xawl.car.interceptor.TimeInterceptor"></bean>
 		</mvc:interceptor>
-	<!-- 	<mvc:interceptor>
-			<mvc:mapping path="/**/*.action" /> <bean class="com.xawl.car.interceptor.JsonInterceptor" 
-				/> </mvc:interceptor> -->
-			<mvc:interceptor>
-				<mvc:mapping path="/**/*.action" />
-				<bean class="com.xawl.car.interceptor.RoleInterceptor"></bean>
-			</mvc:interceptor> 
+		<!-- <mvc:interceptor> <mvc:mapping path="/**/*.action" /> <bean class="com.xawl.car.interceptor.JsonInterceptor" 
+			/> </mvc:interceptor> -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.action" />
+			<bean class="com.xawl.car.interceptor.RoleInterceptor"></bean>
+		</mvc:interceptor>
 
 	</mvc:interceptors>
 

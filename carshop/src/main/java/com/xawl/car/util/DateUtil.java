@@ -1,6 +1,5 @@
 package com.xawl.car.util;
 
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,7 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-
 
 /**
  * 
@@ -21,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
  * @since JDK 1.7
  */
 public class DateUtil {
-
 
 	/**
 	 * 格式化当前系统时间（精确到秒）
@@ -48,21 +45,22 @@ public class DateUtil {
 		strYMDHMSSS = formatter.format(currentDateTime);
 		return strYMDHMSSS;
 	}
-	
+
 	/**
-     * 获取当前系统时间
-     *
-     * @param pattern 时间格式
-     *
-     * @return String
-     */
-    public static final String getNowDT() {
-    	String yyyyMMdd = StringUtils.EMPTY;
+	 * 获取当前系统时间
+	 * 
+	 * @param pattern
+	 *            时间格式
+	 * 
+	 * @return String
+	 */
+	public static final String getNowDT() {
+		String yyyyMMdd = StringUtils.EMPTY;
 		Date currentDateTime = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		yyyyMMdd = formatter.format(currentDateTime);
 		return yyyyMMdd;
-    }
+	}
 
 	public static String getSqlDate() {
 		SimpleDateFormat myFmt1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -121,6 +119,46 @@ public class DateUtil {
 		long to = df.parse(smdate).getTime();
 
 		return (int) ((to - from) / 86400000L);
+	}
+
+	public static boolean compare_date(String DATE2) {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			Date dt2 = df.parse(new Date().toLocaleString());
+			Date dt1 = df.parse(DATE2);
+			if (dt1.getTime() > dt2.getTime()) {
+				System.out.println("dt1 在dt2前");
+				return true;
+			} else if (dt1.getTime() < dt2.getTime()) {
+				System.out.println("dt1在dt2后");
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		return false;
+	}
+
+	public static void main(String[] args) {
+		System.out.println(compare_date("2017-04-25"));
+	}
+
+	public static boolean compTo2(String currentTime, int number) {
+		SimpleDateFormat myFmt1 = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date current = new Date();
+		Date parse = null;
+		try {
+			parse = myFmt1.parse(currentTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		long time = parse.getTime();
+		long time2 = current.getTime();
+
+		return (time2 - time) / 86400L <= number;
 	}
 
 }

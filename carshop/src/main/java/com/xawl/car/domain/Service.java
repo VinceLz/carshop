@@ -10,8 +10,8 @@ public class Service {
 	private int sid;
 	private String sname;
 	private String sdesc;
-	private float oldprice;
-	private float newprice;
+	private double oldprice;
+	private double newprice;
 	private int mbid;
 	private int type;
 	
@@ -35,18 +35,23 @@ public class Service {
 	public void setSdesc(String sdesc) {
 		this.sdesc = sdesc;
 	}
-	public float getOldprice() {
+	
+	public double getOldprice() {
 		return oldprice;
 	}
-	public void setOldprice(float oldprice) {
+
+	public void setOldprice(double oldprice) {
 		this.oldprice = oldprice;
 	}
-	public float getNewprice() {
+
+	public double getNewprice() {
 		return newprice;
 	}
-	public void setNewprice(float newprice) {
+
+	public void setNewprice(double newprice) {
 		this.newprice = newprice;
 	}
+
 	public int getMbid() {
 		return mbid;
 	}

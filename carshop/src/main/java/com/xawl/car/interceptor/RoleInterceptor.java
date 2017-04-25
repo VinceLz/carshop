@@ -51,20 +51,13 @@ public class RoleInterceptor implements HandlerInterceptor {
 					// session为空或者已经过期，则进行判断token
 					User usernew = userService.getUserByToken(token);
 					if (usernew == null) {
-
 						send(response, keyUtil.SERVICE_NO_LOGIN);
 						request.getSession().invalidate();
+						System.out.println("你被拦截了");
 						return false;
 					} else {
 						request.getSession().setAttribute(
 								ResourceUtil.CURRENT_USER, usernew);
-						// 登陆成功 将最新的sessionId写入request并且写回客户端
-						Cookie[] cookies = request.getCookies();
-						for (Cookie cook : cookies) {
-							if ("JSESSIONID".equals(cook.getName())) {
-								cook.setValue(request.getSession().getId());
-							}
-						}
 					}
 				}
 
