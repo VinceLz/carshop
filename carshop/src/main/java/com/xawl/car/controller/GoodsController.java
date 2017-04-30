@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.xawl.car.domain.CarColor;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.Model;
 import com.xawl.car.domain.VO.GoodsVO;
@@ -25,8 +24,6 @@ public class GoodsController {
 	@Resource
 	private ModelService modelService;
 
-	
-	
 	@RequestMapping("/car/getModels")
 	@ResponseBody
 	public String get(JSON json, @RequestParam() String gid) {
@@ -34,12 +31,11 @@ public class GoodsController {
 		GoodsVO allById = modelService.getAllById(gid);
 		System.out.println(gid);
 		List<String> image = goodsService.getImage(gid);
-		if(image!=null&&image.size()!=0)
-		{
+		if (image != null && image.size() != 0) {
 			allById.setGimage(image);
 		}
 		json.add("car", allById);
-		
+
 		return json + "";
 	}
 
@@ -48,15 +44,14 @@ public class GoodsController {
 	public String get2(JSON json, @RequestParam() String mid) {
 		// 通过gid拿到型号
 		Model main = modelService.getById(mid);
-		
+
 		List<String> image = modelService.getImage(mid);
-		if(image!=null&&image.size()!=0)
-		{
+		if (image != null && image.size() != 0) {
 			main.setMimage(image);
 		}
 		// 推荐
-		if(main==null){
-			return json+"";
+		if (main == null) {
+			return json + "";
 		}
 		Map map = new HashMap<String, Object>();
 		map.put("min", main.getGuidegprice() * 0.9);
@@ -72,7 +67,7 @@ public class GoodsController {
 	@ResponseBody
 	public String get3(JSON json, @RequestParam() String mid) {
 		// 通过gid拿到型号
-		List<CarColor> list = modelService.getColors(mid);
+		List<String> list = modelService.getColors(mid);
 		// 推荐
 		json.add("colors", list);
 		return json + "";
@@ -87,5 +82,4 @@ public class GoodsController {
 		return json + "";
 	}
 
-	
 }

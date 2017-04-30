@@ -1,7 +1,6 @@
 package com.xawl.car.service.impl;
 
 import java.lang.reflect.Method;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,23 +17,21 @@ import com.xawl.car.domain.OptionLog;
 import com.xawl.car.domain.User;
 import com.xawl.car.domain.YcOrder;
 import com.xawl.car.interceptor.OpLog;
-import com.xawl.car.service.LogService;
 import com.xawl.car.util.DateUtil;
 
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class SnapshotLogWriteService {
-	@Autowired
+//	@Autowired
 	private OptionLogMapper optionLogMapperion;
-
-	public OptionLogMapper getLogService() {
-		return optionLogMapperion;
-	}
+//
+//	public OptionLogMapper getLogService() {
+//		return optionLogMapperion;
+//	}
 
 	// 环绕通知方法
-	@Around("execution(* com.xawl.car.controller.*.*(..))")
+	//@Around("execution(* com.xawl.car.controller.*.*(..))")
 	public Object doWriteLog(ProceedingJoinPoint pjp) {
-		System.err.println("拦截方法,进入日志记录");
 		Object target = pjp.getTarget();
 		// 拦截的方法名称
 		String methodName = pjp.getSignature().getName();
@@ -96,7 +93,6 @@ public class SnapshotLogWriteService {
 					log.setContent("---发起交易请求--------");
 					break;
 				case OpLog.SERVICE_BLAK:
-
 					// 服务器回调接口
 					// 先判断服务器的回调是否正确，不正确则直接丢弃
 					HttpServletRequest request = findParamByType(
@@ -118,7 +114,7 @@ public class SnapshotLogWriteService {
 					Integer status = findParamByType(Integer.class, args,
 							parameterTypes);
 					log = new OptionLog();
-					log.setContent("---收到客户端回调  status：" + status);
+					log.setContent("---客户端回调  status：" + status);
 					log.setCreatedate(DateUtil.getSqlDate());
 					log.setGoodid(goodid2);
 					log.setUlogin(user3.getUlogin());

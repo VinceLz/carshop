@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import com.xawl.car.domain.CarColor;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.Model;
 import com.xawl.car.domain.Order;
@@ -22,9 +21,12 @@ public interface ModelMapper {
 	Model getById(Serializable mid);
 
 	List<Model> findByPrice(Map price);
+
 	List<String> getImage(Serializable id);
+
 	Order getbyMid2All(Serializable mid);
-	List<CarColor> getColors(Serializable mid);
-	
+
+	String getColors(Serializable mid);
+
 	Model getConf(Serializable id);
 }

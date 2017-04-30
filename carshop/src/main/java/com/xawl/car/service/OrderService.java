@@ -16,11 +16,9 @@ public interface OrderService {
 
 	void updateOrderStatusByYc(Map map);
 
-	void updateOrderYcStatus(Map map);
+	void updateOrderYcStatus(Map map, String goodid);
 
 	YcOrder getByGoodid(String goodid);
-
-	
 
 	void updateQid(YcOrder byGoodid);
 

@@ -1,5 +1,6 @@
 package com.xawl.car.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,14 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xawl.car.dao.OrderMapper;
+import com.xawl.car.dao.RollMapper;
 import com.xawl.car.domain.Order;
 import com.xawl.car.domain.YcOrder;
 import com.xawl.car.service.OrderService;
+import com.xawl.car.service.RollService;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrderMapper orderMapper;
+	@Autowired
+	private RollMapper rollMapper;
 
 	@Override
 	public void insert(Order order) {
@@ -23,7 +28,14 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public void insertYcorder(YcOrder ycorder) {
-		orderMapper.insertYcorder(ycorder);
+		orderMapper.insertYcorder(ycorder);// 插入订单
+		// 使用了优惠劵，占用中
+		if (ycorder.getRuid() != null) {
+			Map map = new HashMap();
+			map.put("ruid", ycorder.getRuid());
+			map.put("status", 3);
+			rollMapper.updateRollStatus(map);
+		}
 	}
 
 	@Override
@@ -42,8 +54,18 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public void updateOrderYcStatus(Map map) {
+	public void updateOrderYcStatus(Map map, String goodid) {
 		orderMapper.updateOrderYcStatus(map);
+		if (goodid != null) {
+			YcOrder byGoodid = orderMapper.getByGoodid(goodid);
+			if (byGoodid.getRuid() != null) {
+				// 使用了优惠劵，修改为已使用
+				Map map2 = new HashMap();
+				map2.put("ruid", byGoodid.getRuid());
+				map2.put("status", 1);
+				rollMapper.updateRollStatus(map2);
+			}
+		}
 	}
 
 	@Override

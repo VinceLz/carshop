@@ -140,9 +140,9 @@
 
 
 
-	<select id="getColors" parameterType="int"
-		resultType="com.xawl.car.domain.CarColor">
-		select colorName,colorKey,mid from db_color where
+	<select id="getColors" parameterType="int" resultType="string">
+		select
+		configure from db_model where
 		mid=#{mid}
 	</select>
 

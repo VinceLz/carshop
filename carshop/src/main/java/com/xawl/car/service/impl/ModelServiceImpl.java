@@ -1,6 +1,8 @@
 package com.xawl.car.service.impl;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,14 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xawl.car.dao.ModelMapper;
-import com.xawl.car.domain.CarColor;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.Model;
 import com.xawl.car.domain.Order;
 import com.xawl.car.domain.VO.GoodsVO;
 import com.xawl.car.domain.VO.ModelVO;
-import com.xawl.car.pagination.Page;
 import com.xawl.car.service.ModelService;
+import com.xawl.car.util.JsonUtils;
 
 @Service
 public class ModelServiceImpl implements ModelService {
@@ -40,8 +41,26 @@ public class ModelServiceImpl implements ModelService {
 	}
 
 	@Override
-	public List<CarColor> getColors(Serializable mid) {
-		return modelMapper.getColors(mid);
+	public List<String> getColors(Serializable mid) {
+		String config = modelMapper.getColors(mid);
+		System.out.println(config);
+		try {
+			LinkedHashMap<String, LinkedHashMap<String, String>> jsonToPojo = (LinkedHashMap<String, LinkedHashMap<String, String>>) JsonUtils
+					.jsonToPojo(config, LinkedHashMap.class);
+			String string = jsonToPojo.get("基本参数").get("车身颜色");
+			System.out.println(string);
+			if (org.apache.commons.lang.StringUtils.isEmpty(string)) {
+				return null;
+			} else {
+
+				String[] split = string.split("、");
+				List<String> asList = Arrays.asList(split);
+				return asList;
+			}
+		} catch (Exception e) {
+
+		}
+		return null;
 	}
 
 	@Override

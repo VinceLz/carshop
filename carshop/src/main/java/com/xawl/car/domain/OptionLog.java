@@ -1,6 +1,8 @@
 package com.xawl.car.domain;
 
 public class OptionLog {
+	public static int ORDER_KEEP_CAR = 0;
+	public static int ORDER_CAR = 1;
 	private Integer oid;
 	private String content;
 	private String goodid;
@@ -10,10 +12,16 @@ public class OptionLog {
 	private String result;
 	private int status;
 	private String exeception;
-	
-	
-	
-	
+	private int type;
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 	public String getExeception() {
 		return exeception;
 	}
@@ -85,6 +93,5 @@ public class OptionLog {
 	public void setCreatedate(String createdate) {
 		this.createdate = createdate;
 	}
-	
 
 }

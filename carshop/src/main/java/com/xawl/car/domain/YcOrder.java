@@ -9,7 +9,7 @@ public class YcOrder {
 	public static int ORDER_CHECK = -2;// 前台支付成功，等待服务器异步回调确认
 	public static int ORDER_FAIL = 1;// 卖家取消了订单
 	public static int ORDER_SUCCESS = 2;// 卖家确认
-	public static int ORDER_EXCEPTION = -3;// 订单异常
+	public static int ORDER_EXCEPTION = -3;// 订单异常，是订单金额与支付金额不一致
 	private int yoid;
 	private String goodid;
 	private String bmname;
