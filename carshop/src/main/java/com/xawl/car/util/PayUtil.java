@@ -10,17 +10,217 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.util.Base64;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 
 public class PayUtil {
 	public static Logger logger = LoggerFactory.getLogger(PayUtil.class);
+
+	public static Map<String, Object> queryMoneyBlack(String goodid, String qid) {
+		// 去查询
+		Map<String, String> reqMap = new HashMap<String, String>();
+		if (StringUtils.isBlank(reqMap.get("version"))) {
+			reqMap.put("version", PayConf.VERSION);
+		}
+		if (StringUtils.isBlank(reqMap.get("charset"))) {
+			reqMap.put("charset", PayConf.CHARSET);
+		}
+		if (StringUtils.isBlank(reqMap.get("signMethod"))) {
+			reqMap.put("signMethod", PayConf.SIGNMETHOD);
+		}
+		if (StringUtils.isBlank(reqMap.get("transType"))) {
+			reqMap.put("transType", "02");
+		}
+		if (StringUtils.isBlank(reqMap.get("merId"))) {
+			reqMap.put("merId", PayConf.MERID);
+		}
+		if (StringUtils.isBlank(reqMap.get("orderNumber"))) {
+			reqMap.put("orderNumber", goodid);
+		}
+		if (StringUtils.isBlank(reqMap.get("qid"))) {
+			reqMap.put("qid", qid);
+		}
+		if (StringUtils.isBlank(reqMap.get("orderTime"))) {
+			reqMap.put("orderTime", DateUtil.currentTime());
+		}
+		String charset = reqMap.get("charset");
+		if (StringUtils.isBlank(charset)) {
+			charset = PayConf.CHARSET;
+		}
+		String signKey = PayConf.SIGNKEY;
+		reqMap = Maps.filterEntries(reqMap,
+				new Predicate<Map.Entry<String, String>>() {
+					@Override
+					public boolean apply(Map.Entry<String, String> entry) {
+						return StringUtils.isNotBlank(entry.getValue());
+					}
+				});
+
+		// 生成签名
+		String sign = AppUtils.signBeforePost(reqMap, signKey, charset);
+		System.out.println("向清算平台发送支付请求:" + reqMap.toString());
+		System.out.println("原始签名：" + sign);
+		reqMap.put("sign", sign);
+		String httpPost = HttpClientUtil.httpPost(PayConf.REFUND_QUERY_URL,
+				reqMap, charset);
+		String readStringXml = readStringXml(httpPost, signKey, charset);// xml格式的响应报文
+		logger.info("收到退款同步查询响应---" + readStringXml);
+		Document doc = null;
+		try {
+			doc = DocumentHelper.parseText(readStringXml);
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+		Map<String, Object> map = Xml2Map.Dom2Map(doc);
+		return map;
+	}
+
+	public static Map<String, String> moneyBlack(String goodid, String qid) {
+		String charset = PayConf.CHARSET;
+		String signKey = PayConf.SIGNKEY;
+		// 定义接口参数
+		Map<String, String> reqMap = new HashMap<>();
+		if (StringUtils.isBlank(reqMap.get("version"))) {
+			reqMap.put("version", PayConf.VERSION);
+		}
+		if (StringUtils.isBlank(reqMap.get("charset"))) {
+			reqMap.put("charset", PayConf.CHARSET);
+		}
+		if (StringUtils.isBlank(reqMap.get("signMethod"))) {
+			reqMap.put("signMethod", PayConf.SIGNMETHOD);
+		}
+		if (StringUtils.isBlank(reqMap.get("transType"))) {
+			reqMap.put("transType", "02");
+		}
+		if (StringUtils.isBlank(reqMap.get("merId"))) {
+			reqMap.put("merId", PayConf.MERID);
+		}
+		if (StringUtils.isBlank(reqMap.get("orderTime"))) {
+			reqMap.put("orderTime", DateUtil.currentTime());
+		}
+		if (StringUtils.isBlank(reqMap.get("orderNumber"))) {
+			reqMap.put("orderNumber", goodid);
+		}
+		if (StringUtils.isBlank(reqMap.get("qid"))) {
+			reqMap.put("qid", qid);
+		}
+		if (StringUtils.isBlank(reqMap.get("refAmount"))) {
+			reqMap.put("refAmount", "1");
+		}
+		if (StringUtils.isBlank(reqMap.get("orderCurrency"))) {
+			reqMap.put("orderCurrency", "156");
+		}
+		if (StringUtils.isBlank(reqMap.get("backEndUrl"))) {
+			reqMap.put("backEndUrl",
+					"http://www.singpa.com/carshop/ycorder/moneysBack.action");
+		}
+		String[] paramKeys = new String[] { "version", "charset", "signMethod",
+				"transType", "merId", "orderTime", "orderNumber", "qid",
+				"refAmount", "orderCurrency", "sign", "backEndUrl",
+				"merReserved1" };
+
+		Map<String, String> paramMap = Maps.newTreeMap();
+		for (String key : paramKeys) {
+			paramMap.put(key, reqMap.get(key));
+		}
+		// 过滤掉空格
+		paramMap = Maps.filterEntries(paramMap,
+				new Predicate<Map.Entry<String, String>>() {
+					@Override
+					public boolean apply(Map.Entry<String, String> entry) {
+						return StringUtils.isNotBlank(entry.getValue());
+					}
+				});
+		String sign = AppUtils.signBeforePost(paramMap, signKey, charset);
+		paramMap.put("sign", sign);
+		System.out.println("向清算平台发送退款请求:" + paramMap.toString());
+		String ret = HttpClientUtil.httpPost(PayConf.REFUND_PAY_URL, paramMap,
+				charset);
+		System.out.println("清算平台同步响应:" + ret);
+		// 处理清算平台同步返回结果
+		Map<String, String> retMap = Maps.newHashMap();
+		if (StringUtils.isNotBlank(ret)) {
+			String[] retArray = ret.split("&");
+			for (String item : retArray) {
+				String[] itemArray = item.split("=");
+				retMap.put(itemArray[0], (2 == itemArray.length ? itemArray[1]
+						: StringUtils.EMPTY));
+			}
+
+		}
+		return retMap;
+	}
+
+	public static Map<String, Object> queryPay(String goodid, String qid) {
+		// 去查询
+		Map<String, String> reqMap = new HashMap<String, String>();
+		if (StringUtils.isBlank(reqMap.get("version"))) {
+			reqMap.put("version", PayConf.VERSION);
+		}
+		if (StringUtils.isBlank(reqMap.get("charset"))) {
+			reqMap.put("charset", PayConf.CHARSET);
+		}
+		if (StringUtils.isBlank(reqMap.get("signMethod"))) {
+			reqMap.put("signMethod", PayConf.SIGNMETHOD);
+		}
+		if (StringUtils.isBlank(reqMap.get("transType"))) {
+			reqMap.put("transType", "01");
+		}
+		if (StringUtils.isBlank(reqMap.get("merId"))) {
+			reqMap.put("merId", PayConf.MERID);
+		}
+		if (StringUtils.isBlank(reqMap.get("orderNumber"))) {
+			reqMap.put("orderNumber", goodid);
+		}
+		if (StringUtils.isBlank(reqMap.get("qid"))) {
+			reqMap.put("qid", qid);
+		}
+		if (StringUtils.isBlank(reqMap.get("queryTime"))) {
+			reqMap.put("queryTime", DateUtil.currentTime());
+		}
+		if (StringUtils.isBlank(reqMap.get("payType"))) {
+			reqMap.put("payType", "B2C");
+		}
+		String charset = reqMap.get("charset");
+		if (StringUtils.isBlank(charset)) {
+			charset = PayConf.CHARSET;
+		}
+		String signKey = PayConf.SIGNKEY;
+		reqMap = Maps.filterEntries(reqMap,
+				new Predicate<Map.Entry<String, String>>() {
+					@Override
+					public boolean apply(Map.Entry<String, String> entry) {
+						return StringUtils.isNotBlank(entry.getValue());
+					}
+				});
+
+		// 生成签名
+		String sign = AppUtils.signBeforePost(reqMap, signKey, charset);
+		System.out.println("向清算平台发送支付请求:" + reqMap.toString());
+		System.out.println("原始签名：" + sign);
+		reqMap.put("sign", sign);
+		String httpPost = HttpClientUtil.httpPost(PayConf.JSPT_QUERY_URL,
+				reqMap, charset);
+		System.out.println("清算平台同步响应:" + httpPost);// 返回的响应报文
+		String readStringXml = readStringXml(httpPost, signKey, charset);// xml格式的响应报文
+		logger.info("收到查询报文内容为" + readStringXml);
+		Document doc = null;
+		try {
+			doc = DocumentHelper.parseText(readStringXml);
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+
+		Map<String, Object> map = Xml2Map.Dom2Map(doc);
+		return map;
+	}
 
 	public static String payMent(String goodid, Double Price, String bankId) {
 		// 获取客户端商品信息
@@ -74,8 +274,8 @@ public class PayUtil {
 		} else {
 			String merReserved1 = null;
 			try {
-				merReserved1 = new String(reqMap.get("merReserved1")
-						.getBytes("ISO8859-1"), charset);
+				merReserved1 = new String(reqMap.get("merReserved1").getBytes(
+						"ISO8859-1"), charset);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -87,8 +287,8 @@ public class PayUtil {
 		} else {
 			String merReserved2 = null;
 			try {
-				merReserved2 = new String(reqMap.get("merReserved2")
-						.getBytes("ISO8859-1"), charset);
+				merReserved2 = new String(reqMap.get("merReserved2").getBytes(
+						"ISO8859-1"), charset);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -100,8 +300,8 @@ public class PayUtil {
 		} else {
 			String merReserved3 = null;
 			try {
-				merReserved3 = new String(reqMap.get("merReserved3")
-						.getBytes("ISO8859-1"), charset);
+				merReserved3 = new String(reqMap.get("merReserved3").getBytes(
+						"ISO8859-1"), charset);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -179,7 +379,8 @@ public class PayUtil {
 		return appmessage;
 	}
 
-	private String readStringXml(String xml, String signKey, String charset) {
+	private static String readStringXml(String xml, String signKey,
+			String charset) {
 
 		String respMsg = StringUtils.EMPTY;
 

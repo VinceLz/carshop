@@ -34,7 +34,6 @@ public class RoleInterceptor implements HandlerInterceptor {
 		java.lang.reflect.Method method = methodHandler.getMethod();
 		Role role = method.getAnnotation(Role.class);
 		if (role != null) {
-
 			int roleCode = role.role(); // 权限码
 			if ((roleCode == Role.ROLE_USER)) {// 需要登陆
 				String token = request.getParameter("token");

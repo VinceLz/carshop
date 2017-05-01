@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
+import com.xawl.car.dao.OptionLogMapper;
 import com.xawl.car.domain.Bank;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.OptionLog;
@@ -46,6 +47,7 @@ import com.xawl.car.util.DateUtil;
 import com.xawl.car.util.HttpClientUtil;
 import com.xawl.car.util.JsonUtils;
 import com.xawl.car.util.PayConf;
+import com.xawl.car.util.PayUtil;
 import com.xawl.car.util.RequestUtils;
 import com.xawl.car.util.Xml2Map;
 
@@ -64,7 +66,7 @@ public class OrderController {
 	public Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Resource
-	private OptionLogService optionLogService;
+	private OptionLogMapper optionLogMapper;
 
 	// 生成订单
 	@RequestMapping("/order/up")
@@ -125,20 +127,17 @@ public class OrderController {
 			}
 		}
 		json.add("ycorder", ycorder);// 订单
-		try {
-			orderService.insertYcorder(ycorder);// 插入成功
-			OptionLog op = new OptionLog();
-			op.setGoodid(goodid);
-			op.setUlogin(user.getUlogin());
-			op.setCreatedate(DateUtil.getSqlDate());
-			op.setContent("创建养车订单/订单价格:" + ycorder.getPrice() + "/商家:"
-					+ ycorder.getBmname() + "/手机号:" + ycorder.getUphone()
-					+ "/是否使用优惠劵" + ycorder.getYoid() == null ? "否" : "是");
-			op.setResult(json.toString());
-			op.setType(OptionLog.ORDER_KEEP_CAR);
-		} catch (Exception e) {
-			return json.toString();
-		}
+		orderService.insertYcorder(ycorder);// 插入成功
+		OptionLog op = new OptionLog();
+		op.setGoodid(goodid);
+		op.setUlogin(user.getUlogin());
+		op.setCreatedate(DateUtil.getSqlDate());
+		op.setContent(("创建养车订单/订单价格:" + ycorder.getPrice() + "/商家:"
+				+ ycorder.getBmname() + "/手机号:" + ycorder.getUphone() + "/是否使用优惠劵:")
+				+ ycorder.getYoid());
+		op.setResult(json.toString());
+		op.setType(OptionLog.ORDER_KEEP_CAR);
+		optionLogMapper.insertLog(op);
 		return json.toString();
 	}
 
@@ -151,142 +150,31 @@ public class OrderController {
 			throws Exception {
 
 		YcOrder byGoodid = orderService.getByGoodid(goodid);
+		String appmessage = PayUtil.payMent(goodid, byGoodid.getPrice(),
+				bankId.getBankId());
 
-		// 获取客户端商品信息
-		Map<String, String> reqMap = new HashMap<String, String>();
-
-		String charset = reqMap.get("charset");
-		if (StringUtils.isBlank(charset)) {
-			charset = PayConf.CHARSET;
-		}
-		String signKey = PayConf.SIGNKEY;
-
-		// 本实例模拟商户系统发送交易请求 手机demo中提交信息仅作参考在后台补全所有字段 具体使用请结合商户实际情况
-		if (StringUtils.isBlank(reqMap.get("version"))) {
-			reqMap.put("version", PayConf.VERSION);
-		}
-		if (StringUtils.isBlank(reqMap.get("charset"))) {
-			reqMap.put("charset", PayConf.CHARSET);
-		}
-		if (StringUtils.isBlank(reqMap.get("signMethod"))) {
-			reqMap.put("signMethod", PayConf.SIGNMETHOD);
-		}
-		if (StringUtils.isBlank(reqMap.get("transType"))) {
-			reqMap.put("transType", PayConf.TRANSTYPE);
-		}
-		if (StringUtils.isBlank(reqMap.get("merId"))) {
-			reqMap.put("merId", PayConf.MERID);
-		}
-		if (StringUtils.isBlank(reqMap.get("signKey"))) {
-			reqMap.put("signKey", PayConf.SIGNKEY);
-		}
-		if (StringUtils.isBlank(reqMap.get("backEndUrl"))) {
-			reqMap.put("backEndUrl", PayConf.EZFMER_BACKENDURL);
-		}
-		if (StringUtils.isBlank(reqMap.get("orderTime"))) {
-			reqMap.put("orderTime", DateUtil.currentTime());
-		}
-		if (StringUtils.isBlank(reqMap.get("orderNumber"))) {
-			reqMap.put("orderNumber", goodid);
-		}
-		if (StringUtils.isBlank(reqMap.get("orderAmount"))) {
-			logger.debug("支付的金额为" + byGoodid.getPrice() * 100 + "---"
-					+ byGoodid);
-			reqMap.put("orderAmount", (int) (byGoodid.getPrice() * 100) + "");
-		}
-		if (StringUtils.isBlank(reqMap.get("orderCurrency"))) {
-			reqMap.put("orderCurrency", "156");
-		}
-		if (StringUtils.isBlank(reqMap.get("defaultBankNumber"))) {
-			reqMap.put("defaultBankNumber", bankId.getBankId());
-		}
-		if (StringUtils.isBlank(reqMap.get("merReserved1"))) {
-			reqMap.put("merReserved1", "");
-		} else {
-			String merReserved1 = new String(reqMap.get("merReserved1")
-					.getBytes("ISO8859-1"), charset);
-			reqMap.put("merReserved1",
-					AppUtils.URLEncode(merReserved1, charset));
-		}
-		if (StringUtils.isBlank(reqMap.get("merReserved2"))) {
-			reqMap.put("merReserved2", "");
-		} else {
-			String merReserved2 = new String(reqMap.get("merReserved2")
-					.getBytes("ISO8859-1"), charset);
-			reqMap.put("merReserved2",
-					AppUtils.URLEncode(merReserved2, charset));
-		}
-		if (StringUtils.isBlank(reqMap.get("merReserved3"))) {
-			reqMap.put("merReserved3", "");
-		} else {
-			String merReserved3 = new String(reqMap.get("merReserved3")
-					.getBytes("ISO8859-1"), charset);
-			reqMap.put("merReserved3",
-					AppUtils.URLEncode(merReserved3, charset));
-		}
-		if (StringUtils.isBlank(reqMap.get("agentAmount"))) {
-			reqMap.put("agentAmount", "");
-		}
-
-		if (StringUtils.isBlank(reqMap.get("appSchema"))) {
-			reqMap.put("appSchema", "ronglian10001mobilepay");
-		}
-
-		reqMap.put("merReserved1", new String(reqMap.get("merReserved1")
-				.getBytes("ISO8859-1"), charset));
-		reqMap.put("merReserved2", new String(reqMap.get("merReserved2")
-				.getBytes("ISO8859-1"), charset));
-		reqMap.put("merReserved3", new String(reqMap.get("merReserved3")
-				.getBytes("ISO8859-1"), charset));
-
-		// 定义接口数据集合
-		Map<String, String> paramMap = Maps.newHashMap();
-
-		// 构造签名参数数组
-		String[] paramKeys = new String[] { "version", "charset", "signMethod",
-				"transType", "merId", "backEndUrl", "orderTime", "orderNumber",
-				"orderAmount", "orderCurrency", "defaultBankNumber",
-				"merReserved1", "merReserved2", "merReserved3", "agentAmount",
-				"appSchema" };
-		for (String key : paramKeys) {
-			paramMap.put(key, reqMap.get(key));
-		}
-
-		// 生成签名
-		String sign = AppUtils.signBeforePost(paramMap, signKey, charset);
-		System.out.println("向清算平台发送支付请求:" + paramMap.toString());
-		System.out.println("原始签名：" + sign);
-		paramMap.put("sign", sign);
-		logger.info("响应报文" + paramMap);
-		// 生成支付报文信息，发送报文推送请求
-		String ret = HttpClientUtil.httpPost(PayConf.EZFMER_PAY_URL, paramMap,
-				charset);
-		logger.info("收到报文推送请求响应串：" + ret);
-
-		// 响应报文解析
-		Map<String, String> msgMap = readHttpPost(ret, signKey);
-
-		logger.info("消息", msgMap);
-
-		// 去掉没用项
-		msgMap.remove("version");
-		msgMap.remove("charset");
-		msgMap.remove("signMethod");
-		msgMap.remove("transType");
-		msgMap.remove("merReserved1");
-		msgMap.remove("merReserved2");
-		msgMap.remove("merReserved3");
-		msgMap.remove("sign");
-		String appmessage = JsonUtils.toJosnFromObject(msgMap);
-		logger.info("向商户客户端发送响应结果为：" + appmessage);
 		String respCode = JSONObject.parseObject(appmessage).getString(
 				"respCode");
 		if ("00".equals(respCode)) {
 			// 成功
 			byGoodid.setQid(JSONObject.parseObject(appmessage).getString("qid"));
 			orderService.updateQid(byGoodid);
+		} else {
+			// 获取失败
+			json.add("status", 0);
 		}
 		json.add("paycode", appmessage);// 银行返回
+
+		OptionLog op = new OptionLog();
+		op.setBankname(bankId.getBankname());
+		op.setContent("用户/" + user.getUlogin() + "发起交易请求/银行返回结果/" + appmessage
+				+ "");
+		op.setCreatedate(DateUtil.getSqlDate());
+		op.setGoodid(goodid);
+		op.setResult(json.toString());
+		op.setType(OptionLog.ORDER_KEEP_CAR);
+		op.setUlogin(user.getUlogin());
+		optionLogMapper.insertLog(op);
 		return json.toString();
 	}
 
@@ -298,147 +186,36 @@ public class OrderController {
 		Map<String, String> respMap = RequestUtils.getReqMap(req);
 		System.out.println("-------退款异步回答了");
 		System.out.println(respMap);
-		return null;
+		json.add("resp", respMap);
+		return json.toString();
 	}
 
 	@RequestMapping("/ycorder/BackSelect")
 	@ResponseBody
 	public String getTop14(JSON json, String goodid, String qid)
 			throws Exception {
-		logger.info("同步查询退款消息");
-
-		// 去查询
-		Map<String, String> reqMap = new HashMap<String, String>();
-		if (StringUtils.isBlank(reqMap.get("version"))) {
-			reqMap.put("version", PayConf.VERSION);
-		}
-		if (StringUtils.isBlank(reqMap.get("charset"))) {
-			reqMap.put("charset", PayConf.CHARSET);
-		}
-		if (StringUtils.isBlank(reqMap.get("signMethod"))) {
-			reqMap.put("signMethod", PayConf.SIGNMETHOD);
-		}
-		if (StringUtils.isBlank(reqMap.get("transType"))) {
-			reqMap.put("transType", "02");
-		}
-		if (StringUtils.isBlank(reqMap.get("merId"))) {
-			reqMap.put("merId", PayConf.MERID);
-		}
-		if (StringUtils.isBlank(reqMap.get("orderNumber"))) {
-			reqMap.put("orderNumber", goodid);
-		}
-		if (StringUtils.isBlank(reqMap.get("qid"))) {
-			reqMap.put("qid", qid);
-		}
-		if (StringUtils.isBlank(reqMap.get("orderTime"))) {
-			reqMap.put("orderTime", DateUtil.currentTime());
-		}
-		String charset = reqMap.get("charset");
-		if (StringUtils.isBlank(charset)) {
-			charset = PayConf.CHARSET;
-		}
-		String signKey = PayConf.SIGNKEY;
-		reqMap = Maps.filterEntries(reqMap,
-				new Predicate<Map.Entry<String, String>>() {
-					@Override
-					public boolean apply(Map.Entry<String, String> entry) {
-						return StringUtils.isNotBlank(entry.getValue());
-					}
-				});
-
-		// 生成签名
-		String sign = AppUtils.signBeforePost(reqMap, signKey, charset);
-		System.out.println("向清算平台发送支付请求:" + reqMap.toString());
-		System.out.println("原始签名：" + sign);
-		reqMap.put("sign", sign);
-		String httpPost = HttpClientUtil.httpPost(PayConf.REFUND_QUERY_URL,
-				reqMap, charset);
-		logger.info("收到退款同步查询响应" + httpPost);
-		String readStringXml = readStringXml(httpPost, signKey, charset);// xml格式的响应报文
-		logger.info("收到退款同步查询响应2---" + readStringXml);
-		return null;
+		Map<String, Object> queryMoneyBlack = PayUtil.queryMoneyBlack(goodid,
+				qid);
+		json.add("resp", queryMoneyBlack);
+		return json.toString();
 	}
 
+	// 发起退款操作
 	@RequestMapping("/ycorder/moneyBack")
 	@ResponseBody
 	public String getTop12(JSON json, String goodid, String qid)
 			throws Exception {
-		String charset = PayConf.CHARSET;
-		String signKey = PayConf.SIGNKEY;
-		// 定义接口参数
-		Map<String, String> reqMap = new HashMap<>();
-		if (StringUtils.isBlank(reqMap.get("version"))) {
-			reqMap.put("version", PayConf.VERSION);
-		}
-		if (StringUtils.isBlank(reqMap.get("charset"))) {
-			reqMap.put("charset", PayConf.CHARSET);
-		}
-		if (StringUtils.isBlank(reqMap.get("signMethod"))) {
-			reqMap.put("signMethod", PayConf.SIGNMETHOD);
-		}
-		if (StringUtils.isBlank(reqMap.get("transType"))) {
-			reqMap.put("transType", "02");
-		}
-		if (StringUtils.isBlank(reqMap.get("merId"))) {
-			reqMap.put("merId", PayConf.MERID);
-		}
-		if (StringUtils.isBlank(reqMap.get("orderTime"))) {
-			reqMap.put("orderTime", DateUtil.currentTime());
-		}
-		if (StringUtils.isBlank(reqMap.get("orderNumber"))) {
-			reqMap.put("orderNumber", goodid);
-		}
-		if (StringUtils.isBlank(reqMap.get("qid"))) {
-			reqMap.put("qid", qid);
-		}
-		if (StringUtils.isBlank(reqMap.get("refAmount"))) {
-			reqMap.put("refAmount", "1");
-		}
-		if (StringUtils.isBlank(reqMap.get("orderCurrency"))) {
-			reqMap.put("orderCurrency", "156");
-		}
-		if (StringUtils.isBlank(reqMap.get("backEndUrl"))) {
-			reqMap.put("backEndUrl",
-					"http://www.singpa.com/carshop/ycorder/moneysBack.action");
-		}
-		String[] paramKeys = new String[] { "version", "charset", "signMethod",
-				"transType", "merId", "orderTime", "orderNumber", "qid",
-				"refAmount", "orderCurrency", "sign", "backEndUrl",
-				"merReserved1" };
 
-		Map<String, String> paramMap = Maps.newTreeMap();
-		for (String key : paramKeys) {
-			paramMap.put(key, reqMap.get(key));
-		}
-		// 过滤掉空格
-		paramMap = Maps.filterEntries(paramMap,
-				new Predicate<Map.Entry<String, String>>() {
-					@Override
-					public boolean apply(Map.Entry<String, String> entry) {
-						return StringUtils.isNotBlank(entry.getValue());
-					}
-				});
-		String sign = AppUtils.signBeforePost(paramMap, signKey, charset);
-		paramMap.put("sign", sign);
-		System.out.println("向清算平台发送退款请求:" + paramMap.toString());
-		String ret = HttpClientUtil.httpPost(PayConf.REFUND_PAY_URL, paramMap,
-				charset);
-		System.out.println("清算平台同步响应:" + ret);
-		// 处理清算平台同步返回结果
-		if (StringUtils.isNotBlank(ret)) {
-			String[] retArray = ret.split("&");
-			Map<String, String> retMap = Maps.newHashMap();
-			for (String item : retArray) {
-				String[] itemArray = item.split("=");
-				retMap.put(itemArray[0], (2 == itemArray.length ? itemArray[1]
-						: StringUtils.EMPTY));
-			}
-
-		}
-		return goodid;
+		Map<String, String> moneyBlack = PayUtil.moneyBlack(goodid, qid);
+		// 00成功
+		// 01失败
+		// 02不确定
+		String respcode = moneyBlack.get("respCode");
+		json.add("resp", moneyBlack);
+		return json.toString();
 	}
 
-	@OpLog(OpLogType = OpLog.SERVICE_BLAK)
+	// @OpLog(OpLogType = OpLog.SERVICE_BLAK)
 	// 生成提交订单的回调接口
 	@RequestMapping("/ycorder/black")
 	public String getTop9(HttpServletRequest request, HttpServletResponse resp)
@@ -475,6 +252,10 @@ public class OrderController {
 
 		logger.info("接收到异步通知报文:" + respMap.toString());
 
+		OptionLog op = new OptionLog();
+		op.setContent("收到银行异步回调");
+		op.setCreatedate(DateUtil.getSqlDate());
+		op.setType(OptionLog.ORDER_KEEP_CAR);
 		// 签名验证
 		boolean validate = AppUtils.validate(respMap, PayConf.SIGNKEY, charset);
 		if (validate) {
@@ -482,12 +263,17 @@ public class OrderController {
 			String goodid = respMap.get("orderNumber");
 			if (goodid == null) {
 				respMap.put("msg", "服务器回调异常---orderNumber为空 丢弃不处理");
+				op.setResult(respMap.toString());
+				optionLogMapper.insertLog(op);
 				return respMap.toString();
 			}
+			op.setGoodid(goodid);
 			YcOrder byGoodid = orderService.getByGoodid(goodid);
 			if (byGoodid.getStatus() == YcOrder.ORDER_PAY) {
 				// 已经校验成功 丢弃后面的消息
 				respMap.put("msg", "订单已经校验过,服务器重复回调,丢弃不处理");
+				op.setResult(respMap.toString());
+				optionLogMapper.insertLog(op);
 				return respMap.toString();
 			}
 			// 此处添加商户业务处理逻辑
@@ -503,6 +289,8 @@ public class OrderController {
 					orderService.updateOrderYcStatus(map, goodid);
 					// 并且根据订单的优惠劵状态
 					respMap.put("xawl.msg", "交易正常");
+					op.setResult(respMap.toString());
+					optionLogMapper.insertLog(op);
 					return respMap.toString();
 				} else {
 					// 不相等表示订单异常
@@ -511,30 +299,43 @@ public class OrderController {
 					map.put("goodid", goodid);
 					orderService.updateOrderYcStatus(map, null);
 					respMap.put("xawl.msg", "交易额异常");
+					op.setResult(respMap.toString());
+					optionLogMapper.insertLog(op);
 					return respMap.toString();
 				}
 			} else if ("2".equals(respMap.get("state"))) {
 				logger.info("交易失败.");
 				respMap.put("xawl.msg", "交易失败");
+				op.setResult(respMap.toString());
+				optionLogMapper.insertLog(op);
 				return respMap.toString();
 			} else {
 				// 状态码异常
 				respMap.put("xawl.msg", "状态码未知");
+				op.setResult(respMap.toString());
+				optionLogMapper.insertLog(op);
 				return respMap.toString();
 			}
 		} else {
 			respMap.put("xawl.msg", "签名验证失败");
+			op.setResult(respMap.toString());
+			optionLogMapper.insertLog(op);
 			return respMap.toString();
 		}
 	}
 
 	// 客户端支付成功回调我的接口
-	@OpLog(OpLogType = OpLog.Client_BLAK)
+	// @OpLog(OpLogType = OpLog.Client_BLAK)
 	@Role
 	@RequestMapping("/ycorder/sblack")
 	@ResponseBody
 	public String getTop10(JSON json, User user, String goodid, Integer status)
 			throws Exception {
+		OptionLog op = new OptionLog();
+		op.setCreatedate(DateUtil.getSqlDate());
+		op.setGoodid(goodid);
+		op.setType(OptionLog.ORDER_KEEP_CAR);
+		op.setUlogin(user.getUlogin());
 		// 返回4种状态
 		// 支付成功 3 0
 		// 支付失败2 -1
@@ -546,79 +347,33 @@ public class OrderController {
 			status = -1;
 		}
 		YcOrder order = orderService.getByGoodid(goodid);
+
 		if (order == null) {
 			// 查询不到这个订单
 			json.add("status", 0);
 			json.add("msg", "no order id");
+			op.setContent("客户端状态码/" + status + "/发送订单查询不到");
+			op.setResult(json.toString());
+			optionLogMapper.insertLog(op);
 			return json.toString();
 		}
 		// 先判断服务器&客户端状态全是交易完成，那么就不查询了
 		if (status == 0 && order.getStatus() == YcOrder.ORDER_PAY) {
 			// 服务器也被回调了显示成功、客户端也显示成功，那么说明这笔交易应该没问题
+			op.setResult(json.toString());
+			op.setContent("客户端状态码/" + status + "/服务器以回调,交易完毕");
+			optionLogMapper.insertLog(op);
 			return json.toString();
 		} else {
-			// 去查询
-			Map<String, String> reqMap = new HashMap<String, String>();
-			if (StringUtils.isBlank(reqMap.get("version"))) {
-				reqMap.put("version", PayConf.VERSION);
-			}
-			if (StringUtils.isBlank(reqMap.get("charset"))) {
-				reqMap.put("charset", PayConf.CHARSET);
-			}
-			if (StringUtils.isBlank(reqMap.get("signMethod"))) {
-				reqMap.put("signMethod", PayConf.SIGNMETHOD);
-			}
-			if (StringUtils.isBlank(reqMap.get("transType"))) {
-				reqMap.put("transType", "01");
-			}
-			if (StringUtils.isBlank(reqMap.get("merId"))) {
-				reqMap.put("merId", PayConf.MERID);
-			}
-			if (StringUtils.isBlank(reqMap.get("orderNumber"))) {
-				reqMap.put("orderNumber", goodid);
-			}
-			if (StringUtils.isBlank(reqMap.get("qid"))) {
-				reqMap.put("qid", order.getQid());
-			}
-			if (StringUtils.isBlank(reqMap.get("queryTime"))) {
-				reqMap.put("queryTime", DateUtil.currentTime());
-			}
-			if (StringUtils.isBlank(reqMap.get("payType"))) {
-				reqMap.put("payType", "B2C");
-			}
-			String charset = reqMap.get("charset");
-			if (StringUtils.isBlank(charset)) {
-				charset = PayConf.CHARSET;
-			}
-			String signKey = PayConf.SIGNKEY;
-			reqMap = Maps.filterEntries(reqMap,
-					new Predicate<Map.Entry<String, String>>() {
-						@Override
-						public boolean apply(Map.Entry<String, String> entry) {
-							return StringUtils.isNotBlank(entry.getValue());
-						}
-					});
-
-			// 生成签名
-			String sign = AppUtils.signBeforePost(reqMap, signKey, charset);
-			System.out.println("向清算平台发送支付请求:" + reqMap.toString());
-			System.out.println("原始签名：" + sign);
-			reqMap.put("sign", sign);
-			String httpPost = HttpClientUtil.httpPost(PayConf.JSPT_QUERY_URL,
-					reqMap, charset);
-			System.out.println("清算平台同步响应:" + httpPost);// 返回的响应报文
-			String readStringXml = readStringXml(httpPost, signKey, charset);// xml格式的响应报文
-			logger.info("收到查询报文内容为" + readStringXml);
-			Document doc = DocumentHelper.parseText(readStringXml);
-
-			Map<String, Object> map = Xml2Map.Dom2Map(doc);
-			json.add("select", map);
+			Map<String, Object> queryPay = PayUtil.queryPay(goodid,
+					order.getQid());
+			json.add("select", queryPay);
 			// 判断 map.put("status", YcOrder.ORDER_CHECK);
-			Object object = map.get("state");
+			Object object = queryPay.get("state");
 			if (object != null) {
-				if ("1".equals(map.get("state"))) {
+				if ("1".equals(queryPay.get("state"))) {
 					// 成功
-					Map<String, String> map2 = (Map) map.get("queryorder");
+					Map<String, String> map2 = (Map) queryPay.get("queryorder");
 					String pay = map2.get("payAmount");// 实付金额
 					String realpay = map2.get("orderAmount");
 					if (pay.equals(realpay)
@@ -628,10 +383,14 @@ public class OrderController {
 						map3.put("status", YcOrder.ORDER_PAY);
 						map3.put("goodid", goodid);
 						orderService.updateOrderYcStatus(map3, goodid);
+						op.setContent("客户端状态码/" + status + "/无法确认订单发起查询请求&返回结果"
+								+ queryPay.toString() + "/请求交易正常");
 					} else {
 						Map map4 = new HashMap();
 						map4.put("status", YcOrder.ORDER_EXCEPTION);
 						map4.put("goodid", goodid);
+						op.setContent("客户端状态码/" + status + "/无法确认订单发起查询请求&返回结果"
+								+ queryPay.toString() + "/请求金额异常");
 						orderService.updateOrderYcStatus(map4, null);
 					}
 				} else {
@@ -645,6 +404,8 @@ public class OrderController {
 					}
 					map5.put("goodid", goodid);
 					orderService.updateOrderYcStatus(map5, null);
+					op.setContent("客户端状态码/" + status + "/无法确认订单发起查询请求&返回结果"
+							+ queryPay.toString() + "/订单支付失败");
 				}
 			} else {
 				// 没有查询到这笔或者其他错误
@@ -652,12 +413,12 @@ public class OrderController {
 				map6.put("status", YcOrder.ORDER_NO_PAY);
 				map6.put("goodid", goodid);
 				orderService.updateOrderYcStatus(map6, null);
+				op.setContent("客户端状态码/" + status + "/无法确认订单发起查询请求&返回结果"
+						+ queryPay.toString() + "/没有查询到这笔订单");
 			}
 		}
+		op.setResult(json.toString());
+		optionLogMapper.insertLog(op);
 		return json.toString();
 	}
-
-
-
-	
 }

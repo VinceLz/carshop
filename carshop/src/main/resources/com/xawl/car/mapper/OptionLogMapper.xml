@@ -3,7 +3,7 @@
 <mapper namespace="com.xawl.car.dao.OptionLogMapper">
 	<insert id="insertLog" parameterType="com.xawl.car.domain.OptionLog">
 		insert into order_log
-		(goodid,ulogin,createdate,content,bankname,result,status,exeception)
+		(goodid,ulogin,createdate,content,bankname,result,`type`)
 		values (
 		#{goodid},
 		#{ulogin},
@@ -11,8 +11,7 @@
 		#{content},
 		#{bankname},
 		#{result},
-		#{status},
-		#{exeception}
+		#{type}
 		)
 	</insert>
 </mapper>

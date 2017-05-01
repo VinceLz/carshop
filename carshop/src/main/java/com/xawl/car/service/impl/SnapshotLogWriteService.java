@@ -122,11 +122,11 @@ public class SnapshotLogWriteService {
 				}
 				try {
 					object = pjp.proceed(args);
-					log.setResult("" + object);
-					log.setStatus(1);
+				//	log.setResult("" + object);
+				//	log.setStatus(1);
 				} catch (Throwable e) {
-					log.setStatus(0);
-					log.setExeception(e.toString());
+				//	log.setStatus(0);
+				//	log.setExeception(e.toString());
 					e.printStackTrace();
 				}
 				optionLogMapperion.insertLog(log);
