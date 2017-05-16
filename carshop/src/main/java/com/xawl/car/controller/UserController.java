@@ -248,6 +248,7 @@ public class UserController {
 		});
 		return json.toString();
 	}
+	
 
 	// 退出登录
 	@RequestMapping("/user/logout")

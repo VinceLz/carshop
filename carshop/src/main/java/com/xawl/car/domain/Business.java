@@ -22,6 +22,7 @@ public class Business {
 	private String distance;
 	private String bshowImage;
 	private Boolean isActivity = true;
+	
 
 	public Boolean getIsActivity() {
 		return isActivity;

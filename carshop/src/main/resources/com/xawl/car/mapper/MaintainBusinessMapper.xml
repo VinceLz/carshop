@@ -6,9 +6,10 @@
 
 	<select id="getHomeHot" resultType="com.xawl.car.domain.MaintainBusiness">
 		SELECT
-		mbid,mbname,baddress,bshowimage
+		mbid,mbname,baddress,bshowimage,longitude,latitude
 		,bphone,title1,title2,isHot,score FROM
-		view_ycbusiness_stages_title WHERE
+		view_ycbusiness_stages_title
+		WHERE
 		isHot=1 order by bdate desc
 	</select>
 
@@ -17,11 +18,12 @@
 		resultType="com.xawl.car.domain.MaintainBusiness">
 
 		SELECT
-		mbid,mbname,bshowImage,baddress,bphone,title1,title2,score,
+		mbid,mbname,bshowImage,baddress,bphone,title1,title2,score,latitude,longitude,
 		ROUND(6378.1380 *
 		2.0 * ASIN(SQRT(
 		POW((SIN(#{latitude} * PI() / 180.0
-		- latitude
+		-
+		latitude
 		* PI()
 		/
 		180.0) / 2.0), 2.0)
@@ -46,7 +48,7 @@
 	<select id="getStore" parameterType="string"
 		resultType="com.xawl.car.domain.MaintainBusiness">
 		select
-		mbid,mbname,baddress,bdate,bphone,uname,score,commentcount,PreferentialInformation,time
+		mbid,mbname,baddress,bdate,bphone,uname,score,commentcount,PreferentialInformation,time,longitude,latitude
 		from
 		db_maintainbusiness where
 		mbid=#{mbid}

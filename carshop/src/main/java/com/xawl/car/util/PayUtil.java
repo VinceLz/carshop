@@ -1,6 +1,8 @@
 package com.xawl.car.util;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -9,22 +11,47 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.util.Base64;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 
 public class PayUtil {
-	public static Logger logger = LoggerFactory.getLogger(PayUtil.class);
+	private static Logger logger = null;
 
-	public static Map<String, Object> queryMoneyBlack(String goodid, String qid) {
+	static {
+		String BLCX_XML_CONFIG_FILEPATH = PayUtil.class.getResource("/")
+				+ "PayLog.properties";
+		URL url = null;
+		try {
+			url = new URL(BLCX_XML_CONFIG_FILEPATH);
+			logger = Logger.getLogger(PayUtil.class);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		PropertyConfigurator.configure(url);
+	}
+
+	/**
+	 * 查询退款情况
+	 * 
+	 * @param goodid
+	 *            商品id
+	 * @param qid
+	 *            流水id
+	 * @return 银行返回参数
+	 * @throws MalformedURLException
+	 */
+	public static Map<String, Object> queryMoneyBlack(String goodid, String qid)
+			throws MalformedURLException {
 		// 去查询
+		logger.info("商品id:" + goodid + "&流水id:" + qid + "---查询退款");
 		Map<String, String> reqMap = new HashMap<String, String>();
 		if (StringUtils.isBlank(reqMap.get("version"))) {
 			reqMap.put("version", PayConf.VERSION);
@@ -65,13 +92,13 @@ public class PayUtil {
 
 		// 生成签名
 		String sign = AppUtils.signBeforePost(reqMap, signKey, charset);
-		System.out.println("向清算平台发送支付请求:" + reqMap.toString());
-		System.out.println("原始签名：" + sign);
 		reqMap.put("sign", sign);
 		String httpPost = HttpClientUtil.httpPost(PayConf.REFUND_QUERY_URL,
 				reqMap, charset);
-		String readStringXml = readStringXml(httpPost, signKey, charset);// xml格式的响应报文
-		logger.info("收到退款同步查询响应---" + readStringXml);
+		String readStringXml = readStringXml(httpPost, signKey, charset);//
+		// xml格式的响应报文
+		logger.info("商品id:" + goodid + "&流水id:" + qid + "---收到退款同步查询响应:"
+				+ readStringXml);
 		Document doc = null;
 		try {
 			doc = DocumentHelper.parseText(readStringXml);
@@ -80,9 +107,20 @@ public class PayUtil {
 		}
 		Map<String, Object> map = Xml2Map.Dom2Map(doc);
 		return map;
+
 	}
 
+	/**
+	 * 发起退款操作
+	 * 
+	 * @param goodid
+	 *            商品id
+	 * @param qid
+	 *            流水id
+	 * @return 银行返回的参数
+	 */
 	public static Map<String, String> moneyBlack(String goodid, String qid) {
+		logger.info("商品id:" + goodid + "&流水id:" + qid + "---申请退款");
 		String charset = PayConf.CHARSET;
 		String signKey = PayConf.SIGNKEY;
 		// 定义接口参数
@@ -140,10 +178,9 @@ public class PayUtil {
 				});
 		String sign = AppUtils.signBeforePost(paramMap, signKey, charset);
 		paramMap.put("sign", sign);
-		System.out.println("向清算平台发送退款请求:" + paramMap.toString());
 		String ret = HttpClientUtil.httpPost(PayConf.REFUND_PAY_URL, paramMap,
 				charset);
-		System.out.println("清算平台同步响应:" + ret);
+		logger.info("商品id:" + goodid + "&流水id:" + qid + "---同步接收到银行退款数据");
 		// 处理清算平台同步返回结果
 		Map<String, String> retMap = Maps.newHashMap();
 		if (StringUtils.isNotBlank(ret)) {
@@ -158,8 +195,18 @@ public class PayUtil {
 		return retMap;
 	}
 
+	/**
+	 * 查询支付情况
+	 * 
+	 * @param goodid
+	 *            商品id
+	 * @param qid
+	 *            流水id
+	 * @return 返回银行返回数据
+	 */
 	public static Map<String, Object> queryPay(String goodid, String qid) {
 		// 去查询
+		logger.info("商品id:" + goodid + "&流水id:" + qid + "---申请查询支付情况");
 		Map<String, String> reqMap = new HashMap<String, String>();
 		if (StringUtils.isBlank(reqMap.get("version"))) {
 			reqMap.put("version", PayConf.VERSION);
@@ -203,14 +250,11 @@ public class PayUtil {
 
 		// 生成签名
 		String sign = AppUtils.signBeforePost(reqMap, signKey, charset);
-		System.out.println("向清算平台发送支付请求:" + reqMap.toString());
-		System.out.println("原始签名：" + sign);
 		reqMap.put("sign", sign);
 		String httpPost = HttpClientUtil.httpPost(PayConf.JSPT_QUERY_URL,
 				reqMap, charset);
-		System.out.println("清算平台同步响应:" + httpPost);// 返回的响应报文
 		String readStringXml = readStringXml(httpPost, signKey, charset);// xml格式的响应报文
-		logger.info("收到查询报文内容为" + readStringXml);
+		logger.info("商品id:" + goodid + "&流水id:" + qid + "---同步收到银行查询结果");
 		Document doc = null;
 		try {
 			doc = DocumentHelper.parseText(readStringXml);
@@ -222,7 +266,21 @@ public class PayUtil {
 		return map;
 	}
 
+	/**
+	 * 请求支付接口
+	 * 
+	 * @param goodid
+	 *            商品id
+	 * @param Price
+	 *            支付金额 以元为单位
+	 * @param bankId
+	 *            支付方式id
+	 * @return
+	 */
+
 	public static String payMent(String goodid, Double Price, String bankId) {
+		logger.info("商品id:" + goodid + "&价格:" + Price + "银行id:" + bankId
+				+ "---申请支付");
 		// 获取客户端商品信息
 		Map<String, String> reqMap = new HashMap<String, String>();
 
@@ -347,23 +405,20 @@ public class PayUtil {
 		for (String key : paramKeys) {
 			paramMap.put(key, reqMap.get(key));
 		}
-
 		// 生成签名
 		String sign = AppUtils.signBeforePost(paramMap, signKey, charset);
-		System.out.println("向清算平台发送支付请求:" + paramMap.toString());
-		System.out.println("原始签名：" + sign);
 		paramMap.put("sign", sign);
-		logger.info("响应报文" + paramMap);
+		// logger.info("响应报文" + paramMap);
 		// 生成支付报文信息，发送报文推送请求
 		String ret = HttpClientUtil.httpPost(PayConf.EZFMER_PAY_URL, paramMap,
 				charset);
-		logger.info("收到报文推送请求响应串：" + ret);
+		logger.info("商品id:" + goodid + "&价格:" + Price + "银行id:" + bankId
+				+ "---收到银行支付反馈" + ret);
 
 		// 响应报文解析
 		Map<String, String> msgMap = readHttpPost(ret, signKey);
 
-		logger.info("消息", msgMap);
-
+		// logger.info("消息", msgMap);
 		// 去掉没用项
 		msgMap.remove("version");
 		msgMap.remove("charset");
@@ -374,8 +429,7 @@ public class PayUtil {
 		msgMap.remove("merReserved3");
 		msgMap.remove("sign");
 		String appmessage = JsonUtils.toJosnFromObject(msgMap);
-		logger.info("向商户客户端发送响应结果为：" + appmessage);
-
+		// logger.info("向商户客户端发送响应结果为：" + appmessage);
 		return appmessage;
 	}
 
@@ -483,7 +537,7 @@ public class PayUtil {
 		builder.append("&").append(
 				Crypto.GetMessageDigest(PayConf.SIGNKEY, "MD5",
 						msgMap.get("charset")));
-		logger.info("响应报文解析串" + builder.toString());
+		// logger.info("响应报文解析串" + builder.toString());
 		return msgMap;
 	}
 

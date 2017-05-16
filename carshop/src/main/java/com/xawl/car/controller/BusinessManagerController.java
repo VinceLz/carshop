@@ -20,6 +20,7 @@ import com.xawl.car.interceptor.Role;
 import com.xawl.car.service.MaintainBusinessService;
 import com.xawl.car.service.OrderService;
 import com.xawl.car.util.DateUtil;
+import com.xawl.car.util.DesUtil;
 import com.xawl.car.util.ResourceUtil;
 import com.xawl.car.util.TokenUtil;
 
@@ -42,7 +43,8 @@ public class BusinessManagerController {
 			@RequestParam() String mpassword, HttpServletRequest request) {
 		Map map = new HashMap<String, String>();
 		map.put("mlogin", mlogin);
-		map.put("mpassword", TokenUtil.MD5(mpassword));
+		System.out.println("mlogin" + mlogin);
+		map.put("mpassword", DesUtil.encode(DesUtil.DES, mpassword));
 		MaintainBusiness manager = maintainBusinessService.login(map);
 		if (manager != null) {
 			// 登陆成功
@@ -129,7 +131,8 @@ public class BusinessManagerController {
 	@Role(role = Role.ROLE_BUSINESS)
 	@RequestMapping("/manager/orders")
 	public String get6(JSON json, MaintainBusiness business) {
-		List<YcOrder> list = orderService.getOrders(business.getMbid());// 获取所有订单
+		// 获取付款、取消、确认订单。
+		List<YcOrder> list = orderService.getOrders(business.getMbid());
 		json.add("orders", list);
 		return json.toString();
 	}
@@ -139,11 +142,17 @@ public class BusinessManagerController {
 	@Role(role = Role.ROLE_BUSINESS)
 	@RequestMapping("/manager/affirm")
 	public String get7(JSON json, MaintainBusiness business,
-			@RequestParam int yoid) {
+			@RequestParam int yoid, int ok) {
+		// ok 传1 表示接单
+		// 0表示取消订单
 		Map map = new HashMap();
 		map.put("mbid", business.getMbid());
 		map.put("yoid", yoid);
-		map.put("status", YcOrder.ORDER_SUCCESS);
+		if (ok == 0) {
+			map.put("status", YcOrder.ORDER_FAIL);// 取消了订单
+		} else {
+			map.put("status", YcOrder.ORDER_SUCCESS);// 确认了订单
+		}
 		orderService.updateOrderStatusByYc(map);// 确认
 		return json.toString();
 	}

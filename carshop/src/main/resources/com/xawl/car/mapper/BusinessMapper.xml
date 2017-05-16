@@ -31,7 +31,7 @@
 	<select id="get" parameterType="string"
 		resultType="com.xawl.car.domain.VO.BusinessVO">
 		select
-		bid,bname,baddress,bphone,majorbusiness,bshowImage,title1,title2,isActivity
+		bid,bname,baddress,bphone,majorbusiness,bshowImage,title1,title2,isActivity,latitude,longitude
 		from
 		view_business_stages_title where bid=#{bid} limit 0,1
 	</select>
@@ -41,7 +41,7 @@
 	<select id="getHomeHot" resultType="com.xawl.car.domain.Business">
 		SELECT
 		bid,bname,baddress,bshowImage
-		,bphone,majorbusiness,title1,title2,isActivity FROM
+		,bphone,majorbusiness,title1,title2,isActivity,longitude,latitude FROM
 		view_business_stages_title WHERE
 		isHot=1 order by bdate desc
 	</select>
@@ -50,7 +50,7 @@
 		resultType="com.xawl.car.domain.Business">
 
 		SELECT
-		bid,bname,bshowImage,baddress,bphone,majorbusiness,title1,title2,isActivity,
+		bid,bname,bshowImage,baddress,bphone,majorbusiness,title1,title2,isActivity,longitude,latitude,
 
 		ROUND(6378.1380 * 2.0 * ASIN(SQRT(
 		POW((SIN(#{latitude} * PI() / 180.0

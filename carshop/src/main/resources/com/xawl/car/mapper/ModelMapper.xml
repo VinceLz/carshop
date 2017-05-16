@@ -134,7 +134,7 @@
 		</if>
 		<if test="maxprice!=null and maxprice!=''">and #{maxprice}>=gprice</if>
 		<if test="minprice!=null and minprice!=''">and gprice>=#{minprice}</if>
-		<if test="keyword!=null and keyword!=''">and keyword like '%${keyword}%'</if>
+		<if test="keyword!=null and keyword!=''">and keyword like '${keyword}%'</if>
 		) limit ${(PageNo-1)*PageSize},#{PageSize}
 	</select>
 

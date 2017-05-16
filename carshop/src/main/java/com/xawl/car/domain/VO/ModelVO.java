@@ -23,8 +23,10 @@ public class ModelVO {
 	private Double maxprice; // 最大价格
 	private Double minprice; // 最小价格
 	private Integer PageNo=1; //当前页 默认1
-	private Integer PageSize=10;
+	private Integer PageSize=10;   // 暂时将分页去掉
 	
+	
+
 	public Integer getPageSize() {
 		return PageSize;
 	}

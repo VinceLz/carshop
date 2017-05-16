@@ -25,7 +25,6 @@ public class YcOrder {
 	private int status;
 	private String qid;
 	private String date;
-	
 
 	public String getDate() {
 		return date;

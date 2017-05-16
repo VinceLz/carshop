@@ -51,7 +51,7 @@
 		select
 		bmname,realprice,ruid,sname,yoid,mbid,uid,uname,uphone,status,goodid,qid,date
 		from
-		db_yc_order where mbid=#{mbid}
+		db_yc_order where mbid=#{mbid} and status in(0,1,2)
 	</select>
 	<update id="updateOrderStatusByYc" parameterType="map">
 		update

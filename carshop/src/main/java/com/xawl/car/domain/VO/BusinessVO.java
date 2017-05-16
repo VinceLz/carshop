@@ -23,8 +23,26 @@ public class BusinessVO {
 	private Double stages24;
 	private Double stages36;
 	private String stages="分期政策"; //为了防止app坏掉，先向下兼容
+	private String longitude;
+	private String latitude;
+	
 
 
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
 
 	public String getStages() {
 		return stages;

@@ -1,22 +1,15 @@
 package com.xawl.car.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.net.util.Base64;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,9 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
 import com.xawl.car.dao.OptionLogMapper;
 import com.xawl.car.domain.Bank;
 import com.xawl.car.domain.JSON;
@@ -35,21 +25,15 @@ import com.xawl.car.domain.Order;
 import com.xawl.car.domain.User;
 import com.xawl.car.domain.YcOrder;
 import com.xawl.car.domain.VO.RollVO;
-import com.xawl.car.interceptor.OpLog;
 import com.xawl.car.interceptor.Role;
 import com.xawl.car.service.ModelService;
-import com.xawl.car.service.OptionLogService;
 import com.xawl.car.service.OrderService;
 import com.xawl.car.service.RollService;
 import com.xawl.car.util.AppUtils;
-import com.xawl.car.util.Crypto;
 import com.xawl.car.util.DateUtil;
-import com.xawl.car.util.HttpClientUtil;
-import com.xawl.car.util.JsonUtils;
 import com.xawl.car.util.PayConf;
 import com.xawl.car.util.PayUtil;
 import com.xawl.car.util.RequestUtils;
-import com.xawl.car.util.Xml2Map;
 
 /*
  * 订单

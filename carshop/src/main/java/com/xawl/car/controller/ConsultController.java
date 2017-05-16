@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.net.MalformedURLException;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
@@ -18,6 +19,7 @@ import com.xawl.car.domain.Consult;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.service.ConsultService;
 import com.xawl.car.util.DateUtil;
+import com.xawl.car.util.PayUtil;
 
 @Controller
 public class ConsultController {
@@ -35,7 +37,11 @@ public class ConsultController {
 		return json + "";
 	}
 
-	
-
+	@RequestMapping("/consult/demo")
+	@ResponseBody
+	public String demo(JSON json) throws MalformedURLException {
+		PayUtil.queryMoneyBlack(null, null);
+		return json + "";
+	}
 
 }
