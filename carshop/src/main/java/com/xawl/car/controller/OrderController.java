@@ -9,9 +9,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,7 +30,6 @@ import com.xawl.car.util.AppUtils;
 import com.xawl.car.util.DateUtil;
 import com.xawl.car.util.PayConf;
 import com.xawl.car.util.PayUtil;
-import com.xawl.car.util.RequestUtils;
 
 /*
  * 订单
@@ -44,11 +40,8 @@ public class OrderController {
 	private ModelService modelService;
 	@Resource
 	private OrderService orderService;
-
 	@Resource
 	private RollService rollService;
-	public Logger logger = LoggerFactory.getLogger(getClass());
-
 	@Resource
 	private OptionLogMapper optionLogMapper;
 
@@ -162,18 +155,37 @@ public class OrderController {
 		return json.toString();
 	}
 
+	// 银行退款异步回调
 	@RequestMapping("/ycorder/moneysBack")
 	@ResponseBody
 	public String getTop13(JSON json, HttpServletRequest req,
 			HttpServletResponse resp) throws Exception {
-		resp.setStatus(HttpServletResponse.SC_OK);// 响应清算平台通知
-		Map<String, String> respMap = RequestUtils.getReqMap(req);
-		System.out.println("-------退款异步回答了");
-		System.out.println(respMap);
-		json.add("resp", respMap);
+		Map<String, String> reqMap = PayUtil.AsyncMoneyBlack(req, resp);
+		// 签名验证
+		boolean validate = AppUtils.validate(reqMap, PayConf.SIGNKEY,
+				reqMap.get("charset"));
+		if (validate) {
+			// 签名验证通过
+			System.out.println("签名验证成功.");
+			// 此处添加商户业务处理逻辑
+			if ("1".equals(reqMap.get("state"))) {
+				// 订单退款成功
+				System.out.println("订单退款成功.");
+			} else if ("2".equals(reqMap.get("state"))) {
+				// 订单退款失败
+				System.out.println("订单退款失败.");
+			}
+		} else {
+			// 签名验证失败
+			System.out.println("签名验证失败.");
+			// 此处添加商户业务处理逻辑
+		}
+		System.out.println("接收清算平台通知消息完成.");
+		json.add("resp", reqMap);
 		return json.toString();
 	}
 
+	// 退款查询
 	@RequestMapping("/ycorder/BackSelect")
 	@ResponseBody
 	public String getTop14(JSON json, String goodid, String qid)
@@ -204,38 +216,8 @@ public class OrderController {
 	@RequestMapping("/ycorder/black")
 	public String getTop9(HttpServletRequest request, HttpServletResponse resp)
 			throws Exception {
-		resp.setStatus(HttpServletResponse.SC_OK);// 响应清算平台通知
-		System.out.println("------回调我了");
-		// 获取通知参数
-		Map<String, String> respMap = RequestUtils.getReqMap(request);
-
+		Map<String, String> respMap = PayUtil.AsyncPayInfo(request, resp);
 		String charset = respMap.get("charset");
-
-		// 转换编码
-		String merReserved = respMap.get("merReserved1");
-		if (StringUtils.isNotBlank(merReserved)) {
-			if (StringUtils.isNotBlank(merReserved)) {
-				respMap.put("merReserved1",
-						new String(merReserved.getBytes("ISO8859-1"), charset));
-			}
-		}
-		String merReserved2 = respMap.get("merReserved2");
-		if (StringUtils.isNotBlank(merReserved2)) {
-			if (StringUtils.isNotBlank(merReserved2)) {
-				respMap.put("merReserved2",
-						new String(merReserved2.getBytes("ISO8859-1"), charset));
-			}
-		}
-		String merReserved3 = respMap.get("merReserved3");
-		if (StringUtils.isNotBlank(merReserved3)) {
-			if (StringUtils.isNotBlank(merReserved3)) {
-				respMap.put("merReserved3",
-						new String(merReserved3.getBytes("ISO8859-1"), charset));
-			}
-		}
-
-		logger.info("接收到异步通知报文:" + respMap.toString());
-
 		OptionLog op = new OptionLog();
 		op.setContent("收到银行异步回调");
 		op.setCreatedate(DateUtil.getSqlDate());
@@ -243,7 +225,6 @@ public class OrderController {
 		// 签名验证
 		boolean validate = AppUtils.validate(respMap, PayConf.SIGNKEY, charset);
 		if (validate) {
-			logger.info("签名验证成功.");
 			String goodid = respMap.get("orderNumber");
 			if (goodid == null) {
 				respMap.put("msg", "服务器回调异常---orderNumber为空 丢弃不处理");
@@ -288,7 +269,6 @@ public class OrderController {
 					return respMap.toString();
 				}
 			} else if ("2".equals(respMap.get("state"))) {
-				logger.info("交易失败.");
 				respMap.put("xawl.msg", "交易失败");
 				op.setResult(respMap.toString());
 				optionLogMapper.insertLog(op);
