@@ -21,6 +21,5 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/XBPay.jar"/>
 	<classpathentry kind="output" path="src/main/webapp/WEB-INF/classes"/>
 </classpath>

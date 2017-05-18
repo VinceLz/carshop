@@ -4,12 +4,14 @@ package com.xawl.car.domain;
  * 养车模块中的订单
  */
 public class YcOrder {
-	public static int ORDER_NO_PAY = -1;// 买家未支付钱
-	public static int ORDER_PAY = 0;// 买付钱了
+	public static int ORDER_NO_PAY = -1;// 买家未支付钱  后台屏蔽(不需要注意的状态)
+	public static int ORDER_PAY = 0;// 买付钱了   需要注意的状态
 	public static int ORDER_CHECK = -2;// 前台支付成功，等待服务器异步回调确认
-	public static int ORDER_FAIL = 1;// 卖家取消了订单
+	public static int ORDER_FAIL = 1;// 卖家取消了订单 等待退款
+	public static int ORDER_BLACK=3; //退款成功 
 	public static int ORDER_SUCCESS = 2;// 卖家确认
 	public static int ORDER_EXCEPTION = -3;// 订单异常，是订单金额与支付金额不一致
+	//异常订单应该是取消订单并且退款
 	private int yoid;
 	private String goodid;
 	private String bmname;
