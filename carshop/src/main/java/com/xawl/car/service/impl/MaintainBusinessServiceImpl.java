@@ -67,4 +67,9 @@ public class MaintainBusinessServiceImpl implements MaintainBusinessService {
 	public void insertService(com.xawl.car.domain.Service service) {
 		maintainBusinessMapper.insertService(service);
 	}
+
+	@Override
+	public List<MaintainBusiness> query(int type) {
+		return maintainBusinessMapper.query(type);
+	}
 }

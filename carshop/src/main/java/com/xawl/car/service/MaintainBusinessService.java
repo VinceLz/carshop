@@ -26,10 +26,10 @@ public interface MaintainBusinessService {
 
 	void deleteByService(String sid);
 
-
-
 	void updateService(Service service);
 
 	void insertService(Service service);
+
+	List<MaintainBusiness> query(int type);
 
 }

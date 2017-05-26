@@ -2,6 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xawl.car.dao.MaintainBusinessMapper">
 
+	<select id="query" parameterType="int"
+		resultType="com.xawl.car.domain.MaintainBusiness">
+		SELECT
+		mbid,mbname,bshowImage,baddress,bphone,title1,title2,score,latitude,longitude,
+		ROUND(6378.1380 *
+		2.0 * ASIN(SQRT(
+		POW((SIN(#{latitude} * PI() / 180.0
+		-
+		latitude
+		* PI()
+		/
+		180.0) / 2.0), 2.0)
+		+ COS(latitude * PI() / 180.0)
+		*
+		COS(latitude *
+		PI() /
+		180.0)
+		* POW(
+		SIN(( #{longitude}* PI() / 180.0 -
+		longitude * PI()
+		/ 180.0)
+		/ 2.0),
+		2.0))) * 1000.0) AS distance
+		FROM
+		view_ycbusiness_stages_title
+		where mbid in(
+		SELECT
+		DISTINCT b.mbid FROM
+		db_maintainbusiness b
+		,db_service s WHERE
+		b.`mbid`=s.`mbid` AND
+		s.`type`=#{type}) ORDER BY distance asc
+	</select>
 
 
 	<select id="getHomeHot" resultType="com.xawl.car.domain.MaintainBusiness">
@@ -16,7 +49,6 @@
 
 	<select id="getHomeBydistance" parameterType="map"
 		resultType="com.xawl.car.domain.MaintainBusiness">
-
 		SELECT
 		mbid,mbname,bshowImage,baddress,bphone,title1,title2,score,latitude,longitude,
 		ROUND(6378.1380 *

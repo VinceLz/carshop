@@ -51,7 +51,7 @@ public class MaintainBusinessController {
 
 	@ResponseBody
 	@RequestMapping("/ycstore/get")
-	public String getHome2(JSON json, @RequestParam()String mbid) {
+	public String getHome2(JSON json, @RequestParam() String mbid) {
 		MaintainBusiness store = maintainBusinessService.getStore(mbid);
 		if (store == null) {
 			return json + "";
@@ -78,9 +78,17 @@ public class MaintainBusinessController {
 
 	@ResponseBody
 	@RequestMapping("/ycstore/getComment")
-	public String getHome3(JSON json, @RequestParam()String mbid) {
+	public String getHome3(JSON json, @RequestParam() String mbid) {
 		List<Comment> comment = maintainBusinessService.getCommentList(mbid);
 		json.add("comment", comment);
+		return json.toString();
+	}
+
+	@ResponseBody
+	@RequestMapping("/ycstore/query")
+	public String getHome5(JSON json, int type) {
+		List<MaintainBusiness> list = maintainBusinessService.query(type);// 查询到可以提高type对应服务的商家id
+		json.add("list", list);
 		return json.toString();
 	}
 

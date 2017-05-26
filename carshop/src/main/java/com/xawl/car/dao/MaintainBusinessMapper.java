@@ -24,10 +24,10 @@ public interface MaintainBusinessMapper {
 
 	void deleteByService(String sid);
 
-	
-
 	void updateService(com.xawl.car.domain.Service service);
 
 	void insertService(com.xawl.car.domain.Service service);
+
+	List<MaintainBusiness> query(int type);
 
 }

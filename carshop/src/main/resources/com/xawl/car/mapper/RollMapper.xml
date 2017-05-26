@@ -27,7 +27,12 @@
 		FROM
 		db_roll r,db_roll_user ru WHERE ru.`rid`=r.`rid` AND
 		ru.`uid`=#{uid}
-		and (r.type=#{type} or r.type=0) and ru.status=0
+		and r.type in
+		<foreach collection="type" close=")" open="(" separator=","
+			item="item" index="index">
+			#{item}
+		</foreach>
+		and ru.status=0
 	</select>
 
 	<delete id="deleteByruid" parameterType="int">

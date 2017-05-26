@@ -27,17 +27,24 @@ public class RollController {
 	 * 方案1：mysql存储过程+定时器 方案2：linux 的crontab定时器执行sql脚本 方案3: java 定时调度 spring的定时调度
 	 * scheduleExecutorSerice 暂时先用mysql的存储过程+定时器方案
 	 */
-	
+
 	@Role
 	@ResponseBody
 	@RequestMapping("/roll/get")
-	public String getHome2(JSON json, User user, @RequestParam() int type) {
+	public String getHome2(JSON json, User user, @RequestParam() String type) {
 		// 获取user对应的优惠劵
+		System.out.println(type);
 		Map map = new HashMap();
 		map.put("uid", user.getUid());
-		map.put("type", type);
+		String[] split = type.split(",");
+		int[] arr = new int[split.length + 1];
+		for (int i = 0; i < split.length; i++) {
+			arr[i] = Integer.valueOf(split[i]);
+		}
+		arr[split.length] = 0;// 通用优惠劵
+		map.put("type", arr);
 		List<RollVO> volist = rollService.getRollByType2Uid(map);
-		System.out.println(volist+"-----");
+		System.out.println(volist + "-----");
 		json.add("rolls", volist);
 		return json.toString();
 	}
