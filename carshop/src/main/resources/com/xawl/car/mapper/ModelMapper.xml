@@ -149,7 +149,7 @@
 
 
 	<select id="getbyMid2All" parameterType="int"
-		resultType="com.xawl.car.domain.Order">
+		resultType="com.xawl.car.domain.YcOrder">
 		SELECT
 		b.`bid`,b.`bname`,b.`bphone`,m.`mname`,m.`mid`,g.`gid`,g.`gname` FROM
 		db_model m,db_goods g,db_business b WHERE m.`gid`=g.`gid` AND

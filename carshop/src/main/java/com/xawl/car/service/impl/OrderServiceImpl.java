@@ -7,14 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.xawl.car.dao.OptionLogMapper;
 import com.xawl.car.dao.OrderMapper;
 import com.xawl.car.dao.RollMapper;
-import com.xawl.car.domain.OptionLog;
 import com.xawl.car.domain.Order;
 import com.xawl.car.domain.YcOrder;
 import com.xawl.car.service.OrderService;
-import com.xawl.car.service.RollService;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -51,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public YcOrder getByGoodid(String yoid) {
+	public List<YcOrder> getByGoodid(String yoid) {
 		return orderMapper.getByGoodid(yoid);
 	}
 
@@ -59,13 +56,15 @@ public class OrderServiceImpl implements OrderService {
 	public void updateOrderYcStatus(Map map, String goodid) {
 		orderMapper.updateOrderYcStatus(map);
 		if (goodid != null) {
-			YcOrder byGoodid = orderMapper.getByGoodid(goodid);
-			if (byGoodid.getRuid() != null) {
-				// 使用了优惠劵，修改为已使用
-				Map map2 = new HashMap();
-				map2.put("ruid", byGoodid.getRuid());
-				map2.put("status", 1);
-				rollMapper.updateRollStatus(map2);
+			List<YcOrder> byGoodid = orderMapper.getByGoodid(goodid);
+			for (YcOrder yc : byGoodid) {
+				if (yc.getRuid() != null) {
+					// 使用了优惠劵，修改为已使用
+					Map map2 = new HashMap();
+					map2.put("ruid", yc.getRuid());
+					map2.put("status", 1);
+					rollMapper.updateRollStatus(map2);
+				}
 			}
 		}
 	}
@@ -73,6 +72,12 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public void updateQid(YcOrder byGoodid) {
 		orderMapper.updateQid(byGoodid);
+	}
+
+	@Override
+	public List<YcOrder> findOrderByMap(Map map) {
+		return orderMapper.findOrderByMap(map);
+
 	}
 
 }

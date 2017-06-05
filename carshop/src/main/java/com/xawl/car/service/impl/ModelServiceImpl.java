@@ -13,6 +13,7 @@ import com.xawl.car.dao.ModelMapper;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.Model;
 import com.xawl.car.domain.Order;
+import com.xawl.car.domain.YcOrder;
 import com.xawl.car.domain.VO.GoodsVO;
 import com.xawl.car.domain.VO.ModelVO;
 import com.xawl.car.service.ModelService;
@@ -64,7 +65,7 @@ public class ModelServiceImpl implements ModelService {
 	}
 
 	@Override
-	public Order getbyMid2All(Serializable mid) {
+	public YcOrder getbyMid2All(Serializable mid) {
 		return modelMapper.getbyMid2All(mid);
 	}
 

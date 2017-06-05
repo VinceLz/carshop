@@ -18,10 +18,10 @@ public interface OrderMapper {
 
 	void updateOrderYcStatus(Map map);
 
-	YcOrder getByGoodid(String yoid);
-
-	
+	List<YcOrder> getByGoodid(String yoid);
 
 	void updateQid(YcOrder byGoodid);
+
+	List<YcOrder> findOrderByMap(Map map);
 
 }

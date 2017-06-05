@@ -1,6 +1,7 @@
 package com.xawl.car.util;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -24,8 +25,19 @@ import org.dom4j.Element;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
+import com.xawl.car.domain.YcOrder;
 
 public class PayUtil {
+
+	public static double sumPrice(List<YcOrder> list) {
+		BigDecimal priBigDecimal = new BigDecimal(0);
+		for (YcOrder ycOrder : list) {
+			priBigDecimal = priBigDecimal
+					.add(new BigDecimal(ycOrder.getPrice()));
+		}
+		return priBigDecimal.doubleValue();
+	}
+
 	private static Logger logger = null;
 
 	static {

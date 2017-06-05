@@ -18,8 +18,10 @@ public interface OrderService {
 
 	void updateOrderYcStatus(Map map, String goodid);
 
-	YcOrder getByGoodid(String goodid);
+	List<YcOrder> getByGoodid(String goodid);
 
 	void updateQid(YcOrder byGoodid);
+
+	List<YcOrder> findOrderByMap(Map map);
 
 }

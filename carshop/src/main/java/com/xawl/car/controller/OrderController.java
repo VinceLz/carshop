@@ -2,8 +2,12 @@ package com.xawl.car.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +22,6 @@ import com.xawl.car.dao.OptionLogMapper;
 import com.xawl.car.domain.Bank;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.OptionLog;
-import com.xawl.car.domain.Order;
 import com.xawl.car.domain.User;
 import com.xawl.car.domain.YcOrder;
 import com.xawl.car.domain.VO.RollVO;
@@ -45,73 +48,128 @@ public class OrderController {
 	@Resource
 	private OptionLogMapper optionLogMapper;
 
-	// 生成订单
-	@RequestMapping("/order/up")
+	/**
+	 * 返回在线订车订单
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@Role
+	@RequestMapping("/order/myOrder")
 	@ResponseBody
-	public String getTop5(JSON json, String mid, String total, Integer uid,
-			String uname, String color, String buyWay, String city,
-			String cardCity) {
-		// 通过mid 获取一些gid bid 等信息
-		Order order = modelService.getbyMid2All(mid);
-		order.setOrdertime(DateUtil.getSqlDate());
-		order.setTotal(Double.parseDouble(total));
-		order.setStatus(-1);
-		order.setUid(uid);
-		order.setUname(uname);
-		order.setColor(color);
-		order.setBuyWay(buyWay);
-		order.setCity(city);
-		order.setCardCity(cardCity);
-		orderService.insert(order);
-		return json + "";
+	public String getTop125(JSON json, User user, int type) {
+		Map map = new HashMap<String, String>();
+		map.put("uid", user.getUid());
+		map.put("type", type);
+		List<YcOrder> yc = orderService.findOrderByMap(map);
+		json.add("orders", yc);
+		return json.toString();
+
 	}
 
-	// @OpLog(OpLogType = OpLog.ORDER_CREATE)
+	// 生成订单
 	@Role
-	@RequestMapping("/ycorder/add")
+	@RequestMapping("/order/up")
 	@ResponseBody
-	public String getTop51(JSON json, YcOrder ycorder, User user)
-			throws UnsupportedEncodingException, ParseException {
-		ycorder.setUid(user.getUid());
-		ycorder.setStatus(YcOrder.ORDER_NO_PAY);
-		ycorder.setDate(new DateUtil().getNowDT());
-		String goodid = user.getUphone() + DateUtil.currentTimeToSS();// 生成订单
-		ycorder.setGoodid(goodid);
-
-		if (ycorder.getRuid() != null) {
-			// 检查优惠劵是否可用，并修改优惠劵为占用状态
-			RollVO roll = rollService.getByRuid(ycorder.getRuid());
-			// 1判断优惠劵类型与订单类型是否一致
-			if (roll.getType() != ycorder.getType()) {
-				json.add("status", 0);
-				json.add("msg", "type no");
-				return json.toString();
-			}
-			if (roll.getStatus() != 0) {
-				json.add("status", 0);
-				json.add("msg", "status no");
-				return json.toString();
-			}
-			if (roll.getCondition() > ycorder.getRealprice()) {
-				json.add("status", 0);
-				json.add("msg", "condition no");
-				return json.toString();
-			}
-			if (!DateUtil.compTo2(roll.getPastdate(), 0)) {
-				json.add("status", 0);
-				json.add("msg", "roll endtime");
-				return json.toString();
-			}
+	public String getTop5(JSON json, String orderList, User user) {
+		System.out.println("----" + orderList);
+		List<YcOrder> parseArray = com.alibaba.fastjson.JSON.parseArray(
+				orderList, YcOrder.class);
+		if (parseArray == null || parseArray.size() == 0) {
+			json.add("msg", "no param");
+			return json.toString();
 		}
-		json.add("ycorder", ycorder);// 订单
-		orderService.insertYcorder(ycorder);// 插入成功
+		YcOrder ycOrder = parseArray.get(0);
+		// 通过mid 获取一些gid bid 等信息
+		YcOrder order = modelService.getbyMid2All(ycOrder.getMid());
+		if (order == null) {
+			json.add("msg", "no car");
+			return json.toString();
+		}
+		String datas = new DateUtil().getNowDT();
+		String goodid = user.getUphone() + DateUtil.currentTimeToSS();// 生成订单
+		order.setStatus(YcOrder.ORDER_NO_PAY);
+		order.setUid(user.getUid());
+		order.setUname(user.getUname());
+		order.setUphone(user.getUphone());
+		order.setColor(ycOrder.getColor());
+		order.setBuyWay(ycOrder.getBuyWay());
+		order.setType(0);// 0表示购车 1养车
+		order.setCity(ycOrder.getCity());
+		order.setCardCity(ycOrder.getCardCity());
+		order.setGoodid(goodid);
+		order.setDate(datas);
+		order.setPrice(ycOrder.getPrice());
+		order.setSname(ycOrder.getSname());
+		order.setBmname(ycOrder.getBmname());
+		order.setBuytime(ycOrder.getBuytime());
+		System.out.println(order);
+		orderService.insertYcorder(order);
 		OptionLog op = new OptionLog();
 		op.setGoodid(goodid);
 		op.setUlogin(user.getUlogin());
 		op.setCreatedate(DateUtil.getSqlDate());
-		op.setContent(("创建养车订单/订单价格:" + ycorder.getPrice() + "/商家:"
-				+ ycorder.getBmname() + "/手机号:" + ycorder.getUphone() + "/是否使用优惠劵:")
-				+ ycorder.getYoid());
+		// 写日志,
+		op.setContent(("创建购车车订单/订单价格:" + order.getPrice() + "/商家:"
+				+ order.getBmname() + "/手机号:" + order.getUphone()));
+		op.setResult(json.toString());
+		op.setType(OptionLog.ORDER_KEEP_CAR);
+		optionLogMapper.insertLog(op);
+		json.add("ycorder", order);
+		return json + "";
+	}
+
+	/*
+	 * 此接口支持批量订单和单个订单
+	 */
+	// @OpLog(OpLogType = OpLog.ORDER_CREATE)
+	@Role
+	@RequestMapping("/ycorder/add")
+	@ResponseBody
+	public String getTop52(JSON json, String orderList, User user)
+			throws UnsupportedEncodingException, ParseException {
+		System.out.println(orderList);
+		// 获取订单集合
+		// 如果使用了优惠劵，那么默认优惠劵在订单集合中的第一个
+		// 总价
+		List<YcOrder> parseArray = com.alibaba.fastjson.JSON.parseArray(
+				orderList, YcOrder.class);
+		if (parseArray == null || parseArray.size() == 0) {
+			json.add("msg", "no order");
+			return json.toString();
+		}
+		String datas = new DateUtil().getNowDT();
+		String goodid = user.getUphone() + DateUtil.currentTimeToSS();// 生成订单
+		for (YcOrder ycorder : parseArray) {
+			ycorder.setUid(user.getUid());
+			ycorder.setStatus(YcOrder.ORDER_NO_PAY);
+			ycorder.setDate(datas);
+			ycorder.setGoodid(goodid);
+		}
+		if (parseArray != null && parseArray.size() > 0) {
+			YcOrder head = parseArray.get(0);// 获取第一个
+			if (head.getRuid() != null) {
+				// 检查优惠劵是否可用，并修改优惠劵为占用状态
+				RollVO roll = rollService.getByRuid(head.getRuid());
+				if (roll.getStatus() != 0) {
+					json.add("status", 0);
+					json.add("msg", "status no");
+					return json.toString();
+				}
+			}
+		}
+		json.add("ycorder", parseArray.get(0));// 返回订单号
+		for (YcOrder ycorder2 : parseArray) {
+			orderService.insertYcorder(ycorder2);// 插入成功
+		}
+		OptionLog op = new OptionLog();
+		op.setGoodid(goodid);
+		op.setUlogin(user.getUlogin());
+		op.setCreatedate(DateUtil.getSqlDate());
+		// 写日志,
+		op.setContent(("创建养车订单/订单价格:" + parseArray.get(0).getPrice() + "/商家:"
+				+ parseArray.get(0).getBmname() + "/手机号:" + parseArray.get(0)
+				.getUphone()));
 		op.setResult(json.toString());
 		op.setType(OptionLog.ORDER_KEEP_CAR);
 		optionLogMapper.insertLog(op);
@@ -125,17 +183,21 @@ public class OrderController {
 	@ResponseBody
 	public String getTop11(JSON json, User user, String goodid, Bank bankId)
 			throws Exception {
-
-		YcOrder byGoodid = orderService.getByGoodid(goodid);
-		String appmessage = PayUtil.payMent(goodid, byGoodid.getPrice(),
+		List<YcOrder> byGoodid = orderService.getByGoodid(goodid);// 根据订单号获取订单集合
+		System.out.println("----支付金额：" + byGoodid.get(0).getPrice());
+		double sumPrice = byGoodid.get(0).getPrice();
+		String appmessage = PayUtil.payMent(goodid, sumPrice,
 				bankId.getBankId());
 
 		String respCode = JSONObject.parseObject(appmessage).getString(
 				"respCode");
 		if ("00".equals(respCode)) {
 			// 成功
-			byGoodid.setQid(JSONObject.parseObject(appmessage).getString("qid"));
-			orderService.updateQid(byGoodid);
+			for (YcOrder order : byGoodid) {
+				order.setQid(JSONObject.parseObject(appmessage)
+						.getString("qid"));
+				orderService.updateQid(order);
+			}
 		} else {
 			// 获取失败
 			json.add("status", 0);
@@ -233,8 +295,11 @@ public class OrderController {
 				return respMap.toString();
 			}
 			op.setGoodid(goodid);
-			YcOrder byGoodid = orderService.getByGoodid(goodid);
-			if (byGoodid.getStatus() == YcOrder.ORDER_PAY) {
+			List<YcOrder> byGoodid = orderService.getByGoodid(goodid);
+			if (byGoodid == null || byGoodid.size() == 0)
+				return null;
+			// 先用第一个校验 后面保证原子性
+			if (byGoodid.get(0).getStatus() == YcOrder.ORDER_PAY) {
 				// 已经校验成功 丢弃后面的消息
 				respMap.put("msg", "订单已经校验过,服务器重复回调,丢弃不处理");
 				op.setResult(respMap.toString());
@@ -310,9 +375,9 @@ public class OrderController {
 		} else {
 			status = -1;
 		}
-		YcOrder order = orderService.getByGoodid(goodid);
+		List<YcOrder> order = orderService.getByGoodid(goodid);
 
-		if (order == null) {
+		if (order == null || order.size() == 0) {
 			// 查询不到这个订单
 			json.add("status", 0);
 			json.add("msg", "no order id");
@@ -322,15 +387,15 @@ public class OrderController {
 			return json.toString();
 		}
 		// 先判断服务器&客户端状态全是交易完成，那么就不查询了
-		if (status == 0 && order.getStatus() == YcOrder.ORDER_PAY) {
+		if (status == 0 && order.get(0).getStatus() == YcOrder.ORDER_PAY) {
 			// 服务器也被回调了显示成功、客户端也显示成功，那么说明这笔交易应该没问题
 			op.setResult(json.toString());
 			op.setContent("客户端状态码/" + status + "/服务器以回调,交易完毕");
 			optionLogMapper.insertLog(op);
 			return json.toString();
 		} else {
-			Map<String, Object> queryPay = PayUtil.queryPay(goodid,
-					order.getQid());
+			Map<String, Object> queryPay = PayUtil.queryPay(goodid, order
+					.get(0).getQid());
 			json.add("select", queryPay);
 			// 判断 map.put("status", YcOrder.ORDER_CHECK);
 			Object object = queryPay.get("state");
@@ -341,7 +406,7 @@ public class OrderController {
 					String pay = map2.get("payAmount");// 实付金额
 					String realpay = map2.get("orderAmount");
 					if (pay.equals(realpay)
-							&& pay.equals((int) (order.getPrice() * 100))) {
+							&& pay.equals((int) (order.get(0).getPrice() * 100))) {
 						// 正常
 						Map map3 = new HashMap();
 						map3.put("status", YcOrder.ORDER_PAY);
