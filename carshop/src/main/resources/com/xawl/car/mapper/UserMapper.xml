@@ -44,7 +44,7 @@
 			<if test="uaddress !=null and uaddress!=''">uaddress=#{uaddress},</if>
 			<if test="uname !=null and uname!=''">uname=#{uname},</if>
 			<if test="upassword !=null and upassword!=''">upassword=#{upassword},</if>
-			<if test="uemail !=null and uemail!=''">uemail=#{uemail}</if>
+			<if test="uemail !=null and uemail!=''">uemail=#{uemail},</if>
 			<if test="token !=null and token!=''">token=#{token}</if>
 		</set>
 		where uid=#{uid}
@@ -56,6 +56,7 @@
 		from db_user where token=#{token}
 	</select>
 	<update id="updatePwd" parameterType="com.xawl.car.domain.User">
-		update db_user set upassword=#{upassword} where ulogin=#{ulogin}
+		update db_user set
+		upassword=#{upassword} where ulogin=#{ulogin}
 	</update>
 </mapper>

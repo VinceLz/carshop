@@ -23,10 +23,12 @@ import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.RollGrant;
 import com.xawl.car.domain.SMS;
 import com.xawl.car.domain.User;
+import com.xawl.car.interceptor.Role;
 import com.xawl.car.service.RollService;
 import com.xawl.car.service.UserService;
 import com.xawl.car.util.DateUtil;
 import com.xawl.car.util.ExecutorUtil;
+import com.xawl.car.util.IDUtils;
 import com.xawl.car.util.PropertiesUtil;
 import com.xawl.car.util.ResourceUtil;
 import com.xawl.car.util.RollUtil;
@@ -67,12 +69,14 @@ public class UserController {
 				return json + "";
 			}
 			String create = DateUtil.getSqlDate();
-			user.setLasttime(create);
+
 			// 更新登陆状态 和 最后登陆时间
 			String token = TokenUtil.MD5(ulogin + upassword + create);
-			user.setToken(token);
+			User up = new User();
+			up.setToken(token);
+			up.setLasttime(create);
+			up.setUid(user.getUid());
 			userService.update(user);
-
 			request.getSession().setAttribute(ResourceUtil.CURRENT_USER, user);
 			// json.add("JSESSIONID", request.getSession().getId());//
 			// 防止cookie不能使用，回显
@@ -85,54 +89,6 @@ public class UserController {
 			return json + "";
 		}
 
-	}
-
-	// 上传头像
-	@RequestMapping("/user/upload")
-	public Object upload(@RequestParam() String uid, JSON json,
-			HttpServletRequest request, @RequestParam("file") MultipartFile file) {
-		String bimage = null;
-		if (file != null && !uid.isEmpty()) {
-
-			// 获得项目的路径
-			ServletContext sc = request.getSession().getServletContext();
-			// 上传位置
-			String path = sc.getRealPath("img") + "/"; // 设定文件保存的目录
-
-			String dbpath = "/img" + "/";
-			File f = new File(path);
-			if (!f.exists())
-				f.mkdirs();
-			// 获得原始文件名
-			String fileName = file.getOriginalFilename();
-			// 新文件名
-			String newFileName = UUID.randomUUID() + fileName;
-			if (!file.isEmpty()) {
-				try {
-					FileOutputStream fos = new FileOutputStream(path
-							+ newFileName);
-					InputStream in = file.getInputStream();
-					int b1 = 0;
-					while ((b1 = in.read()) != -1) {
-						fos.write(b1);
-					}
-					fos.close();
-					in.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			bimage = dbpath + newFileName;
-		} else {
-			json.add("status", 0);
-			json.add("msg", "upload error");
-			return json + "";
-		}
-		Map map = new HashMap<String, Object>();
-		map.put("uid", uid);
-		map.put("uimage", bimage);
-		userService.updateImage(map);
-		return json.toString();
 	}
 
 	@RequestMapping("/user/registfrist")
@@ -165,7 +121,7 @@ public class UserController {
 		// 防止cookie不能使用，回显
 		return json.toString();
 	}
-	
+
 	@RequestMapping("/user/registlast")
 	public @ResponseBody
 	Object regist2(@RequestParam() String upassword,
@@ -206,11 +162,11 @@ public class UserController {
 		user.setToken(token);
 		userService.insertregist(user);
 		// 插入完成后获取最新的用户数据
-		
+
 		User userByUlogin = userService.getUserByUlogin(phone);
 		request.getSession().removeAttribute("VirCode");
 		json.add("user", userByUlogin);
-		  final int uid = userByUlogin.getUid();
+		final int uid = userByUlogin.getUid();
 		// 默认是注册完毕后直接登录。
 		// json.add("JSESSIONID", request.getSession().getId());//
 		// 防止cookie不能使用，回显
@@ -229,7 +185,7 @@ public class UserController {
 				RollUtil.insert(rollGrant, rollService, uid, user);// 根据规则进行放发优惠劵
 			}
 		});
-	
+
 		return json + "";
 	}
 
@@ -248,7 +204,6 @@ public class UserController {
 		});
 		return json.toString();
 	}
-	
 
 	// 退出登录
 	@RequestMapping("/user/logout")
@@ -323,4 +278,76 @@ public class UserController {
 
 	}
 
+	// 更新个人信息
+	@Role
+	@RequestMapping(value = "/user/updateInfo")
+	@ResponseBody
+	public String updateInfo(JSON json, int uid, String uphone, String uname,
+			String uaddress, String uemail) {
+		User user = new User();
+		user.setUid(uid);
+		user.setUphone(uphone);
+		user.setUname(uname);
+		user.setUaddress(uaddress);
+		user.setUemail(uemail);
+		userService.update(user);
+		return json.toString();
+	}
+
+	// 上传头像
+	@RequestMapping("/user/upload")
+	@ResponseBody
+	public Object uploadImage(String uid, JSON json,
+			HttpServletRequest request, MultipartFile file) {
+
+		System.out.println(file.getSize() + "---");
+		Map uploadPicture = uploadPicture(file, request);
+		String url = uploadPicture.get("url").toString();
+		Map map = new HashMap<String, Object>();
+		map.put("uid", uid);
+		map.put("uimage", url);
+		userService.updateImage(map);
+		json.add("url", url);
+		return json.toString();
+	}
+
+	public Map uploadPicture(MultipartFile uploadFile,
+			HttpServletRequest request) {
+		Map resultMap = new HashMap();
+		try {
+			// 重新生成一个新的文件名
+			// 取原始文件名
+			String oldName = uploadFile.getOriginalFilename();
+			// 生成新的文件名
+			// 使用id生成策略生成图片名称
+			String newName = IDUtils.getImageName();
+			newName = newName + oldName.substring(oldName.lastIndexOf("."));
+			// 图片上传
+			System.out.print("xuzi" + newName);
+			// String imagePath = new DateTime().toString("/yyyy/MM/dd");'
+			ServletContext sc = request.getSession().getServletContext();
+			String path = sc.getRealPath("img") + "/";
+			File f = new File(path);
+			if (!f.exists()) {
+				f.mkdirs();
+			}
+			FileOutputStream fos = new FileOutputStream(path + newName);
+			int b1 = 0;
+			InputStream in = uploadFile.getInputStream();
+			while ((b1 = in.read()) != -1) {
+				fos.write(b1);
+			}
+			fos.close();
+			in.close();
+			resultMap.put("error", 0);
+			resultMap.put("url", "/img/" + newName);
+			// 返回结果
+			return resultMap;
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("error", 1);
+			resultMap.put("message", "exception");
+			return resultMap;
+		}
+	}
 }

@@ -1,8 +1,11 @@
 package com.xawl.car.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -11,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.xawl.car.domain.Business;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.Model;
+import com.xawl.car.domain.VO.BusinessVO;
 import com.xawl.car.domain.VO.GoodsVO;
+import com.xawl.car.service.BusinessService;
 import com.xawl.car.service.GoodsService;
 import com.xawl.car.service.ModelService;
 
@@ -23,6 +29,8 @@ public class GoodsController {
 	private GoodsService goodsService;
 	@Resource
 	private ModelService modelService;
+	@Resource
+	private BusinessService businessService;
 
 	@RequestMapping("/car/getModels")
 	@ResponseBody
@@ -79,6 +87,35 @@ public class GoodsController {
 	public String get4(JSON json, @RequestParam() String mid) {
 		Model conf = modelService.getConf(mid);
 		json.add("model", conf);
+		return json + "";
+	}
+
+	// 获取车的详细配置
+	@RequestMapping("/car/goods/getAll")
+	@ResponseBody
+	public String get42(JSON json) {
+		List<String> list = goodsService.getAll();
+		json.add("list", list);
+		return json + "";
+	}
+
+	// 获取车的详细配置
+	@RequestMapping("/car/goods/query")
+	@ResponseBody
+	public String get1142(JSON json, String gname, String longitude,
+			String latitude) {
+		List<BusinessVO> list = null;
+		Map map = new HashMap<String, Object>();
+		map.put("longitude", longitude);
+		map.put("latitude", latitude);
+		if ("-1".equals(gname)) {
+			// 默认随机一个
+			list = businessService.getAll(map);
+		} else {
+			map.put("gname", gname);
+			list = goodsService.getBusiness(map);
+		}
+		json.add("list", list);
 		return json + "";
 	}
 

@@ -15,7 +15,7 @@ public interface BusinessMapper {
 	void insert(Business carStore);
 	
 	List<Business> getHomeHot();
-	List<Business> getAll();
+	List<BusinessVO> getAll(Map map);
 	
 	List<Business>getHomeBydistance(Map map);
 	

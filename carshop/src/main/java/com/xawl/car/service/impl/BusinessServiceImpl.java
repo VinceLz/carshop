@@ -26,8 +26,6 @@ public class BusinessServiceImpl implements BusinessService {
 	private BusinessMapper businessMapper;
 
 	@Autowired
-	private JedisDao jedisDao;
-	@Autowired
 	private ModelMapper modelMapper;
 
 	@Override
@@ -38,7 +36,6 @@ public class BusinessServiceImpl implements BusinessService {
 	@Override
 	public void insert(Business carStore) {
 		businessMapper.insert(carStore);
-		jedisDao.hdel("business", "all");
 	}
 
 	@Override
@@ -52,8 +49,8 @@ public class BusinessServiceImpl implements BusinessService {
 	}
 
 	@Override
-	public List<Business> getAll() {
-		return businessMapper.getAll();
+	public List<BusinessVO> getAll(Map map) {
+		return businessMapper.getAll(map);
 	}
 
 	@Override
@@ -75,5 +72,6 @@ public class BusinessServiceImpl implements BusinessService {
 	public List<String> getImage(Serializable id) {
 		return businessMapper.getImage(id);
 	}
+
 
 }

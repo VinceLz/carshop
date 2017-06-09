@@ -16,10 +16,17 @@ public interface BusinessService {
 	Business getById(Serializable id);
 
 	void insert(Business carStore);
+
 	List<Business> getHomeHot();
-	List<Business>getHomeBydistance(Map map);
-	List<Business> getAll();
+
+	List<Business> getHomeBydistance(Map map);
+
+	List<BusinessVO> getAll(Map map);
+
 	BusinessVO getStore2Car(Serializable bid);
+
 	List<String> getImage(Serializable id);
+
 	BusinessVO get(String bid);
+
 }

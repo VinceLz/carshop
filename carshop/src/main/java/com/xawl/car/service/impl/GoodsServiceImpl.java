@@ -2,14 +2,17 @@ package com.xawl.car.service.impl;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xawl.car.dao.GoodsMapper;
-import com.xawl.car.dao.JedisDao;
+import com.xawl.car.domain.Business;
 import com.xawl.car.domain.Goods;
 import com.xawl.car.domain.HomeTop;
+import com.xawl.car.domain.VO.BusinessVO;
 import com.xawl.car.pagination.Page;
 import com.xawl.car.service.GoodsService;
 
@@ -18,8 +21,6 @@ public class GoodsServiceImpl implements GoodsService {
 
 	@Autowired
 	private GoodsMapper goodsMapper;
-	@Autowired
-	private JedisDao jedisDao;
 
 	@Override
 	public Goods getById(Serializable id) {
@@ -29,7 +30,6 @@ public class GoodsServiceImpl implements GoodsService {
 	@Override
 	public void insert(Goods goods) {
 		goodsMapper.insert(goods);
-		jedisDao.hdel("goods", "all");
 	}
 
 	@Override
@@ -45,5 +45,15 @@ public class GoodsServiceImpl implements GoodsService {
 	@Override
 	public List<String> getImage(Serializable id) {
 		return goodsMapper.getImage(id);
+	}
+
+	@Override
+	public List<String> getAll() {
+		return goodsMapper.getAll();
+	}
+
+	@Override
+	public List<BusinessVO> getBusiness(Map map) {
+		return goodsMapper.getBusiness(map);
 	}
 }

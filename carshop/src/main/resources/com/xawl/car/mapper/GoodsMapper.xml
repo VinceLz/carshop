@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xawl.car.dao.GoodsMapper">
-	
+
 
 
 
 	<select id="getImage" resultType="string" parameterType="int">
 		select
-		image from db_image where  gid=#{gid}
+		image from db_image where gid=#{gid}
+	</select>
+
+
+	<select id="getAll" resultType="string">
+		select distinct gname from
+		db_goods
+	</select>
+
+
+	<select id="getBusiness" parameterType="map"
+		resultType="com.xawl.car.domain.Business" >
+		SELECT
+		bid,bname,bshowImage,baddress,bphone,majorbusiness,title1,title2,isActivity,longitude,latitude,
+		ROUND(6378.1380 * 2.0 * ASIN(SQRT(
+		POW((SIN(#{latitude} * PI() / 180.0
+		- latitude
+		* PI() / 180.0) / 2.0), 2.0)
+		+ COS(latitude * PI() / 180.0)
+		*
+		COS(latitude * PI() / 180.0)
+		* POW(
+		SIN(( #{longitude}* PI() / 180.0 -
+		longitude * PI() / 180.0) / 2.0),
+		2.0))) * 1000.0) AS distance
+		FROM
+		view_business_stages_title where   bid in(select bid from
+		db_goods where gname=#{gname})
+		ORDER BY distance asc
 	</select>
 </mapper>
