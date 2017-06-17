@@ -149,11 +149,37 @@ public class BusinessManagerController {
 		map.put("mbid", business.getMbid());
 		map.put("yoid", yoid);
 		if (ok == 0) {
-			map.put("status", YcOrder.ORDER_FAIL);// 取消了订单
+			YcOrder order = orderService.getById(yoid);
+			if (order.getPrice() == 0 && order.getStatus() == 0) {
+				// 0元单
+				map.put("status", YcOrder.ORDER_BLACK);// 直接退款
+			} else {
+
+				map.put("status", YcOrder.ORDER_FAIL);// 取消了订单
+				// 检查订单如果是0元，直接显示退款
+			}
+
 		} else {
 			map.put("status", YcOrder.ORDER_SUCCESS);// 确认了订单
 		}
 		orderService.updateOrderStatusByYc(map);// 确认
+		return json.toString();
+	}
+
+	// 修改密码
+	@ResponseBody
+	@Role(role = Role.ROLE_BUSINESS)
+	@RequestMapping("/manager/updatePwd")
+	public String changpwd(JSON json, MaintainBusiness business, String old,
+			String news) {
+		Map map = new HashMap<String, String>();
+		map.put("old", DesUtil.encode(DesUtil.DES, old));
+		map.put("news", DesUtil.encode(DesUtil.DES, news));
+		map.put("mbid", business.getMbid());
+		int sum = maintainBusinessService.updatePwd(map);
+		if (sum == 0) {
+			json.add("status", 0);
+		}
 		return json.toString();
 	}
 }

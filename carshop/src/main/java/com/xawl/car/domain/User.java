@@ -16,8 +16,27 @@ public class User {
 	private String uimage;
 	private String lasttime;
 	private String token;
+	private String gname;
+	private String mname;
 	
 	
+	
+	public String getGname() {
+		return gname;
+	}
+
+	public void setGname(String gname) {
+		this.gname = gname;
+	}
+
+	public String getMname() {
+		return mname;
+	}
+
+	public void setMname(String mname) {
+		this.mname = mname;
+	}
+
 	public String getUlogin() {
 		return ulogin;
 	}
@@ -114,5 +133,16 @@ public class User {
 	public void setUimage(String uimage) {
 		this.uimage = uimage;
 	}
+
+	@Override
+	public String toString() {
+		return "User [uid=" + uid + ", uphone=" + uphone + ", ulogin=" + ulogin
+				+ ", uaddress=" + uaddress + ", uname=" + uname
+				+ ", upassword=" + upassword + ", ucreate=" + ucreate
+				+ ", uemail=" + uemail + ", status=" + status + ", uimage="
+				+ uimage + ", lasttime=" + lasttime + ", token=" + token
+				+ ", gname=" + gname + ", mname=" + mname + "]";
+	}
+	
 
 }

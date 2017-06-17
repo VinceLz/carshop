@@ -24,4 +24,6 @@ public interface OrderMapper {
 
 	List<YcOrder> findOrderByMap(Map map);
 
+	YcOrder getById(int yoid);
+
 }

@@ -39,6 +39,15 @@ public class YcOrder {
 	private int bid;
 	private String buytime;
 	private String bname;
+	private String lastTime;//最后修改时间
+	
+	public String getLastTime() {
+		return lastTime;
+	}
+
+	public void setLastTime(String lastTime) {
+		this.lastTime = lastTime;
+	}
 
 	public String getBname() {
 		return bname;

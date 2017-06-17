@@ -32,4 +32,6 @@ public interface MaintainBusinessService {
 
 	List<MaintainBusiness> query(int type);
 
+	int updatePwd(Map map);
+
 }

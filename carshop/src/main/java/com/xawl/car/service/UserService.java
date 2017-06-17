@@ -18,4 +18,6 @@ public interface UserService {
 	User getUserByToken(String token);
 
 	void updatePwd(User user);
+
+	int updatePwdByOld(Map map);
 }

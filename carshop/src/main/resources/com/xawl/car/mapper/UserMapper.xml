@@ -32,7 +32,7 @@
 	</update>
 	<select id="getUser" parameterType="map" resultType="com.xawl.car.domain.User">
 		select
-		uid,ulogin,uphone,uaddress,uname,ucreate,uemail,status,uimage,token
+		uid,ulogin,uphone,uaddress,uname,ucreate,uemail,status,uimage,token,gname,mname
 		from db_user where ulogin=#{ulogin} and upassword=#{upassword}
 
 	</select>
@@ -45,7 +45,9 @@
 			<if test="uname !=null and uname!=''">uname=#{uname},</if>
 			<if test="upassword !=null and upassword!=''">upassword=#{upassword},</if>
 			<if test="uemail !=null and uemail!=''">uemail=#{uemail},</if>
-			<if test="token !=null and token!=''">token=#{token}</if>
+			<if test="token !=null and token!=''">token=#{token},</if>
+			<if test="gname !=null and gname!=''">gname=#{gname},</if>
+			<if test="mname !=null and mname!=''">mname=#{mname}</if>
 		</set>
 		where uid=#{uid}
 	</update>
@@ -58,5 +60,12 @@
 	<update id="updatePwd" parameterType="com.xawl.car.domain.User">
 		update db_user set
 		upassword=#{upassword} where ulogin=#{ulogin}
+	</update>
+
+	<update id="updatePwdByOld" parameterType="map">
+		update db_user
+		set
+		upassword=#{news} where upassword=#{old} and
+		uid=#{uid}
 	</update>
 </mapper>

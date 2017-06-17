@@ -50,4 +50,9 @@ public class UserServiceImpl implements UserService {
 		userMapper.updatePwd(user);
 	}
 
+	@Override
+	public int updatePwdByOld(Map map) {
+		return userMapper.updatePwdByOld(map);
+	}
+
 }

@@ -22,17 +22,16 @@
 
 	<select id="getRollByType2Uid" parameterType="map"
 		resultType="com.xawl.car.domain.VO.RollVO">
-		SELECT
+		SELECT * FROM (SELECT
 		r.rid,r.type,r.rname,r.price,ru.pastdate,ru.createdate,ru.status,r.condition,ru.ruid
-		FROM
-		db_roll r,db_roll_user ru WHERE ru.`rid`=r.`rid` AND
-		ru.`uid`=#{uid}
-		and r.type in
+		FROM db_roll r,db_roll_user ru WHERE ru.`rid`=r.`rid` AND ru.`uid`=21
+		AND ru.status=0
+		) b WHERE b.`type` IN
 		<foreach collection="type" close=")" open="(" separator=","
 			item="item" index="index">
 			#{item}
 		</foreach>
-		and ru.status=0
+
 	</select>
 
 	<delete id="deleteByruid" parameterType="int">

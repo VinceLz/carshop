@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.xawl.car.domain.Business;
 import com.xawl.car.domain.JSON;
 import com.xawl.car.domain.Model;
@@ -22,6 +24,7 @@ import com.xawl.car.domain.VO.GoodsVO;
 import com.xawl.car.service.BusinessService;
 import com.xawl.car.service.GoodsService;
 import com.xawl.car.service.ModelService;
+import com.xawl.car.util.HttpClientUtilS;
 
 @Controller
 public class GoodsController {
@@ -119,4 +122,58 @@ public class GoodsController {
 		return json + "";
 	}
 
+	// 获取车的详细配置
+	@RequestMapping("/car/getAllBrand")
+	@ResponseBody
+	public String getAllBusiness(JSON json) {
+		String doGet = HttpClientUtilS
+				.doGet("http://www.autohome.com.cn/ashx/AjaxIndexCarFind.ashx?type=11");
+		json.add("result", doGet);
+		return json.toString();
+	}
+
+	// 获取车的详细配置
+	@RequestMapping("/car/getAllGoods")
+	@ResponseBody
+	public String getAllBusinesss(JSON json, String id) {
+		String doGet = HttpClientUtilS
+				.doGet("http://www.autohome.com.cn//ashx/AjaxIndexCarFind.ashx?type=3&value="
+						+ id);
+		JSONArray arr = new JSONArray();
+		String root = com.alibaba.fastjson.JSONObject.parseObject(doGet)
+				.getJSONObject("result").getString("factoryitems");
+
+		JSONArray parseArray = com.alibaba.fastjson.JSON.parseArray(root);
+
+		for (int i = 0; i < parseArray.size(); i++) {
+			JSONObject jsonObject = parseArray.getJSONObject(i);
+			JSONArray jsonArray = jsonObject.getJSONArray("seriesitems");
+			arr.addAll(jsonArray);
+		}
+		json.add("result", arr);
+		return json.toString();
+	}
+
+	// 获取车的详细配置
+	@RequestMapping("/car/getAllModel")
+	@ResponseBody
+	public String getAllBusinessss(JSON json, String id) {
+		String doGet = HttpClientUtilS
+				.doGet("http://www.autohome.com.cn//ashx/AjaxIndexCarFind.ashx?type=5&value="
+						+ id);
+
+		// 解析
+		JSONArray arr = new JSONArray();
+		String root = com.alibaba.fastjson.JSONObject.parseObject(doGet)
+				.getJSONObject("result").getString("yearitems");
+
+		JSONArray parseArray = com.alibaba.fastjson.JSON.parseArray(root);
+		for (int i = 0; i < parseArray.size(); i++) {
+			JSONObject jsonObject = parseArray.getJSONObject(i);
+			JSONArray jsonArray = jsonObject.getJSONArray("specitems");
+			arr.addAll(jsonArray);
+		}
+		json.add("result", arr);
+		return json.toString();
+	}
 }

@@ -1,6 +1,7 @@
 package com.xawl.car.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,20 +73,22 @@ public class OrderController {
 	@RequestMapping("/order/up")
 	@ResponseBody
 	public String getTop5(JSON json, String orderList, User user) {
-		System.out.println("----" + orderList);
 		List<YcOrder> parseArray = com.alibaba.fastjson.JSON.parseArray(
 				orderList, YcOrder.class);
 		if (parseArray == null || parseArray.size() == 0) {
 			json.add("msg", "no param");
 			return json.toString();
 		}
+
 		YcOrder ycOrder = parseArray.get(0);
 		// 通过mid 获取一些gid bid 等信息
+
 		YcOrder order = modelService.getbyMid2All(ycOrder.getMid());
 		if (order == null) {
 			json.add("msg", "no car");
 			return json.toString();
 		}
+
 		String datas = new DateUtil().getNowDT();
 		String goodid = user.getUphone() + DateUtil.currentTimeToSS();// 生成订单
 		order.setStatus(YcOrder.ORDER_NO_PAY);
@@ -100,10 +103,10 @@ public class OrderController {
 		order.setGoodid(goodid);
 		order.setDate(datas);
 		order.setPrice(ycOrder.getPrice());
+		order.setRealprice(ycOrder.getRealprice());
 		order.setSname(ycOrder.getSname());
 		order.setBmname(ycOrder.getBmname());
 		order.setBuytime(ycOrder.getBuytime());
-		System.out.println(order);
 		orderService.insertYcorder(order);
 		OptionLog op = new OptionLog();
 		op.setGoodid(goodid);
@@ -126,42 +129,70 @@ public class OrderController {
 	@Role
 	@RequestMapping("/ycorder/add")
 	@ResponseBody
-	public String getTop52(JSON json, String orderList, User user)
+	public String getTop52(JSON json, String orderList, User user, Double price)
 			throws UnsupportedEncodingException, ParseException {
-		System.out.println(orderList);
 		// 获取订单集合
 		// 如果使用了优惠劵，那么默认优惠劵在订单集合中的第一个
 		// 总价
+		System.out.println(price);
 		List<YcOrder> parseArray = com.alibaba.fastjson.JSON.parseArray(
 				orderList, YcOrder.class);
+
 		if (parseArray == null || parseArray.size() == 0) {
 			json.add("msg", "no order");
 			return json.toString();
 		}
+
 		String datas = new DateUtil().getNowDT();
+
 		String goodid = user.getUphone() + DateUtil.currentTimeToSS();// 生成订单
+		YcOrder head = null;
 		for (YcOrder ycorder : parseArray) {
 			ycorder.setUid(user.getUid());
 			ycorder.setStatus(YcOrder.ORDER_NO_PAY);
 			ycorder.setDate(datas);
 			ycorder.setGoodid(goodid);
 		}
+		// 开始计算价格比例 并设置为price
+
 		if (parseArray != null && parseArray.size() > 0) {
-			YcOrder head = parseArray.get(0);// 获取第一个
+			head = parseArray.get(0);// 获取第一个
 			if (head.getRuid() != null) {
+				// 使用了优惠劵，那么就进行比例计算
+				// 开始计算
 				// 检查优惠劵是否可用，并修改优惠劵为占用状态
 				RollVO roll = rollService.getByRuid(head.getRuid());
 				if (roll.getStatus() != 0) {
 					json.add("status", 0);
-					json.add("msg", "status no");
 					return json.toString();
 				}
+				valiPrice(parseArray, price);
 			}
+
+			if (price == 0) {
+				// 0yuan 单
+				for (YcOrder orders : parseArray) {
+					orders.setStatus(YcOrder.ORDER_PAY);// 已经支付
+					if (orders.getRuid() != null) {
+						Map map = new HashMap();
+						map.put("ruid", orders.getRuid());
+						map.put("status", 1);
+						rollService.updateRollStatus(map);
+					}
+
+				}
+				// 讲优惠劵作废
+
+			}
+
 		}
-		json.add("ycorder", parseArray.get(0));// 返回订单号
+
+		// 返回支付金额
 		for (YcOrder ycorder2 : parseArray) {
 			orderService.insertYcorder(ycorder2);// 插入成功
 		}
+		head.setPrice(price);
+		json.add("ycorder", head);// 返回订单号
 		OptionLog op = new OptionLog();
 		op.setGoodid(goodid);
 		op.setUlogin(user.getUlogin());
@@ -176,6 +207,31 @@ public class OrderController {
 		return json.toString();
 	}
 
+	/**
+	 * 根据价格比例计算
+	 * 
+	 * @param parseArray
+	 * @param price
+	 */
+	private void valiPrice(List<YcOrder> parseArray, Double price) {
+		// price 总结
+		Double sum = 0D;
+		Double items = 0D;
+		for (YcOrder order : parseArray) {
+			sum = add(sum, order.getRealprice());
+		}
+		for (int i = 0; i < parseArray.size(); i++) {
+			double item = div(parseArray.get(i).getRealprice(), sum);
+			if (i == parseArray.size() - 1) {
+				// 最后一个
+				parseArray.get(i).setPrice(price - items);
+			} else {
+				items = items + mul(item, price);
+				parseArray.get(i).setPrice(mul(item, price));
+			}
+		}
+	}
+
 	// 请求支付接口
 	// @OpLog(OpLogType = OpLog.REQUEST_PAY)
 	@Role
@@ -183,12 +239,17 @@ public class OrderController {
 	@ResponseBody
 	public String getTop11(JSON json, User user, String goodid, Bank bankId)
 			throws Exception {
-		List<YcOrder> byGoodid = orderService.getByGoodid(goodid);// 根据订单号获取订单集合
-		System.out.println("----支付金额：" + byGoodid.get(0).getPrice());
-		double sumPrice = byGoodid.get(0).getPrice();
-		String appmessage = PayUtil.payMent(goodid, sumPrice,
-				bankId.getBankId());
 
+		List<YcOrder> byGoodid = orderService.getByGoodid(goodid);// 根据订单号获取订单集合
+
+		Double sum = 0D;
+		// 计算总价格
+		for (YcOrder orders : byGoodid) {
+			sum = add(orders.getPrice(), sum);
+		}
+
+		System.out.println("----支付金额：" + sum);
+		String appmessage = PayUtil.payMent(goodid, sum, bankId.getBankId());
 		String respCode = JSONObject.parseObject(appmessage).getString(
 				"respCode");
 		if ("00".equals(respCode)) {
@@ -222,6 +283,7 @@ public class OrderController {
 	@ResponseBody
 	public String getTop13(JSON json, HttpServletRequest req,
 			HttpServletResponse resp) throws Exception {
+
 		Map<String, String> reqMap = PayUtil.AsyncMoneyBlack(req, resp);
 		// 签名验证
 		boolean validate = AppUtils.validate(reqMap, PayConf.SIGNKEY,
@@ -449,5 +511,29 @@ public class OrderController {
 		op.setResult(json.toString());
 		optionLogMapper.insertLog(op);
 		return json.toString();
+	}
+
+	public static double sub(double v1, double v2) {
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.subtract(b2).doubleValue();
+	}
+
+	public static double add(double v1, double v2) {
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.add(b2).doubleValue();
+	}
+
+	public static double div(double v1, double v2) {
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.divide(b2, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
+	}
+
+	public static double mul(double v1, double v2) {
+		BigDecimal b1 = new BigDecimal(Double.toString(v1));
+		BigDecimal b2 = new BigDecimal(Double.toString(v2));
+		return b1.multiply(b2).doubleValue();
 	}
 }

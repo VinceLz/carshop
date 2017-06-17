@@ -283,13 +283,15 @@ public class UserController {
 	@RequestMapping(value = "/user/updateInfo")
 	@ResponseBody
 	public String updateInfo(JSON json, int uid, String uphone, String uname,
-			String uaddress, String uemail) {
+			String uaddress, String uemail, String gname, String mname) {
 		User user = new User();
 		user.setUid(uid);
 		user.setUphone(uphone);
 		user.setUname(uname);
 		user.setUaddress(uaddress);
 		user.setUemail(uemail);
+		user.setGname(gname);
+		user.setMname(mname);
 		userService.update(user);
 		return json.toString();
 	}
@@ -349,5 +351,22 @@ public class UserController {
 			resultMap.put("message", "exception");
 			return resultMap;
 		}
+	}
+
+	// 上传头像
+	@Role
+	@RequestMapping("/user/updatePwd")
+	@ResponseBody
+	public String updatPwd(JSON json, User user, String old, String news) {
+		System.out.println(user);
+		Map map = new HashMap<String, String>();
+		map.put("old", TokenUtil.MD5(old));
+		map.put("news", TokenUtil.MD5(news));
+		map.put("uid", user.getUid());
+		int sum = userService.updatePwdByOld(map);
+		if (sum == 0) {
+			json.add("status", 0);
+		}
+		return json.toString();
 	}
 }

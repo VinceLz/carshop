@@ -72,4 +72,9 @@ public class MaintainBusinessServiceImpl implements MaintainBusinessService {
 	public List<MaintainBusiness> query(int type) {
 		return maintainBusinessMapper.query(type);
 	}
+
+	@Override
+	public int updatePwd(Map map) {
+		return maintainBusinessMapper.updatePwd(map);
+	}
 }

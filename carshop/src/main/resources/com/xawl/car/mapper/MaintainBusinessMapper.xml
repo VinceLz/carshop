@@ -39,7 +39,7 @@
 
 	<select id="getHomeHot" resultType="com.xawl.car.domain.MaintainBusiness">
 		SELECT
-		mbid,mbname,baddress,bshowimage,longitude,latitude
+		mbid,mbname,baddress,bshowimage,longitude,latitude,purchase,commentcount
 		,bphone,title1,title2,isHot,score FROM
 		view_ycbusiness_stages_title
 		WHERE
@@ -50,7 +50,7 @@
 	<select id="getHomeBydistance" parameterType="map"
 		resultType="com.xawl.car.domain.MaintainBusiness">
 		SELECT
-		mbid,mbname,bshowImage,baddress,bphone,title1,title2,score,latitude,longitude,
+		mbid,mbname,bshowImage,baddress,bphone,title1,title2,score,purchase,commentcount,latitude,longitude,
 		ROUND(6378.1380 *
 		2.0 * ASIN(SQRT(
 		POW((SIN(#{latitude} * PI() / 180.0
@@ -146,5 +146,11 @@
 			<if test="type!=null and type!=''">type=#{type},</if>
 		</set>
 		where sid=#{sid}
+	</update>
+
+	<update id="updatePwd" parameterType="map">
+		update db_maintainbusiness
+		set mpassword=#{news} where mbid=#{mbid} and
+		mpassword=#{old}
 	</update>
 </mapper>

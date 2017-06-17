@@ -20,4 +20,6 @@ public interface UserMapper {
 
 	void updatePwd(User user);
 
+	int updatePwdByOld(Map map);
+
 }

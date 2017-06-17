@@ -37,14 +37,17 @@ public class RollController {
 		Map map = new HashMap();
 		map.put("uid", user.getUid());
 		String[] split = type.split(",");
+
 		int[] arr = new int[split.length + 1];
+		
 		for (int i = 0; i < split.length; i++) {
 			arr[i] = Integer.valueOf(split[i]);
 		}
+
 		arr[split.length] = 0;// 通用优惠劵
+		System.out.println(arr.toString());
 		map.put("type", arr);
 		List<RollVO> volist = rollService.getRollByType2Uid(map);
-		System.out.println(volist + "-----");
 		json.add("rolls", volist);
 		return json.toString();
 	}

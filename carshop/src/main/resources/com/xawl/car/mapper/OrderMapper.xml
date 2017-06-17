@@ -64,7 +64,9 @@
 		select
 		bmname,realprice,ruid,sname,yoid,mbid,uid,uname,uphone,status,goodid,qid,date
 		from
-		db_yc_order where mbid=#{mbid} and status in(0,1,2)
+		db_yc_order where mbid=#{mbid} and status in(0,1,2) order by
+		lastTime desc
+
 	</select>
 	<update id="updateOrderStatusByYc" parameterType="map">
 		update
@@ -99,6 +101,17 @@
 		bmname,price,sname,yoid,ruid,mbid,uid,uname,uphone,status,goodid,qid,date,type,bphone,mname,mid,gid,gname,color,buyWay,city,cardCity,bid,buytime,bname
 		from
 		db_yc_order where type=#{type} and uid=#{uid} and status in
-		(0,1,3,2,-3)
+		(0,1,3,2,-3) order by
+		lastTime desc
 	</select>
+
+	<select id="getById" parameterType="int" resultType="com.xawl.car.domain.YcOrder">
+		select *
+		from db_yc_order where yoid=#{yoid}
+	</select>
+
+	<update id="updateStatById" parameterType="int">
+		update db_yc_order set
+		status=3 where yoid=#{yoid}
+	</update>
 </mapper>

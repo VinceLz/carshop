@@ -28,13 +28,6 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public void insertYcorder(YcOrder ycorder) {
 		orderMapper.insertYcorder(ycorder);// 插入订单
-		// 使用了优惠劵，占用中
-		if (ycorder.getRuid() != null) {
-			Map map = new HashMap();
-			map.put("ruid", ycorder.getRuid());
-			map.put("status", 3);
-			rollMapper.updateRollStatus(map);
-		}
 	}
 
 	@Override
@@ -71,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public void updateQid(YcOrder byGoodid) {
+		// 使用了优惠劵，占用中
 		orderMapper.updateQid(byGoodid);
 	}
 
@@ -78,6 +72,11 @@ public class OrderServiceImpl implements OrderService {
 	public List<YcOrder> findOrderByMap(Map map) {
 		return orderMapper.findOrderByMap(map);
 
+	}
+
+	@Override
+	public YcOrder getById(int yoid) {
+		return orderMapper.getById(yoid);
 	}
 
 }
