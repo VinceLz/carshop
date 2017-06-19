@@ -426,7 +426,7 @@ public class PayUtil {
 
 		logger.info("申请支付操作---商品id:" + goodid + "---金额:" + Price + "---银行id:"
 				+ bankId + "---请求报文:" + paramMap);
-		String ret = HttpClientUtil.httpPost(PayConf.EZFMER_PAY_URL, paramMap,
+		String ret = HttpClientUtil.httpPost(PayConf.JSPT_PAY_URL, paramMap,
 				charset);
 		logger.info("申请支付操作---商品id:" + goodid + "---金额:" + Price + "---银行id:"
 				+ bankId + "---响应报文:" + ret);

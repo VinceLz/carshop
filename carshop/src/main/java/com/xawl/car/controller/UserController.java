@@ -301,8 +301,6 @@ public class UserController {
 	@ResponseBody
 	public Object uploadImage(String uid, JSON json,
 			HttpServletRequest request, MultipartFile file) {
-
-		System.out.println(file.getSize() + "---");
 		Map uploadPicture = uploadPicture(file, request);
 		String url = uploadPicture.get("url").toString();
 		Map map = new HashMap<String, Object>();

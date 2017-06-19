@@ -134,7 +134,6 @@ public class OrderController {
 		// 获取订单集合
 		// 如果使用了优惠劵，那么默认优惠劵在订单集合中的第一个
 		// 总价
-		System.out.println(price);
 		List<YcOrder> parseArray = com.alibaba.fastjson.JSON.parseArray(
 				orderList, YcOrder.class);
 
